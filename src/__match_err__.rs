@@ -20,7 +20,7 @@ macro_rules! match_err {
     }};
 }
 
-trait Match<T>: Sized {
+pub trait Match<T>: Sized {
     type Matched;
     fn try_match(self) -> Result<Self::Matched, Self>;
 }
