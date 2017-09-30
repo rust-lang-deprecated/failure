@@ -2,6 +2,7 @@
 pub mod __match_err__;
 
 use std::any::TypeId;
+use std::error::Error as StdError;
 use std::fmt::{self, Display, Debug};
 
 pub trait Fail: Debug + Send + 'static {
@@ -14,6 +15,12 @@ pub trait Fail: Debug + Send + 'static {
     #[doc(hidden)]
     fn __private_get_type_id__(&self) -> TypeId {
         TypeId::of::<Self>()
+    }
+}
+
+impl<E: StdError + Send + 'static> Fail for E {
+    fn fail(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        Display::fmt(self, f)
     }
 }
 
