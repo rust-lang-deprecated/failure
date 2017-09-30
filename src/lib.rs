@@ -1,9 +1,12 @@
 #[doc(hidden)]
 pub mod __match_err__;
+mod error_message;
 
 use std::any::TypeId;
 use std::error::Error as StdError;
 use std::fmt::{self, Display, Debug};
+
+pub use error_message::{ErrorMessage, error_msg};
 
 pub trait Fail: Debug + Send + 'static {
     fn fail(&self, f: &mut fmt::Formatter) -> fmt::Result;
