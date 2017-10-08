@@ -2,3 +2,5 @@
 authors = ["Without Boats <woboats@gmail.com>"]
 name = "failure"
 version = "0.0.1"
+description = "Experimental error handling abstraction."
+license = "MIT OR Apache-2.0"
