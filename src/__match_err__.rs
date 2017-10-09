@@ -26,7 +26,7 @@ pub trait Match<T>: Sized {
 }
 
 impl<T: Fail> Match<T> for Error {
-    type Matched = Box<T>;
+    type Matched = T;
     fn try_match(self) -> Result<Self::Matched, Self> {
         self.downcast::<T>()
     }
@@ -44,8 +44,8 @@ impl<'a, T: Fail> Match<T> for &'a mut Error {
     fn try_match(self) -> Result<Self::Matched, Self> {
         // TODO: replace with simple method like the immutable case
         // (requires nonlexical lifetimes)
-        if self.fail.__private_get_type_id__() == TypeId::of::<T>() {
-            unsafe { Ok(&mut *(&mut *self.fail as *mut Fail as *mut T)) }
+        if self.inner.failure.__private_get_type_id__() == TypeId::of::<T>() {
+            unsafe { Ok(&mut *(&mut self.inner.failure as *mut Fail as *mut T)) }
         } else {
             Err(self)
         }

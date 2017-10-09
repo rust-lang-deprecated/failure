@@ -1,6 +1,13 @@
 [package]
 authors = ["Without Boats <woboats@gmail.com>"]
-name = "failure"
-version = "0.0.1"
 description = "Experimental error handling abstraction."
 license = "MIT OR Apache-2.0"
+name = "failure"
+version = "0.0.1"
+
+[dependencies.backtrace]
+version = "0.3.3"
+optional = true
+
+[features]
+default = ["backtrace"]
