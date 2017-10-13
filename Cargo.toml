@@ -7,7 +7,3 @@ version = "0.0.1"
 
 [dependencies.backtrace]
 version = "0.3.3"
-optional = true
-
-[features]
-default = ["backtrace"]
