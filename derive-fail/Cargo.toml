@@ -1,0 +1,20 @@
+[package]
+authors = ["Without Boats <woboats@gmail.com>"]
+name = "derive-fail"
+version = "0.1.0"
+
+[dependencies]
+quote = "0.3.15"
+syn = "0.11.11"
+
+[dev-dependencies]
+backtrace = "0.3.3"
+
+[dev-dependencies.failure]
+path = ".."
+
+[features]
+nightly = []
+
+[lib]
+proc-macro = true
