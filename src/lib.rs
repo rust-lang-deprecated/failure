@@ -2,14 +2,18 @@ extern crate backtrace;
 
 #[doc(hidden)]
 pub mod __match_err__;
+mod compat;
 mod error_message;
 
 use std::any::TypeId;
 use std::error::Error as StdError;
 use std::fmt::{self, Display, Debug};
+use std::mem;
+use std::ptr;
 
-use backtrace::Backtrace;
+pub use backtrace::Backtrace;
 
+pub use compat::Compat;
 pub use error_message::{ErrorMessage, error_msg};
 
 pub trait Fail: Debug + Send + 'static {
@@ -23,6 +27,11 @@ pub trait Fail: Debug + Send + 'static {
         DisplayFail(self)
     }
 
+    fn compat(self) -> Compat<Self> where Self: Sized {
+        Compat { error: self }
+    }
+
+
     #[doc(hidden)]
     fn __private_get_type_id__(&self) -> TypeId {
         TypeId::of::<Self>()
@@ -35,7 +44,7 @@ impl<E: StdError + Send + 'static> Fail for E {
     }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub struct DisplayFail<'a, F: 'a>(&'a F);
 
 impl<'a, F: Fail> Display for DisplayFail<'a, F> {
@@ -49,14 +58,16 @@ pub struct Error {
 }
 
 struct Inner<F: ?Sized + Fail> {
-    backtrace: Backtrace,
+    backtrace: Option<Backtrace>,
     failure: F,
 }
 
 impl<F: Fail> From<F> for Error {
     fn from(failure: F) -> Error {
         let inner: Inner<F> = {
-            let backtrace = failure.backtrace().map_or_else(Backtrace::new, Backtrace::clone);
+            let backtrace = if failure.backtrace().is_none() {
+                Some(Backtrace::new())
+            } else { None };
             Inner { failure, backtrace }
         };
         Error { inner: Box::new(inner) }
@@ -65,14 +76,30 @@ impl<F: Fail> From<F> for Error {
 
 impl Error {
     pub fn backtrace(&self) -> &Backtrace {
-        &self.inner.backtrace
+        self.inner.backtrace.as_ref().unwrap_or_else(|| self.inner.failure.backtrace().unwrap())
+    }
+
+    pub fn compat(self) -> Compat<Error> {
+        Compat { error: self }
     }
 
     pub fn downcast<T: Fail>(self) -> Result<T, Error> {
-        if self.inner.failure.__private_get_type_id__() == TypeId::of::<T>() {
-            panic!()
-        } else {
-            Err(self)
+        let ret = if let Some(fail) = self.downcast_ref() {
+            unsafe {
+                // drop the backtrace
+                let _ = ptr::read(&self.inner.backtrace as *const Option<Backtrace>);
+                // read out the fail type
+                let fail = ptr::read(fail as *const T);
+                Ok(fail)
+            }
+        } else { Err(()) };
+        match ret {
+            Ok(ret) => {
+                // forget self (backtrace is dropped, failure is moved
+                mem::forget(self);
+                Ok(ret)
+            }
+            _       => Err(self)
         }
     }
 
@@ -99,8 +126,14 @@ impl Display for Error {
     }
 }
 
+impl Debug for Inner<Fail> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Error {{ failure: {:?} }}\n\n{:?}", &self.failure, &self.backtrace)
+    }
+}
+
 impl Debug for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Error {{ failure: {:?} }}\n\n{:?}", &self.inner.failure, &self.inner.backtrace)
+        write!(f, "{:?}", &self.inner)
     }
 }
