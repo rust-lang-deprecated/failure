@@ -7,6 +7,12 @@ pub struct Compat<Error> {
     pub(crate) error: Error,
 }
 
+impl Compat<Error> {
+    pub fn inner(self) -> Error {
+        self.error
+    }
+}
+
 impl<F: Fail> StdError for Compat<F> {
     fn description(&self) -> &'static str {
         "An error has occurred."
