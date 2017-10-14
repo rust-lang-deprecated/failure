@@ -90,11 +90,11 @@ impl Error {
                 let _ = ptr::read(&self.inner.backtrace as *const Option<Backtrace>);
                 // read out the fail type
                 let fail = ptr::read(fail as *const T);
-                Ok(fail)
+                Some(fail)
             }
-        } else { Err(()) };
+        } else { None };
         match ret {
-            Ok(ret) => {
+            Some(ret) => {
                 // forget self (backtrace is dropped, failure is moved
                 mem::forget(self);
                 Ok(ret)
