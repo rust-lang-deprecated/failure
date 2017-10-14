@@ -3,11 +3,16 @@ use std::error::Error as StdError;
 use std::fmt::{self, Display};
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
+/// A compatibility wrapper around an error type from this crate.
+///
+/// `Compat` implements `std::error::Error`, allowing the types from this
+/// crate to be passed to interfaces that expect a type of that trait.
 pub struct Compat<Error> {
     pub(crate) error: Error,
 }
 
 impl Compat<Error> {
+    /// Unwrap this into the inner Error.
     pub fn inner(self) -> Error {
         self.error
     }
