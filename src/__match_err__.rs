@@ -3,7 +3,7 @@ use {Fail, Error};
 
 #[macro_export]
 macro_rules! match_err {
-    ($err:expr => { $($t:ty: $bind:pat => $exec:block)* final: $xbind:pat => $xexec:block }) => {{
+    ($err:expr => { $($t:ty: $bind:pat => $exec:block)* else: $xbind:pat => $xexec:block }) => {{
         let mut err = $err;   
         loop {
             $({
@@ -82,7 +82,7 @@ mod tests {
         let _ = match_err!(err => {
             Foo: err    => { write!(s, "matched {}", err.display()) }
             Bar: err    => { write!(s, "matched {}", err.display()) }
-            final:   _      => { write!(s, "no match") }
+            else:   _      => { write!(s, "no match") }
         });
         assert_eq!(&s, "matched bar");
     }
@@ -94,7 +94,7 @@ mod tests {
         let _ = match_err!(&err => {
             Foo: err    => { write!(s, "matched {}", err.display()) }
             Bar: err    => { write!(s, "matched {}", err.display()) }
-            final:   _      => { write!(s, "no match") }
+            else:   _      => { write!(s, "no match") }
         });
         assert_eq!(&s, "matched bar");
     }
@@ -106,7 +106,7 @@ mod tests {
         let _ = match_err!(&mut err => {
             Foo: err    => { write!(s, "matched {}", err.display()) }
             Bar: err    => { write!(s, "matched {}", err.display()) }
-            final:   _      => { write!(s, "no match") }
+            else:   _      => { write!(s, "no match") }
         });
         assert_eq!(&s, "matched bar");
     }
@@ -117,7 +117,7 @@ mod tests {
         let err: Error = Bar.into();
         let _ = match_err!(err => {
             Foo: err    => { write!(s, "matched {}", err.display()) }
-            final:   _      => { write!(s, "no match") }
+            else:   _      => { write!(s, "no match") }
         });
         assert_eq!(&s, "no match");
     }

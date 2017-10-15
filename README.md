@@ -29,7 +29,7 @@ fn main() {
     match_err!(err => {
         io::Error:   err    => { println!("IO error: {}", err) }
         CustomError: err    => { println!("internal error: {}", err) }
-        final:       _      => { panic!("should not have another kind of error") }
+        else:        _      => { panic!("should not have another kind of error") }
     });
 }
 ```
