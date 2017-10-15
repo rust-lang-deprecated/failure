@@ -40,7 +40,7 @@ pub trait ChainErr<T, E> {
     fn chain_err<F: FnOnce(&E) -> String>(self, f: F) -> Result<T, Error>;
 }
 
-impl<T, E: Fail + 'static> ChainErr<T, E> for Result<T, E> {
+impl<T, E: Fail + Send + 'static> ChainErr<T, E> for Result<T, E> {
     fn chain_err<F: FnOnce(&E) -> String>(self, f: F) -> Result<T, Error> {
         self.map_err(|failure| {
             let context = f(&failure);

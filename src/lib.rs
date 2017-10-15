@@ -49,7 +49,7 @@ pub trait Fail: Debug + {
     }
 
     /// Chain this error with some context.
-    fn chain(self, context: String) -> Error where Self: Sized + 'static {
+    fn chain(self, context: String) -> Error where Self: Sized + Send + 'static {
         Error::from(Chain { context, failure: self })
     }
 
@@ -99,6 +99,22 @@ impl Fail {
     }
 }
 
+impl Fail + Send {
+    /// Attempt to downcast this Fail to a concrete type.
+    ///
+    /// If the underlying error is not of type `T`, this will return `None`.
+    pub fn downcast<T: Fail + 'static>(&self) -> Option<&T> {
+        Fail::downcast(self)
+    }
+
+    /// Attempt to downcast this Fail to a concrete type by mutable reference.
+    ///
+    /// If the underlying error is not of type `T`, this will return `None`.
+    pub fn downcast_mut<T: Fail + 'static>(&mut self) -> Option<&mut T> {
+        Fail::downcast_mut(self)
+    }
+}
+
 impl<E: StdError + 'static> Fail for E {
     fn fail(&self, f: &mut fmt::Formatter) -> fmt::Result {
         Display::fmt(self, f)
@@ -131,7 +147,7 @@ impl<'a, F: Fail> Display for DisplayFail<'a, F> {
 /// information, and can be downcast into the Fail type that underlies it for
 /// more detailed inspection.
 pub struct Error {
-    inner: Box<Inner<Fail>>,
+    inner: Box<Inner<Fail + Send>>,
 }
 
 struct Inner<F: ?Sized + Fail> {
@@ -139,7 +155,7 @@ struct Inner<F: ?Sized + Fail> {
     failure: F,
 }
 
-impl<F: Fail + 'static> From<F> for Error {
+impl<F: Fail + Send + 'static> From<F> for Error {
     fn from(failure: F) -> Error {
         let inner: Inner<F> = {
             let backtrace = if failure.backtrace().is_none() {
@@ -230,7 +246,7 @@ impl Display for Error {
     }
 }
 
-impl Debug for Inner<Fail> {
+impl Debug for Inner<Fail + Send> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "Error {{ failure: {:?} }}\n\n{:?}", &self.failure, &self.backtrace)
     }
