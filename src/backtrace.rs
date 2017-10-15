@@ -4,15 +4,14 @@ use std::cell::UnsafeCell;
 use std::env;
 use std::fmt;
 use std::sync::atomic::{AtomicUsize, ATOMIC_USIZE_INIT, Ordering};
-use std::sync::{Arc, Mutex};
+use std::sync::Mutex;
 
 pub use self::backtrace::Backtrace;
 
 /// Internal representation of a backtrace
 #[doc(hidden)]
-#[derive(Clone)]
 pub(crate) struct InternalBacktrace {
-    backtrace: Option<Arc<MaybeResolved>>,
+    backtrace: Option<MaybeResolved>,
 }
 
 struct MaybeResolved {
@@ -47,10 +46,10 @@ impl InternalBacktrace {
         }
 
         InternalBacktrace {
-            backtrace: Some(Arc::new(MaybeResolved {
+            backtrace: Some(MaybeResolved {
                 resolved: Mutex::new(false),
                 backtrace: UnsafeCell::new(Backtrace::new_unresolved()),
-            })),
+            }),
         }
     }
 
