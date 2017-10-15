@@ -4,11 +4,11 @@ extern crate syn;
 #[macro_use] extern crate synstructure;
 #[macro_use] extern crate quote;
 
-decl_derive!([Fail, attributes(error_msg)] => fail_derive);
+decl_derive!([Fail, attributes(error_msg, cause)] => fail_derive);
 
 fn fail_derive(s: synstructure::Structure) -> quote::Tokens {
     let fail_body = s.each_variant(|v| {
-        let msg = find_error_msg(&v.ast().attrs).unwrap();
+        let msg = find_error_msg(&v.ast().attrs);
         if msg.is_empty() {
             panic!("Expected at least one argument to error_msg");
         }
@@ -35,57 +35,108 @@ fn fail_derive(s: synstructure::Structure) -> quote::Tokens {
         });
 
         quote! {
-            write!(f, #s #(, #args)*)
+            return write!(f, #s #(, #args)*)
+        }
+    });
+
+    let cause_body = s.each_variant(|v| {
+        if let Some(cause) = v.bindings().iter().find(is_cause) {
+            quote!(return Some(#cause))
+        } else {
+            quote!(return None)
         }
     });
 
     let bt_body = s.each_variant(|v| {
-        for bi in v.bindings() {
-            if is_backtrace(bi.ast()) {
-                return quote!(return Some(#bi););
-            }
+        if let Some(bi) = v.bindings().iter().find(is_backtrace) {
+            quote!(return Some(#bi))
+        } else {
+            quote!(return None)
         }
-        quote!(None)
     });
 
-    s.bound_impl("::failure::Fail", quote! {
+    let conversions = s.variants().iter().filter_map(|v| {
+        if let Some(cause) = v.bindings().iter().find(is_cause) {
+            let cause_field = cause.ast().ident.clone().unwrap_or(syn::Ident::new("__cause"));
+            let cause_ty = &cause.ast().ty;
+            let defaults = v.bindings().iter()
+                            .enumerate()
+                            .filter(|&(_, bi)| bi != cause)
+                            .map(|(idx, bi)| bi.ast().ident.clone().unwrap_or(syn::Ident::new(format!("__{}", idx))));
+            let constructor = {
+                let mut v = v.clone();
+                v.bind_with(|_| synstructure::BindStyle::Move);
+                v.binding_name(|field, idx| {
+                    if field == cause.ast() {
+                        cause_field.clone()
+                    } else {
+                        field.ident.clone().unwrap_or(syn::Ident::new(format!("__{}", idx)))
+                    }
+                });
+                v.pat()
+            };
+            Some(s.bound_impl(quote!(::std::convert::From<#cause_ty>), quote! {
+                fn from(#cause_field: #cause_ty) -> Self {
+                    #(let #defaults = ::std::default::Default::default();)*
+                    #constructor
+                }
+            }))
+        } else { None }
+    });
+
+    let fail = s.bound_impl("::failure::Fail", quote! {
+        #[allow(unreachable_code)]
         fn fail(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
             match *self { #fail_body }
+            write!(f, "An error has occurred.")
         }
 
+        #[allow(unreachable_code)]
+        fn cause(&self) -> Option<&::failure::Fail> {
+            match *self { #cause_body }
+            None
+        }
+
+        #[allow(unreachable_code)]
         fn backtrace(&self) -> ::std::option::Option<&::failure::Backtrace> {
             match *self { #bt_body }
+            None
         }
-    })
+    });
+
+    quote! {
+        #fail
+        #(#conversions)*
+    }
 }
 
-fn find_error_msg(attrs: &[syn::Attribute]) -> Result<&[syn::NestedMetaItem], ()> {
-    let mut error_msg = Err(());
+fn find_error_msg(attrs: &[syn::Attribute]) -> &[syn::NestedMetaItem] {
+    let mut error_msg = None;
     for attr in attrs {
         if attr.name() == "error_msg" {
-            if error_msg.is_ok() {
-                // Two error_msg attributes
-                error_msg = Err(());
-                break
+            if error_msg.is_some() {
+                panic!("Cannot have two error_msg attributes")
             } else {
                 if let syn::MetaItem::List(_, ref list)  = attr.value {
-                    error_msg = Ok(&list[..]);
+                    error_msg = Some(&list[..]);
                 } else {
-                    // error_msg is not a list attribute
-                    error_msg = Err(());
-                    break
+                    panic!("error_msg must take a list in parantheses")
                 }
             }
         }
     }
-    error_msg
+    error_msg.expect("Must have attribute error_msg")
 }
 
-fn is_backtrace(field: &syn::Field) -> bool {
-    match field.ty {
-        syn::Ty::Path(None, syn::Path { segments: ref path, .. }) => {
-            path.last().map_or(false, |s| s.ident == "Backtrace" && s.parameters.is_empty())
+fn is_backtrace(bi: &&synstructure::BindingInfo) -> bool {
+        match bi.ast().ty {
+            syn::Ty::Path(None, syn::Path { segments: ref path, .. }) => {
+                path.last().map_or(false, |s| s.ident == "Backtrace" && s.parameters.is_empty())
+            }
+            _ => false
         }
-        _ => false
-    }
+}
+
+fn is_cause(bi: &&synstructure::BindingInfo) -> bool {
+    bi.ast().attrs.iter().any(|attr| attr.name() == "cause")
 }
