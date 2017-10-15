@@ -36,7 +36,9 @@ impl Fail for Chain<Error> {
     }
 }
 
+/// Chain the Error on this Result with context.
 pub trait ChainErr<T, E> {
+    /// Chain the error case with some contextual information.
     fn chain_err<F: FnOnce(&E) -> String>(self, f: F) -> Result<T, Error>;
 }
 

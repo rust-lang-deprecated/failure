@@ -18,6 +18,7 @@ use backtrace::InternalBacktrace;
 use chain::Chain;
 
 pub use backtrace::Backtrace;
+pub use chain::ChainErr;
 pub use compat::Compat;
 pub use error_message::{ErrorMessage, error_msg};
 
