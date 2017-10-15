@@ -35,3 +35,25 @@ impl Fail for Chain<Error> {
         self.failure.backtrace()
     }
 }
+
+pub trait ChainErr<T, E> {
+    fn chain_err<F: FnOnce(&E) -> String>(self, f: F) -> Result<T, Error>;
+}
+
+impl<T, E: Fail + 'static> ChainErr<T, E> for Result<T, E> {
+    fn chain_err<F: FnOnce(&E) -> String>(self, f: F) -> Result<T, Error> {
+        self.map_err(|failure| {
+            let context = f(&failure);
+            Error::from(Chain { context, failure })
+        })
+    }
+}
+
+impl<T> ChainErr<T, Error> for Result<T, Error> {
+    fn chain_err<F: FnOnce(&Error) -> String>(self, f: F) -> Result<T, Error> {
+        self.map_err(|failure| {
+            let context = f(&failure);
+            Error::from(Chain { context, failure })
+        })
+    }
+}
