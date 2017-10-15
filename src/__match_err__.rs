@@ -25,21 +25,21 @@ pub trait Match<T>: Sized {
     fn try_match(self) -> Result<Self::Matched, Self>;
 }
 
-impl<T: Fail> Match<T> for Error {
+impl<T: Fail + 'static> Match<T> for Error {
     type Matched = T;
     fn try_match(self) -> Result<Self::Matched, Self> {
         self.downcast::<T>()
     }
 }
 
-impl<'a, T: Fail> Match<T> for &'a Error {
+impl<'a, T: Fail + 'static> Match<T> for &'a Error {
     type Matched = &'a T;
     fn try_match(self) -> Result<Self::Matched, Self> {
         self.downcast_ref::<T>().ok_or(self)
     }
 }
 
-impl<'a, T: Fail> Match<T> for &'a mut Error {
+impl<'a, T: Fail + 'static> Match<T> for &'a mut Error {
     type Matched = &'a mut T;
     fn try_match(self) -> Result<Self::Matched, Self> {
         // TODO: replace with simple method like the immutable case

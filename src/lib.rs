@@ -4,6 +4,7 @@
 #[doc(hidden)]
 pub mod __match_err__;
 mod backtrace;
+mod chain;
 mod compat;
 mod error_message;
 
@@ -14,8 +15,9 @@ use std::mem;
 use std::ptr;
 
 use backtrace::InternalBacktrace;
-pub use backtrace::Backtrace;
+use chain::Chain;
 
+pub use backtrace::Backtrace;
 pub use compat::Compat;
 pub use error_message::{ErrorMessage, error_msg};
 
@@ -27,7 +29,7 @@ pub use error_message::{ErrorMessage, error_msg};
 /// The `derive-fail` crate provides a way to derive the `Fail` trait for your
 /// type. Additionally, all types that already implement `std::error::Error`,
 /// and are also `Send` and `'static`, implement `Fail` by a blanket impl.
-pub trait Fail: Debug + Send + 'static {
+pub trait Fail: Debug + {
     /// Print an error message, similar to `Debug` or `Display`.
     fn fail(&self, f: &mut fmt::Formatter) -> fmt::Result;
 
@@ -44,6 +46,11 @@ pub trait Fail: Debug + Send + 'static {
     /// Backtrace, you should override it.
     fn backtrace(&self) -> Option<&Backtrace> {
         None
+    }
+
+    /// Chain this error with some context.
+    fn chain(self, context: String) -> Error where Self: Sized + 'static {
+        Error::from(Chain { context, failure: self })
     }
 
     /// This returns an adapter that implements `Display` by calling
@@ -63,7 +70,7 @@ pub trait Fail: Debug + Send + 'static {
 
 
     #[doc(hidden)]
-    fn __private_get_type_id__(&self) -> TypeId {
+    fn __private_get_type_id__(&self) -> TypeId where Self: 'static {
         TypeId::of::<Self>()
     }
 }
@@ -72,7 +79,7 @@ impl Fail {
     /// Attempt to downcast this Fail to a concrete type.
     ///
     /// If the underlying error is not of type `T`, this will return `None`.
-    pub fn downcast<T: Fail>(&self) -> Option<&T> {
+    pub fn downcast<T: Fail + 'static>(&self) -> Option<&T> {
         if self.__private_get_type_id__() == TypeId::of::<T>() {
             unsafe { Some(&*(self as *const Fail as *const T)) }
         } else {
@@ -83,7 +90,7 @@ impl Fail {
     /// Attempt to downcast this Fail to a concrete type by mutable reference.
     ///
     /// If the underlying error is not of type `T`, this will return `None`.
-    pub fn downcast_mut<T: Fail>(&mut self) -> Option<&mut T> {
+    pub fn downcast_mut<T: Fail + 'static>(&mut self) -> Option<&mut T> {
         if self.__private_get_type_id__() == TypeId::of::<T>() {
             unsafe { Some(&mut *(self as *mut Fail as *mut T)) }
         } else {
@@ -92,7 +99,7 @@ impl Fail {
     }
 }
 
-impl<E: StdError + Send + 'static> Fail for E {
+impl<E: StdError + 'static> Fail for E {
     fn fail(&self, f: &mut fmt::Formatter) -> fmt::Result {
         Display::fmt(self, f)
     }
@@ -132,7 +139,7 @@ struct Inner<F: ?Sized + Fail> {
     failure: F,
 }
 
-impl<F: Fail> From<F> for Error {
+impl<F: Fail + 'static> From<F> for Error {
     fn from(failure: F) -> Error {
         let inner: Inner<F> = {
             let backtrace = if failure.backtrace().is_none() {
@@ -149,6 +156,11 @@ impl Error {
     /// an error that wraps other errors.
     pub fn cause(&self) -> &Fail {
         &self.inner.failure
+    }
+
+    /// Chain this error with more context
+    pub fn chain(self, context: String) -> Error {
+        Error::from(Chain { context, failure: self })
     }
 
     /// Get a reference to the Backtrace for this Error.
@@ -175,7 +187,7 @@ impl Error {
     /// failure is of the type `T`. For this reason it returns a `Result` - in
     /// the case that the underlying error is of a different type, the
     /// original Error is returned.
-    pub fn downcast<T: Fail>(self) -> Result<T, Error> {
+    pub fn downcast<T: Fail + 'static>(self) -> Result<T, Error> {
         let ret = if let Some(fail) = self.downcast_ref() {
             unsafe {
                 // drop the backtrace
@@ -199,7 +211,7 @@ impl Error {
     /// reference.
     ///
     /// If the underlying error is not of type `T`, this will return `None`.
-    pub fn downcast_ref<T: Fail>(&self) -> Option<&T> {
+    pub fn downcast_ref<T: Fail + 'static>(&self) -> Option<&T> {
         self.inner.failure.downcast()
     }
 
@@ -207,7 +219,7 @@ impl Error {
     /// mutable reference.
     ///
     /// If the underlying error is not of type `T`, this will return `None`.
-    pub fn downcast_mut<T: Fail>(&mut self) -> Option<&mut T> {
+    pub fn downcast_mut<T: Fail + 'static>(&mut self) -> Option<&mut T> {
         self.inner.failure.downcast_mut()
     }
 }
