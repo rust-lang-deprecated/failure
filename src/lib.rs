@@ -31,6 +31,12 @@ pub trait Fail: Debug + Send + 'static {
     /// Print an error message, similar to `Debug` or `Display`.
     fn fail(&self, f: &mut fmt::Formatter) -> fmt::Result;
 
+    /// Returns a reference to the underlying cause of this failure, if it is
+    /// an error that wraps other errors.
+    fn cause(&self) -> Option<&Fail> {
+        None
+    }
+
     /// Returns a reference to the Backtrace carried by this Fail, if it
     /// carries one.
     ///
@@ -59,6 +65,30 @@ pub trait Fail: Debug + Send + 'static {
     #[doc(hidden)]
     fn __private_get_type_id__(&self) -> TypeId {
         TypeId::of::<Self>()
+    }
+}
+
+impl Fail {
+    /// Attempt to downcast this Fail to a concrete type.
+    ///
+    /// If the underlying error is not of type `T`, this will return `None`.
+    pub fn downcast<T: Fail>(&self) -> Option<&T> {
+        if self.__private_get_type_id__() == TypeId::of::<T>() {
+            unsafe { Some(&*(self as *const Fail as *const T)) }
+        } else {
+            None
+        }
+    }
+
+    /// Attempt to downcast this Fail to a concrete type by mutable reference.
+    ///
+    /// If the underlying error is not of type `T`, this will return `None`.
+    pub fn downcast_mut<T: Fail>(&mut self) -> Option<&mut T> {
+        if self.__private_get_type_id__() == TypeId::of::<T>() {
+            unsafe { Some(&mut *(self as *mut Fail as *mut T)) }
+        } else {
+            None
+        }
     }
 }
 
@@ -115,6 +145,12 @@ impl<F: Fail> From<F> for Error {
 }
 
 impl Error {
+    /// Returns a reference to the underlying cause of this failure, if it is
+    /// an error that wraps other errors.
+    pub fn cause(&self) -> &Fail {
+        &self.inner.failure
+    }
+
     /// Get a reference to the Backtrace for this Error.
     ///
     /// If the failure this wrapped carried a backtrace, that backtrace will
@@ -164,11 +200,7 @@ impl Error {
     ///
     /// If the underlying error is not of type `T`, this will return `None`.
     pub fn downcast_ref<T: Fail>(&self) -> Option<&T> {
-        if self.inner.failure.__private_get_type_id__() == TypeId::of::<T>() {
-            unsafe { Some(&*(&self.inner.failure as *const Fail as *const T)) }
-        } else {
-            None
-        }
+        self.inner.failure.downcast()
     }
 
     /// Attempt to downcast this Error to a particular `Fail` type by
@@ -176,11 +208,7 @@ impl Error {
     ///
     /// If the underlying error is not of type `T`, this will return `None`.
     pub fn downcast_mut<T: Fail>(&mut self) -> Option<&mut T> {
-        if self.inner.failure.__private_get_type_id__() == TypeId::of::<T>() {
-            unsafe { Some(&mut *(&mut self.inner.failure as *mut Fail as *mut T)) }
-        } else {
-            None
-        }
+        self.inner.failure.downcast_mut()
     }
 }
 
