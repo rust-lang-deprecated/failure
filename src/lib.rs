@@ -1,10 +1,9 @@
 //! An experimental new error handling library.
 #![deny(missing_docs)]
 
-extern crate backtrace;
-
 #[doc(hidden)]
 pub mod __match_err__;
+mod backtrace;
 mod compat;
 mod error_message;
 
@@ -14,6 +13,7 @@ use std::fmt::{self, Display, Debug};
 use std::mem;
 use std::ptr;
 
+use backtrace::InternalBacktrace;
 pub use backtrace::Backtrace;
 
 pub use compat::Compat;
@@ -128,7 +128,7 @@ pub struct Error {
 }
 
 struct Inner<F: ?Sized + Fail> {
-    backtrace: Option<Backtrace>,
+    backtrace: InternalBacktrace,
     failure: F,
 }
 
@@ -136,8 +136,8 @@ impl<F: Fail> From<F> for Error {
     fn from(failure: F) -> Error {
         let inner: Inner<F> = {
             let backtrace = if failure.backtrace().is_none() {
-                Some(Backtrace::new())
-            } else { None };
+                InternalBacktrace::new()
+            } else { InternalBacktrace::none() };
             Inner { failure, backtrace }
         };
         Error { inner: Box::new(inner) }
@@ -156,8 +156,8 @@ impl Error {
     /// If the failure this wrapped carried a backtrace, that backtrace will
     /// be returned. Otherwise, the backtrace will have been constructed at
     /// the point that failure was cast into the Error type.
-    pub fn backtrace(&self) -> &Backtrace {
-        self.inner.backtrace.as_ref().unwrap_or_else(|| self.inner.failure.backtrace().unwrap())
+    pub fn backtrace(&self) -> Option<&Backtrace> {
+        self.inner.backtrace.as_backtrace().or_else(|| self.inner.failure.backtrace())
     }
 
     /// Wrap `Error` in a compatibility type.
@@ -179,7 +179,7 @@ impl Error {
         let ret = if let Some(fail) = self.downcast_ref() {
             unsafe {
                 // drop the backtrace
-                let _ = ptr::read(&self.inner.backtrace as *const Option<Backtrace>);
+                let _ = ptr::read(&self.inner.backtrace as *const InternalBacktrace);
                 // read out the fail type
                 let fail = ptr::read(fail as *const T);
                 Some(fail)
