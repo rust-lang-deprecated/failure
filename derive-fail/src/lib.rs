@@ -15,15 +15,11 @@ fn fail_derive(s: synstructure::Structure) -> quote::Tokens {
 
         let s = &msg[0];
         let args = msg[1..].iter().map(|arg| match *arg {
-            syn::NestedMetaItem::Literal(
-                syn::Lit::Int(i, _)
-            ) => {
+            syn::NestedMetaItem::Literal(syn::Lit::Int(i, _)) => {
                 let bi = &v.bindings()[i as usize];
                 quote!(#bi)
             }
-            syn::NestedMetaItem::MetaItem(
-                syn::MetaItem::Word(ref id)
-            ) => {
+            syn::NestedMetaItem::MetaItem(syn::MetaItem::Word(ref id)) => {
                 for bi in v.bindings() {
                     if bi.ast().ident.as_ref() == Some(id) {
                         return quote!(#bi);
