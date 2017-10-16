@@ -1,26 +1,34 @@
 //! An experimental new error handling library.
+#![cfg_attr(not(feature = "std"), no_std)]
 #![deny(missing_docs)]
 
-#[doc(hidden)]
-pub mod __match_err__;
-mod backtrace;
-mod chain;
+#[cfg(feature = "std")]
+extern crate core;
+
 mod compat;
-mod error_message;
 
-use std::any::TypeId;
-use std::error::Error as StdError;
-use std::fmt::{self, Display, Debug};
-use std::mem;
-use std::ptr;
+use core::any::TypeId;
+use core::fmt::{self, Display, Debug};
 
-use backtrace::InternalBacktrace;
-use chain::Chain;
-
-pub use backtrace::Backtrace;
-pub use chain::ChainErr;
 pub use compat::Compat;
-pub use error_message::{ErrorMessage, error_msg};
+
+#[doc(hidden)]
+#[cfg(feature = "std")] pub mod __match_err__;
+#[cfg(feature = "std")] mod backtrace;
+#[cfg(feature = "std")] mod chain;
+#[cfg(feature = "std")] mod error_message;
+
+#[cfg(feature = "std")] use core::mem;
+#[cfg(feature = "std")] use core::ptr;
+
+#[cfg(feature = "std")] use std::error::Error as StdError;
+
+#[cfg(feature = "std")] use backtrace::InternalBacktrace;
+#[cfg(feature = "std")] use chain::Chain;
+
+#[cfg(feature = "std")] pub use backtrace::Backtrace;
+#[cfg(feature = "std")] pub use error_message::{ErrorMessage, error_msg};
+#[cfg(feature = "std")] pub use chain::ChainErr;
 
 /// The `Fail` trait.
 ///
@@ -45,11 +53,13 @@ pub trait Fail: Debug {
     ///
     /// By default, this returns `Non`. If your `Fail` type does have a
     /// Backtrace, you should override it.
+    #[cfg(feature = "std")]
     fn backtrace(&self) -> Option<&Backtrace> {
         None
     }
 
     /// Chain this error with some context.
+    #[cfg(feature = "std")]
     fn chain<D>(self, context: D) -> Error where
         D: Debug + Display + Send + 'static,
         Self: Sized + Send + 'static,
@@ -119,6 +129,7 @@ impl Fail + Send {
     }
 }
 
+#[cfg(feature = "std")]
 impl<E: StdError + 'static> Fail for E {
     fn fail(&self, f: &mut fmt::Formatter) -> fmt::Result {
         Display::fmt(self, f)
@@ -150,15 +161,18 @@ impl<'a, F: Fail> Display for DisplayFail<'a, F> {
 /// In addition to implementing Debug and Display, this type carries Backtrace
 /// information, and can be downcast into the Fail type that underlies it for
 /// more detailed inspection.
+#[cfg(feature = "std")]
 pub struct Error {
     inner: Box<Inner<Fail + Send>>,
 }
 
+#[cfg(feature = "std")]
 struct Inner<F: ?Sized + Fail> {
     backtrace: InternalBacktrace,
     failure: F,
 }
 
+#[cfg(feature = "std")]
 impl<F: Fail + Send + 'static> From<F> for Error {
     fn from(failure: F) -> Error {
         let inner: Inner<F> = {
@@ -171,6 +185,7 @@ impl<F: Fail + Send + 'static> From<F> for Error {
     }
 }
 
+#[cfg(feature = "std")]
 impl Error {
     /// Returns a reference to the underlying cause of this failure, if it is
     /// an error that wraps other errors.
@@ -244,18 +259,21 @@ impl Error {
     }
 }
 
+#[cfg(feature = "std")]
 impl Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         self.inner.failure.fail(f)
     }
 }
 
+#[cfg(feature = "std")]
 impl Debug for Inner<Fail + Send> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "Error {{ failure: {:?} }}\n\n{:?}", &self.failure, &self.backtrace)
     }
 }
 
+#[cfg(feature = "std")]
 impl Debug for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{:?}", &self.inner)

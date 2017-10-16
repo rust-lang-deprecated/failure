@@ -1,4 +1,4 @@
-use std::fmt::{self, Display, Debug};
+use core::fmt::{self, Display, Debug};
 
 use {Error, Fail, Backtrace};
 
@@ -17,6 +17,7 @@ impl<F: Fail, D: Display + Debug> Fail for Chain<F, D> {
         Some(&self.failure)
     }
 
+    #[cfg(feature = "std")]
     fn backtrace(&self) -> Option<&Backtrace> {
         self.failure.backtrace()
     }
@@ -31,6 +32,7 @@ impl<D: Display + Debug> Fail for Chain<Error, D> {
         Some(self.failure.cause())
     }
 
+    #[cfg(feature = "std")]
     fn backtrace(&self) -> Option<&Backtrace> {
         self.failure.backtrace()
     }
