@@ -30,7 +30,7 @@ pub use error_message::{ErrorMessage, error_msg};
 /// The `derive-fail` crate provides a way to derive the `Fail` trait for your
 /// type. Additionally, all types that already implement `std::error::Error`,
 /// and are also `Send` and `'static`, implement `Fail` by a blanket impl.
-pub trait Fail: Debug + {
+pub trait Fail: Debug {
     /// Print an error message, similar to `Debug` or `Display`.
     fn fail(&self, f: &mut fmt::Formatter) -> fmt::Result;
 
@@ -50,7 +50,10 @@ pub trait Fail: Debug + {
     }
 
     /// Chain this error with some context.
-    fn chain(self, context: String) -> Error where Self: Sized + Send + 'static {
+    fn chain<D>(self, context: D) -> Error where
+        D: Debug + Display + Send + 'static,
+        Self: Sized + Send + 'static,
+    {
         Error::from(Chain { context, failure: self })
     }
 
