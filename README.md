@@ -1,4 +1,4 @@
-# fail - a new error handling story
+# failure - a new error handling story
 
 Contains three parts (only a sketch right now):
 
