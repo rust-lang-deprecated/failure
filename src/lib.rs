@@ -179,7 +179,7 @@ impl Error {
     }
 
     /// Chain this error with more context
-    pub fn chain(self, context: String) -> Error {
+    pub fn chain<D: Debug + Display + Send + 'static>(self, context: D) -> Error {
         Error::from(Chain { context, failure: self })
     }
 
