@@ -1,6 +1,4 @@
-use std::fmt::{self, Display};
-
-use std::borrow::Cow;
+use std::fmt::{self, Display, Debug};
 
 use Fail;
 
@@ -9,18 +7,18 @@ use Fail;
 /// This is a convenient way to turn a string into an error value that
 /// can be passed around, if you do not want to create a new `Fail` type for
 /// this use case.
-pub fn error_msg<S: Into<Cow<'static, str>>>(msg: S) -> ErrorMessage {
-    ErrorMessage { msg: msg.into() }
+pub fn error_msg<D: Display + Debug>(msg: D) -> ErrorMessage<D> {
+    ErrorMessage { msg }
 }
 
 /// A Fail type that just contains an error message. You can construct
 /// this from the `error_msg` function.
 #[derive(Debug)]
-pub struct ErrorMessage {
-    msg: Cow<'static, str>,
+pub struct ErrorMessage<D> {
+    msg: D,
 }
 
-impl Fail for ErrorMessage {
+impl<D: Display + Debug> Fail for ErrorMessage<D> {
     fn fail(&self, f: &mut fmt::Formatter) -> fmt::Result {
         Display::fmt(&self.msg, f)
     }
