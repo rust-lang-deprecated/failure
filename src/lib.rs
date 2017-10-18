@@ -6,16 +6,17 @@
 extern crate core;
 
 mod compat;
+mod chain;
 
 use core::any::TypeId;
 use core::fmt::{self, Display, Debug};
 
 pub use compat::Compat;
+pub use chain::Chain;
 
 #[doc(hidden)]
 #[cfg(feature = "std")] pub mod __match_err__;
 #[cfg(feature = "std")] mod backtrace;
-#[cfg(feature = "std")] mod chain;
 #[cfg(feature = "std")] mod error_message;
 
 #[cfg(feature = "std")] use core::mem;
@@ -24,7 +25,6 @@ pub use compat::Compat;
 #[cfg(feature = "std")] use std::error::Error as StdError;
 
 #[cfg(feature = "std")] use backtrace::InternalBacktrace;
-#[cfg(feature = "std")] use chain::Chain;
 
 #[cfg(feature = "std")] pub use backtrace::Backtrace;
 #[cfg(feature = "std")] pub use error_message::{ErrorMessage, error_msg};
@@ -59,12 +59,11 @@ pub trait Fail: Debug {
     }
 
     /// Chain this error with some context.
-    #[cfg(feature = "std")]
-    fn chain<D>(self, context: D) -> Error where
-        D: Debug + Display + Send + 'static,
-        Self: Sized + Send + 'static,
+    fn chain<D>(self, context: D) -> Chain<Self, D> where
+        D: Debug + Display,
+        Self: Sized,
     {
-        Error::from(Chain { context, failure: self })
+        Chain { context, failure: self }
     }
 
     /// This returns an adapter that implements `Display` by calling
@@ -194,8 +193,8 @@ impl Error {
     }
 
     /// Chain this error with more context
-    pub fn chain<D: Debug + Display + Send + 'static>(self, context: D) -> Error {
-        Error::from(Chain { context, failure: self })
+    pub fn chain<D: Debug + Display>(self, context: D) -> Chain<Error, D> {
+        Chain { context, failure: self }
     }
 
     /// Get a reference to the Backtrace for this Error.
