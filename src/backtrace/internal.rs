@@ -1,12 +1,10 @@
-extern crate backtrace;
-
 use std::cell::UnsafeCell;
 use std::env;
 use std::fmt;
 use std::sync::atomic::{AtomicUsize, ATOMIC_USIZE_INIT, Ordering};
 use std::sync::Mutex;
 
-pub use self::backtrace::Backtrace;
+pub use super::backtrace::Backtrace;
 
 /// Internal representation of a backtrace
 #[doc(hidden)]
@@ -26,7 +24,6 @@ impl InternalBacktrace {
     /// Returns a backtrace of the current call stack if `RUST_BACKTRACE`
     /// is set to anything but ``0``, and `None` otherwise.  This is used
     /// in the generated error implementations.
-    #[doc(hidden)]
     pub fn new() -> InternalBacktrace {
         static ENABLED: AtomicUsize = ATOMIC_USIZE_INIT;
 
@@ -55,6 +52,10 @@ impl InternalBacktrace {
 
     pub fn none() -> InternalBacktrace {
         InternalBacktrace { backtrace: None }
+    }
+
+    pub fn is_prepared(&self) -> bool {
+        self.backtrace.is_some()
     }
 
     /// Acquire the internal backtrace

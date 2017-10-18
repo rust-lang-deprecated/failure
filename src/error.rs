@@ -4,7 +4,7 @@ use core::mem;
 use core::ptr;
 
 use Fail;
-use backtrace::{Backtrace, InternalBacktrace};
+use backtrace::{Backtrace};
 use chain::Chain;
 use compat::Compat;
 
@@ -24,7 +24,7 @@ pub struct Error {
 }
 
 pub(crate) struct Inner<F: ?Sized + Fail> {
-    backtrace: InternalBacktrace,
+    backtrace: Backtrace,
     pub(crate) failure: F,
 }
 
@@ -32,8 +32,8 @@ impl<F: Fail + Send + 'static> From<F> for Error {
     fn from(failure: F) -> Error {
         let inner: Inner<F> = {
             let backtrace = if failure.backtrace().is_none() {
-                InternalBacktrace::new()
-            } else { InternalBacktrace::none() };
+                Backtrace::new()
+            } else { Backtrace::none() };
             Inner { failure, backtrace }
         };
         Error { inner: Box::new(inner) }
@@ -58,7 +58,11 @@ impl Error {
     /// be returned. Otherwise, the backtrace will have been constructed at
     /// the point that failure was cast into the Error type.
     pub fn backtrace(&self) -> Option<&Backtrace> {
-        self.inner.backtrace.as_backtrace().or_else(|| self.inner.failure.backtrace())
+        if self.inner.backtrace.is_prepared() {
+            Some(&self.inner.backtrace)
+        } else {
+            self.inner.failure.backtrace()
+        }
     }
 
     /// Wrap `Error` in a compatibility type.
@@ -80,7 +84,7 @@ impl Error {
         let ret = if let Some(fail) = self.downcast_ref() {
             unsafe {
                 // drop the backtrace
-                let _ = ptr::read(&self.inner.backtrace as *const InternalBacktrace);
+                let _ = ptr::read(&self.inner.backtrace as *const Backtrace);
                 // read out the fail type
                 let fail = ptr::read(fail as *const T);
                 Some(fail)

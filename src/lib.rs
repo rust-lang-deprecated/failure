@@ -3,13 +3,16 @@
 #![deny(missing_docs)]
 
 macro_rules! with_std { ($($i:item)*) => ($(#[cfg(feature = "std")]$i)*) }
+macro_rules! without_std { ($($i:item)*) => ($(#[cfg(not(feature = "std"))]$i)*) }
 
+mod backtrace;
 mod compat;
 mod chain;
 
 use core::any::TypeId;
 use core::fmt::{self, Display, Debug};
 
+pub use backtrace::Backtrace;
 pub use compat::Compat;
 pub use chain::{Chain, ChainErr};
 
@@ -18,13 +21,11 @@ with_std! {
 
     #[doc(hidden)]
     pub mod __match_err__;
-    mod backtrace;
     mod error_message;
     mod error;
 
     use std::error::Error as StdError;
 
-    pub use backtrace::Backtrace;
     pub use error_message::{ErrorMessage, error_msg};
     pub use error::Error;
 }
@@ -53,7 +54,6 @@ pub trait Fail: Debug {
     ///
     /// By default, this returns `Non`. If your `Fail` type does have a
     /// Backtrace, you should override it.
-    #[cfg(feature = "std")]
     fn backtrace(&self) -> Option<&Backtrace> {
         None
     }
