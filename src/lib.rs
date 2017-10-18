@@ -8,6 +8,7 @@ macro_rules! without_std { ($($i:item)*) => ($(#[cfg(not(feature = "std"))]$i)*)
 mod backtrace;
 mod compat;
 mod chain;
+    mod error_message;
 
 use core::any::TypeId;
 use core::fmt::{self, Display, Debug};
@@ -15,18 +16,17 @@ use core::fmt::{self, Display, Debug};
 pub use backtrace::Backtrace;
 pub use compat::Compat;
 pub use chain::{Chain, ChainErr};
+pub use error_message::{ErrorMessage, error_msg};
 
 with_std! {
     extern crate core;
 
     #[doc(hidden)]
     pub mod __match_err__;
-    mod error_message;
     mod error;
 
     use std::error::Error as StdError;
 
-    pub use error_message::{ErrorMessage, error_msg};
     pub use error::Error;
 }
 

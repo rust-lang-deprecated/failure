@@ -1,4 +1,4 @@
-use std::fmt::{self, Display, Debug};
+use core::fmt::{self, Display, Debug};
 
 use Fail;
 
