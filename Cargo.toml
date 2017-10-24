@@ -1,9 +1,16 @@
 [package]
 authors = ["Without Boats <woboats@gmail.com>"]
+build = "build.rs"
 description = "Experimental error handling abstraction."
 license = "MIT OR Apache-2.0"
 name = "failure"
 version = "0.0.1"
+
+[build-dependencies]
+skeptic = "0.13"
+
+[dev-dependencies]
+skeptic = "0.13"
 
 [dependencies.backtrace]
 version = "0.3.3"
