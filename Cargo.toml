@@ -1,6 +1,5 @@
 [package]
 authors = ["Without Boats <woboats@gmail.com>"]
-build = "build.rs"
 description = "Experimental error handling abstraction."
 license = "MIT OR Apache-2.0"
 name = "failure"
@@ -10,6 +9,7 @@ version = "0.0.1"
 skeptic = "0.13"
 
 [dev-dependencies]
+derive-fail = { path = "derive-fail" }
 skeptic = "0.13"
 
 [dependencies.backtrace]
