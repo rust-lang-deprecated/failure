@@ -13,8 +13,10 @@ Example use case:
 ```rust
 #![feature(attr_literals)]
 
-#[macro_use] extern crate fail;
-#[macro_use] extern crate fail_derive;
+#[macro_use] extern crate failure;
+#[macro_use] extern crate derive_fail;
+
+use failure::{Error, Fail};
 
 #[derive(Debug, Fail)]
 #[error_msg("something went wrong {}", message)]
@@ -22,14 +24,21 @@ struct CustomError {
     message: String,
 }
 
+fn run_program() -> Result<(), Error> {
+    Err(CustomError {
+        message: String::from("program failed."),
+    }.into())
+}
+
 fn main() {
     use std::io;
 
-    let err = run_program();
-    match_err!(err => {
-        io::Error:   err    => { println!("IO error: {}", err) }
-        CustomError: err    => { println!("internal error: {}", err) }
-        else:        _      => { panic!("should not have another kind of error") }
-    });
+    if let Err(err) = run_program() {
+        match_err!(err => {
+            io::Error:   err    => { println!("IO error: {}", err) }
+            CustomError: err    => { println!("internal error: {}", err.display()) }
+            else:        _      => { panic!("should not have another kind of error") }
+        })
+    }
 }
 ```
