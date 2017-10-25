@@ -16,7 +16,7 @@ Example use case:
 #[macro_use] extern crate failure;
 #[macro_use] extern crate derive_fail;
 
-use failure::{Error, Fail};
+use failure::Error;
 
 #[derive(Debug, Fail)]
 #[error_msg("something went wrong {}", message)]
@@ -36,7 +36,7 @@ fn main() {
     if let Err(err) = run_program() {
         match_err!(err => {
             io::Error:   err    => { println!("IO error: {}", err) }
-            CustomError: err    => { println!("internal error: {}", err.display()) }
+            CustomError: err    => { println!("internal error: {}", err) }
             else:        _      => { panic!("should not have another kind of error") }
         })
     }
