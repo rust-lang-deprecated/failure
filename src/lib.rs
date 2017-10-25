@@ -11,7 +11,7 @@ mod chain;
     mod error_message;
 
 use core::any::TypeId;
-use core::fmt::{self, Display, Debug};
+use core::fmt::{Display, Debug};
 
 pub use backtrace::Backtrace;
 pub use compat::Compat;
@@ -39,10 +39,7 @@ with_std! {
 /// The `derive-fail` crate provides a way to derive the `Fail` trait for your
 /// type. Additionally, all types that already implement `std::error::Error`,
 /// and are also `Send` and `'static`, implement `Fail` by a blanket impl.
-pub trait Fail: Debug {
-    /// Print an error message, similar to `Debug` or `Display`.
-    fn fail(&self, f: &mut fmt::Formatter) -> fmt::Result;
-
+pub trait Fail: Display + Debug + Send + 'static {
     /// Returns a reference to the underlying cause of this failure, if it is
     /// an error that wraps other errors.
     fn cause(&self) -> Option<&Fail> {
@@ -60,16 +57,10 @@ pub trait Fail: Debug {
 
     /// Chain this error with some context.
     fn chain<D>(self, context: D) -> Chain<Self, D> where
-        D: Debug + Display,
+        D: Debug + Display + Send + 'static,
         Self: Sized,
     {
         Chain { context, failure: self }
-    }
-
-    /// This returns an adapter that implements `Display` by calling
-    /// `Fail::fail`.
-    fn display(&self) -> DisplayFail<Self> where Self: Sized {
-        DisplayFail(self)
     }
 
     /// Wrap this in a compatibility wrapper that implements
@@ -128,22 +119,4 @@ impl Fail + Send {
 }
 
 #[cfg(feature = "std")]
-impl<E: StdError + 'static> Fail for E {
-    fn fail(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        Display::fmt(self, f)
-    }
-}
-
-/// A wrapper around a Fail which implements `Display`.
-///
-/// Rather than having to implement `Display` for all of your `Fail` types,
-/// you can call the `display()` method which returns this type, that
-/// implements `Display`.
-#[derive(Copy, Clone, Eq, PartialEq, Hash)]
-pub struct DisplayFail<'a, F: 'a>(&'a F);
-
-impl<'a, F: Fail> Display for DisplayFail<'a, F> {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        self.0.fail(f)
-    }
-}
+impl<E: StdError + Send + 'static> Fail for E { }

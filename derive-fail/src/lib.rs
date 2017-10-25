@@ -7,7 +7,7 @@ extern crate syn;
 decl_derive!([Fail, attributes(error_msg, cause)] => fail_derive);
 
 fn fail_derive(s: synstructure::Structure) -> quote::Tokens {
-    let fail_body = s.each_variant(|v| {
+    let display_body = s.each_variant(|v| {
         let msg = find_error_msg(&v.ast().attrs);
         if msg.is_empty() {
             panic!("Expected at least one argument to error_msg");
@@ -80,13 +80,15 @@ fn fail_derive(s: synstructure::Structure) -> quote::Tokens {
         } else { None }
     });
 
-    let fail = s.bound_impl("::failure::Fail", quote! {
+    let display = s.bound_impl("::std::fmt::Display", quote! {
         #[allow(unreachable_code)]
-        fn fail(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
-            match *self { #fail_body }
+        fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+            match *self { #display_body }
             write!(f, "An error has occurred.")
         }
+    });
 
+    let fail = s.bound_impl("::failure::Fail", quote! {
         #[allow(unreachable_code)]
         fn cause(&self) -> Option<&::failure::Fail> {
             match *self { #cause_body }
@@ -102,6 +104,7 @@ fn fail_derive(s: synstructure::Structure) -> quote::Tokens {
 
     quote! {
         #fail
+        #display
         #(#conversions)*
     }
 }

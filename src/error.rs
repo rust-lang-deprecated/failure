@@ -28,7 +28,7 @@ pub(crate) struct Inner<F: ?Sized + Fail> {
     pub(crate) failure: F,
 }
 
-impl<F: Fail + Send + 'static> From<F> for Error {
+impl<F: Fail> From<F> for Error {
     fn from(failure: F) -> Error {
         let inner: Inner<F> = {
             let backtrace = if failure.backtrace().is_none() {
@@ -48,7 +48,7 @@ impl Error {
     }
 
     /// Chain this error with more context
-    pub fn chain<D: Debug + Display>(self, context: D) -> Chain<Error, D> {
+    pub fn chain<D: Debug + Display + Send + 'static>(self, context: D) -> Chain<Error, D> {
         Chain { context, failure: self }
     }
 
@@ -119,7 +119,7 @@ impl Error {
 
 impl Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        self.inner.failure.fail(f)
+        Display::fmt(&self.inner.failure, f)
     }
 }
 

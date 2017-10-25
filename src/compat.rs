@@ -15,7 +15,7 @@ pub struct Compat<Error> {
 
 impl<F: Fail> Display for Compat<F> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        self.error.fail(f)
+        Display::fmt(&self.error, f)
     }
 }
 
@@ -41,7 +41,7 @@ with_std! {
 
     impl Display for Compat<Error> {
         fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-            self.error.inner.failure.fail(f)
+            Display::fmt(&self.error, f)
         }
     }
 

@@ -7,7 +7,7 @@ with_std! { use {Error, Backtrace}; }
 #[derive(Debug)]
 /// An error chain - provides contextual information around an underlying
 /// error.
-pub struct Chain<F, D: Display + Debug> {
+pub struct Chain<F, D: Display + Debug + Send + 'static> {
     pub(crate) context: D,
     pub(crate) failure: F,
 }
@@ -21,11 +21,7 @@ pub trait ChainErr<T, E> {
 }
 
 
-impl<F: Fail, D: Display + Debug> Fail for Chain<F, D> {
-    fn fail(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}\ninfo: {}", self.failure.display(), &self.context)
-    }
-
+impl<F: Fail, D: Display + Debug + Send + 'static> Fail for Chain<F, D> {
     fn cause(&self) -> Option<&Fail> {
         Some(&self.failure)
     }
@@ -35,6 +31,13 @@ impl<F: Fail, D: Display + Debug> Fail for Chain<F, D> {
         self.failure.backtrace()
     }
 }
+
+impl<F: Fail, D: Display + Debug + Send + 'static> Display for Chain<F, D> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}\ninfo: {}", self.failure, &self.context)
+    }
+}
+
 
 impl<T, E: Fail + Send + 'static> ChainErr<T, E> for Result<T, E> {
     fn chain_err<F, D>(self, f: F) -> Result<T, Chain<E, D>> where
@@ -50,11 +53,7 @@ impl<T, E: Fail + Send + 'static> ChainErr<T, E> for Result<T, E> {
 }
 
 with_std! {
-    impl<D: Display + Debug> Fail for Chain<Error, D> {
-        fn fail(&self, f: &mut fmt::Formatter) -> fmt::Result {
-            write!(f, "{}\ninfo: {}", self.failure, &self.context)
-        }
-
+    impl<D: Display + Debug + Send + 'static> Fail for Chain<Error, D> {
         fn cause(&self) -> Option<&Fail> {
             Some(self.failure.cause())
         }
@@ -62,6 +61,12 @@ with_std! {
         #[cfg(feature = "std")]
         fn backtrace(&self) -> Option<&Backtrace> {
             self.failure.backtrace()
+        }
+    }
+
+    impl<D: Display + Debug + Send + 'static> Display for Chain<Error, D> {
+        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+            write!(f, "{}\ninfo: {}", self.failure, &self.context)
         }
     }
 

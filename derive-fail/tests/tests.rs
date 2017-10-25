@@ -3,15 +3,13 @@
 extern crate failure;
 #[macro_use] extern crate derive_fail;
 
-use failure::Fail;
-
 #[derive(Fail, Debug)]
 #[error_msg("An error has occurred.")]
 struct UnitError;
 
 #[test]
 fn unit_struct() {
-    let s = format!("{}", UnitError.display());
+    let s = format!("{}", UnitError);
     assert_eq!(&s[..], "An error has occurred.");
 }
 
@@ -23,7 +21,7 @@ struct RecordError {
 
 #[test]
 fn record_struct() {
-    let s = format!("{}", RecordError { code: 0 }.display());
+    let s = format!("{}", RecordError { code: 0 });
     assert_eq!(&s[..], "Error code: 0");
 }
 
@@ -33,7 +31,7 @@ struct TupleError(i32);
 
 #[test]
 fn tuple_struct() {
-    let s = format!("{}", TupleError(2).display());
+    let s = format!("{}", TupleError(2));
     assert_eq!(&s[..], "Error code: 2");
 }
 
@@ -51,10 +49,10 @@ enum EnumError {
 
 #[test]
 fn enum_error() {
-    let s = format!("{}", EnumError::StructVariant { code: 2 }.display());
+    let s = format!("{}", EnumError::StructVariant { code: 2 });
     assert_eq!(&s[..], "Error code: 2");
-    let s = format!("{}", EnumError::TupleVariant("foobar").display());
+    let s = format!("{}", EnumError::TupleVariant("foobar"));
     assert_eq!(&s[..], "Error: foobar");
-    let s = format!("{}", EnumError::UnitVariant.display());
+    let s = format!("{}", EnumError::UnitVariant);
     assert_eq!(&s[..], "An error has occurred.");
 }

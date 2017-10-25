@@ -54,14 +54,15 @@ impl<'a, T: Fail + 'static> Match<T> for &'a mut Error {
 
 #[cfg(test)]
 mod tests {
-    use std::fmt::{self, Write};
+    use std::fmt::{self, Write, Display};
     use super::*;
 
     #[derive(Debug)]
     struct Foo;
 
-    impl Fail for Foo {
-        fn fail(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    impl Fail for Foo { }
+    impl Display for Foo {
+        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
             write!(f, "foo")
         }
     }
@@ -69,8 +70,9 @@ mod tests {
     #[derive(Debug)]
     struct Bar;
 
-    impl Fail for Bar {
-        fn fail(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    impl Fail for Bar { }
+    impl Display for Bar {
+        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
             write!(f, "bar")
         }
     }
@@ -80,9 +82,9 @@ mod tests {
         let mut s = String::new();
         let err: Error = Bar.into();
         let _ = match_err!(err => {
-            Foo: err    => { write!(s, "matched {}", err.display()) }
-            Bar: err    => { write!(s, "matched {}", err.display()) }
-            else:   _      => { write!(s, "no match") }
+            Foo: err    => { write!(s, "matched {}", err) }
+            Bar: err    => { write!(s, "matched {}", err) }
+            else:   _   => { write!(s, "no match") }
         });
         assert_eq!(&s, "matched bar");
     }
@@ -92,9 +94,9 @@ mod tests {
         let mut s = String::new();
         let err: Error = Bar.into();
         let _ = match_err!(&err => {
-            Foo: err    => { write!(s, "matched {}", err.display()) }
-            Bar: err    => { write!(s, "matched {}", err.display()) }
-            else:   _      => { write!(s, "no match") }
+            Foo: err    => { write!(s, "matched {}", err) }
+            Bar: err    => { write!(s, "matched {}", err) }
+            else:   _   => { write!(s, "no match") }
         });
         assert_eq!(&s, "matched bar");
     }
@@ -104,9 +106,9 @@ mod tests {
         let mut s = String::new();
         let mut err: Error = Bar.into();
         let _ = match_err!(&mut err => {
-            Foo: err    => { write!(s, "matched {}", err.display()) }
-            Bar: err    => { write!(s, "matched {}", err.display()) }
-            else:   _      => { write!(s, "no match") }
+            Foo: err    => { write!(s, "matched {}", err) }
+            Bar: err    => { write!(s, "matched {}", err) }
+            else:   _   => { write!(s, "no match") }
         });
         assert_eq!(&s, "matched bar");
     }
@@ -116,8 +118,8 @@ mod tests {
         let mut s = String::new();
         let err: Error = Bar.into();
         let _ = match_err!(err => {
-            Foo: err    => { write!(s, "matched {}", err.display()) }
-            else:   _      => { write!(s, "no match") }
+            Foo: err    => { write!(s, "matched {}", err) }
+            else:   _   => { write!(s, "no match") }
         });
         assert_eq!(&s, "no match");
     }
