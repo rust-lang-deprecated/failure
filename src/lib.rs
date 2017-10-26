@@ -7,15 +7,15 @@ macro_rules! without_std { ($($i:item)*) => ($(#[cfg(not(feature = "std"))]$i)*)
 
 mod backtrace;
 mod compat;
-mod chain;
-    mod error_message;
+mod context;
+mod error_message;
 
 use core::any::TypeId;
 use core::fmt::{Display, Debug};
 
 pub use backtrace::Backtrace;
 pub use compat::Compat;
-pub use chain::{Chain, ChainErr};
+pub use context::{Context, ResultExt};
 pub use error_message::{ErrorMessage, error_msg};
 
 with_std! {
@@ -56,11 +56,11 @@ pub trait Fail: Display + Debug + Send + 'static {
     }
 
     /// Chain this error with some context.
-    fn chain<D>(self, context: D) -> Chain<Self, D> where
-        D: Debug + Display + Send + 'static,
+    fn context<D>(self, context: D) -> Context<D> where
+        D: Display + Send + 'static,
         Self: Sized,
     {
-        Chain { context, failure: self }
+        Context::with_err(context, self)
     }
 
     /// Wrap this in a compatibility wrapper that implements

@@ -5,7 +5,7 @@ use core::ptr;
 
 use Fail;
 use backtrace::{Backtrace};
-use chain::Chain;
+use context::Context;
 use compat::Compat;
 
 /// The Error type, backed by an underlying failure which is a type that
@@ -48,8 +48,8 @@ impl Error {
     }
 
     /// Chain this error with more context
-    pub fn chain<D: Debug + Display + Send + 'static>(self, context: D) -> Chain<Error, D> {
-        Chain { context, failure: self }
+    pub fn context<D: Display + Send + 'static>(self, context: D) -> Context<D> {
+        Context::with_err(context, self)
     }
 
     /// Get a reference to the Backtrace for this Error.
