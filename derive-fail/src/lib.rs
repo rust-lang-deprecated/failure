@@ -62,35 +62,6 @@ fn fail_derive(s: synstructure::Structure) -> quote::Tokens {
         }
     });
 
-    let conversions = s.variants().iter().filter_map(|v| {
-        if let Some(cause) = v.bindings().iter().find(is_cause) {
-            let cause_field = cause.ast().ident.clone().unwrap_or(syn::Ident::new("__cause"));
-            let cause_ty = &cause.ast().ty;
-            let defaults = v.bindings().iter()
-                            .enumerate()
-                            .filter(|&(_, bi)| bi != cause)
-                            .map(|(idx, bi)| bi.ast().ident.clone().unwrap_or(syn::Ident::new(format!("__{}", idx))));
-            let constructor = {
-                let mut v = v.clone();
-                v.bind_with(|_| synstructure::BindStyle::Move);
-                v.binding_name(|field, idx| {
-                    if field == cause.ast() {
-                        cause_field.clone()
-                    } else {
-                        field.ident.clone().unwrap_or(syn::Ident::new(format!("__{}", idx)))
-                    }
-                });
-                v.pat()
-            };
-            Some(s.bound_impl(quote!(::std::convert::From<#cause_ty>), quote! {
-                fn from(#cause_field: #cause_ty) -> Self {
-                    #(let #defaults = ::std::default::Default::default();)*
-                    #constructor
-                }
-            }))
-        } else { None }
-    });
-
     let display = s.bound_impl("::std::fmt::Display", quote! {
         #[allow(unreachable_code)]
         fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
@@ -116,7 +87,6 @@ fn fail_derive(s: synstructure::Structure) -> quote::Tokens {
     quote! {
         #fail
         #display
-        #(#conversions)*
     }
 }
 
