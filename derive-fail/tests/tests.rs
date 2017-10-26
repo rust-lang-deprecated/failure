@@ -1,10 +1,8 @@
-#![feature(attr_literals)]
-
 extern crate failure;
 #[macro_use] extern crate derive_fail;
 
 #[derive(Fail, Debug)]
-#[error_msg("An error has occurred.")]
+#[fail(display = "An error has occurred.")]
 struct UnitError;
 
 #[test]
@@ -14,7 +12,7 @@ fn unit_struct() {
 }
 
 #[derive(Fail, Debug)]
-#[error_msg("Error code: {}", code)]
+#[fail(display = "Error code: {}", code)]
 struct RecordError {
     code: u32,
 }
@@ -26,7 +24,7 @@ fn record_struct() {
 }
 
 #[derive(Fail, Debug)]
-#[error_msg("Error code: {}", 0)]
+#[fail(display = "Error code: {}", _0)]
 struct TupleError(i32);
 
 #[test]
@@ -37,13 +35,13 @@ fn tuple_struct() {
 
 #[derive(Fail, Debug)]
 enum EnumError {
-    #[error_msg("Error code: {}", code)]
+    #[fail(display = "Error code: {}", code)]
     StructVariant {
         code: i32,
     },
-    #[error_msg("Error: {}", 0)]
+    #[fail(display = "Error: {}", _0)]
     TupleVariant(&'static str),
-    #[error_msg("An error has occurred.")]
+    #[fail(display = "An error has occurred.")]
     UnitVariant,
 }
 

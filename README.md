@@ -11,15 +11,13 @@ type
 Example use case:
 
 ```rust
-#![feature(attr_literals)]
-
 #[macro_use] extern crate failure;
 #[macro_use] extern crate derive_fail;
 
 use failure::Error;
 
 #[derive(Debug, Fail)]
-#[error_msg("something went wrong {}", message)]
+#[fail(display = "something went wrong {}", message)]
 struct CustomError {
     message: String,
 }

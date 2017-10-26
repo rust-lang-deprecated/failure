@@ -1,5 +1,3 @@
-#![feature(attr_literals)]
-
 extern crate failure;
 #[macro_use] extern crate derive_fail;
 
@@ -9,7 +7,7 @@ use std::fmt;
 use failure::{Backtrace, Fail};
 
 #[derive(Fail, Debug)]
-#[error_msg("An error has occurred: {}", inner)]
+#[fail(display = "An error has occurred: {}", inner)]
 struct WrapError {
     #[cause] inner: io::Error,
 }
@@ -22,7 +20,7 @@ fn wrap_error() {
 }
 
 #[derive(Fail, Debug)]
-#[error_msg("An error has occurred: {}", 0)]
+#[fail(display = "An error has occurred: {}", _0)]
 struct WrapTupleError(#[cause] io::Error);
 
 #[test]
@@ -33,7 +31,7 @@ fn wrap_tuple_error() {
 }
 
 #[derive(Fail, Debug)]
-#[error_msg("An error has occurred: {}", inner)]
+#[fail(display = "An error has occurred: {}", inner)]
 struct WrapBacktraceError {
     #[cause] inner: io::Error,
     backtrace: Backtrace,
@@ -49,9 +47,9 @@ fn wrap_backtrace_error() {
 
 #[derive(Fail, Debug)]
 enum WrapEnumError {
-    #[error_msg("An error has occurred: {}", 0)]
+    #[fail(display = "An error has occurred: {}", _0)]
     Io(#[cause] io::Error),
-    #[error_msg("An error has occurred: {}", inner)]
+    #[fail(display = "An error has occurred: {}", inner)]
     Fmt {
         #[cause] inner: fmt::Error,
         backtrace: Backtrace,

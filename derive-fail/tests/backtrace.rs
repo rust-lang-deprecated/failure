@@ -1,12 +1,10 @@
-#![feature(attr_literals)]
-
 extern crate failure;
 #[macro_use] extern crate derive_fail;
 
 use failure::{Fail, Backtrace};
 
 #[derive(Fail, Debug)]
-#[error_msg("Error code: {}", code)]
+#[fail(display = "Error code: {}", code)]
 struct BacktraceError {
     backtrace: Backtrace,
     code: u32,
@@ -21,7 +19,7 @@ fn backtrace_error() {
 }
 
 #[derive(Fail, Debug)]
-#[error_msg("An error has occurred.")]
+#[fail(display = "An error has occurred.")]
 struct BacktraceTupleError(Backtrace);
 
 #[test]
@@ -34,14 +32,14 @@ fn backtrace_tuple_error() {
 
 #[derive(Fail, Debug)]
 enum BacktraceEnumError {
-    #[error_msg("Error code: {}", code)]
+    #[fail(display = "Error code: {}", code)]
     StructVariant {
         code: i32,
         backtrace: Backtrace,
     },
-    #[error_msg("Error: {}", 0)]
+    #[fail(display = "Error: {}", _0)]
     TupleVariant(&'static str, Backtrace),
-    #[error_msg("An error has occurred.")]
+    #[fail(display = "An error has occurred.")]
     UnitVariant,
 }
 

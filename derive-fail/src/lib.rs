@@ -4,22 +4,33 @@ extern crate syn;
 #[macro_use] extern crate synstructure;
 #[macro_use] extern crate quote;
 
-decl_derive!([Fail, attributes(error_msg, cause)] => fail_derive);
+decl_derive!([Fail, attributes(fail, cause)] => fail_derive);
 
 fn fail_derive(s: synstructure::Structure) -> quote::Tokens {
     let display_body = s.each_variant(|v| {
         let msg = find_error_msg(&v.ast().attrs);
         if msg.is_empty() {
-            panic!("Expected at least one argument to error_msg");
+            panic!("Expected at least one argument to fail attribute");
         }
 
-        let s = &msg[0];
+        let s = match msg[0] {
+            syn::NestedMetaItem::MetaItem(syn::MetaItem::NameValue(ref i, ref lit)) if i == "display" => {
+                lit.clone()
+            }
+            _ => panic!("Fail attribute must begin `display = \"\"` to control the Display message."),
+        };
         let args = msg[1..].iter().map(|arg| match *arg {
             syn::NestedMetaItem::Literal(syn::Lit::Int(i, _)) => {
                 let bi = &v.bindings()[i as usize];
                 quote!(#bi)
             }
             syn::NestedMetaItem::MetaItem(syn::MetaItem::Word(ref id)) => {
+                if id.as_ref().starts_with("_") {
+                    if let Ok(idx) = id.as_ref()[1..].parse::<usize>() {
+                        let bi = &v.bindings()[idx];
+                        return quote!(#bi)
+                    }
+                }
                 for bi in v.bindings() {
                     if bi.ast().ident.as_ref() == Some(id) {
                         return quote!(#bi);
@@ -27,7 +38,7 @@ fn fail_derive(s: synstructure::Structure) -> quote::Tokens {
                 }
                 panic!("Couldn't find a field with this name!");
             }
-            _ => panic!("Invalid argument to error_msg attribute!"),
+            _ => panic!("Invalid argument to fail attribute!"),
         });
 
         quote! {
@@ -112,7 +123,7 @@ fn fail_derive(s: synstructure::Structure) -> quote::Tokens {
 fn find_error_msg(attrs: &[syn::Attribute]) -> &[syn::NestedMetaItem] {
     let mut error_msg = None;
     for attr in attrs {
-        if attr.name() == "error_msg" {
+        if attr.name() == "fail" {
             if error_msg.is_some() {
                 panic!("Cannot have two error_msg attributes")
             } else {
