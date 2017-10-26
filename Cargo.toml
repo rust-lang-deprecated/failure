@@ -1,5 +1,5 @@
 [package]
-authors = ["Without Boats <woboats@gmail.com>"]
+authors = ["Without Boats <boats@mozilla.com>"]
 description = "Experimental error handling abstraction."
 license = "MIT OR Apache-2.0"
 name = "failure"
