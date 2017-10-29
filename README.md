@@ -4,8 +4,6 @@ Contains three parts (only a sketch right now):
 
 * A `Fail` trait and `Error` type wrapper, which acts as a dynamically
 dispatched, open sum type
-* `match_err!`, a macro to give match-like syntax for downcasting the `Error`
-type
 * `derive(Fail)`, a derive for making your type an error type
 
 Example use case:
@@ -13,6 +11,8 @@ Example use case:
 ```rust
 #[macro_use] extern crate failure;
 #[macro_use] extern crate derive_fail;
+
+use std::io;
 
 use failure::Error;
 
@@ -29,14 +29,14 @@ fn run_program() -> Result<(), Error> {
 }
 
 fn main() {
-    use std::io;
+    let result = run_program();
 
-    if let Err(err) = run_program() {
-        match_err!(err => {
-            io::Error:   err    => { println!("IO error: {}", err) }
-            CustomError: err    => { println!("internal error: {}", err) }
-            else:        _      => { panic!("should not have another kind of error") }
-        })
+    if let Err(err) = result {
+        if let Some(io_err) = err.downcast_ref::<io::Error>() {
+            println!("IO error occurred: {}", io_err);
+        } else {
+            println!("Unknown error occurred: {}", err);
+        }
     }
 }
 ```

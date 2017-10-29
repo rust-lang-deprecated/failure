@@ -5,13 +5,6 @@ license = "MIT OR Apache-2.0"
 name = "failure"
 version = "0.0.1"
 
-[build-dependencies]
-skeptic = "0.13"
-
-[dev-dependencies]
-derive-fail = { path = "derive-fail" }
-skeptic = "0.13"
-
 [dependencies.backtrace]
 version = "0.3.3"
 optional = true

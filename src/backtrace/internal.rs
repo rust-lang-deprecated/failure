@@ -7,7 +7,6 @@ use std::sync::Mutex;
 pub use super::backtrace::Backtrace;
 
 /// Internal representation of a backtrace
-#[doc(hidden)]
 pub(crate) struct InternalBacktrace {
     backtrace: Option<MaybeResolved>,
 }

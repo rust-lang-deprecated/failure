@@ -1,47 +1,36 @@
-use Fail;
 use core::fmt::{self, Display};
 
-#[cfg(feature = "std")] use std::error::Error as StdError;
-#[cfg(feature = "std")] use Error;
-
-#[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
 /// A compatibility wrapper around an error type from this crate.
 ///
 /// `Compat` implements `std::error::Error`, allowing the types from this
 /// crate to be passed to interfaces that expect a type of that trait.
-pub struct Compat<Error> {
-    pub(crate) error: Error,
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Hash, Default)]
+pub struct Compat<E> {
+    pub(crate) error: E,
 }
 
-impl<F: Fail> Display for Compat<F> {
+impl<E: Display> Display for Compat<E> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         Display::fmt(&self.error, f)
     }
 }
 
+impl<E> Compat<E> {
+    /// Unwrap this into the inner Error.
+    pub fn into_inner(self) -> E {
+        self.error
+    }
+}
+
 with_std! {
-    impl Compat<Error> {
-        /// Unwrap this into the inner Error.
-        pub fn inner(self) -> Error {
-            self.error
-        }
-    }
+    use std::fmt::Debug;
+    use std::error::Error as StdError;
 
-    impl<F: Fail> StdError for Compat<F> {
+    use Error;
+
+    impl<E: Display + Debug> StdError for Compat<E> {
         fn description(&self) -> &'static str {
             "An error has occurred."
-        }
-    }
-
-    impl StdError for Compat<Error> {
-        fn description(&self) -> &'static str {
-            "An error has occurred."
-        }
-    }
-
-    impl Display for Compat<Error> {
-        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-            Display::fmt(&self.error, f)
         }
     }
 

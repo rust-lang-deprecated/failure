@@ -9,20 +9,20 @@ mod backtrace;
 mod compat;
 mod context;
 mod error_message;
+mod result_ext;
 
 use core::any::TypeId;
 use core::fmt::{Display, Debug};
 
 pub use backtrace::Backtrace;
 pub use compat::Compat;
-pub use context::{Context, ResultExt};
+pub use context::Context;
 pub use error_message::{ErrorMessage, error_msg};
+pub use result_ext::ResultExt;
 
 with_std! {
     extern crate core;
 
-    #[doc(hidden)]
-    pub mod __match_err__;
     mod error;
 
     use std::error::Error as StdError;

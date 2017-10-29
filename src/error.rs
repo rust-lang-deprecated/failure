@@ -4,7 +4,7 @@ use core::mem;
 use core::ptr;
 
 use Fail;
-use backtrace::{Backtrace};
+use backtrace::Backtrace;
 use context::Context;
 use compat::Compat;
 
