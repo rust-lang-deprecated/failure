@@ -65,7 +65,8 @@ with_std! {
 ///
 /// The `derive-fail` crate provides a way to derive the `Fail` trait for your
 /// type. Additionally, all types that already implement `std::error::Error`,
-/// and are also `Send` and `'static`, implement `Fail` by a blanket impl.
+/// and are also `Send`, `Sync`, and `'static`, implement `Fail` by a blanket
+/// impl.
 pub trait Fail: Display + Debug + Send + Sync + 'static {
     /// Returns a reference to the underlying cause of this `Fail`ure, if it
     /// is an error that wraps other errors.

@@ -1,12 +1,16 @@
-# failure - a new error handling story
+# failure - a new error management story
 
-Contains three parts (only a sketch right now):
+`failure` is designed to make it easier to manage errors in Rust. It is
+intended to replace error management based on `std::error::Error` with a new
+system based on lessons learned over the past several years, including those
+learned from experience with quick-error and error-chain.
 
-* A `Fail` trait and `Error` type wrapper, which acts as a dynamically
-dispatched, open sum type
-* `derive(Fail)`, a derive for making your type an error type
+`failure` provides two core components:
 
-Example use case:
+* `Fail`: A new trait for custom error types.
+* `Error`: A struct which any type that implements `Fail` can be cast into.
+
+## Example
 
 ```rust
 #[macro_use] extern crate failure;
@@ -40,3 +44,24 @@ fn main() {
     }
 }
 ```
+
+## Requirements
+
+Both failure and derive-fail are intended to compile on all stable versions of
+Rust newer than 1.18.0, as well as the latest beta and the latest nightly. If
+either crate fails to compile on any version newer than 1.18.0, please open an
+issue.
+
+failure is **no_std** compatible, though some aspects of it (primarily the
+`Error` type) will not be available in no_std mode.
+
+## License
+
+failure is licensed under the terms of the MIT License or the Apache License
+2.0, at your choosing.
+
+## Code of Conduct
+
+Contribution to the failure crate is organized under the terms of the
+Contributor Covenant, the maintainer of failure, @withoutboats, promises to
+intervene to uphold that code of conduct.
