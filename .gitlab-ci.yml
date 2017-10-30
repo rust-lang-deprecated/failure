@@ -2,10 +2,7 @@ image: "rust:latest"
 
 pages:
   script:
-    - mkdir public
-    - cargo doc --no-deps
-    - cp -r ./target/doc public
-    - find $PWD/public
+    - sh ./build-docs.sh
   artifacts:
     paths:
       - public
