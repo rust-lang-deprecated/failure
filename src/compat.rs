@@ -16,7 +16,7 @@ impl<E: Display> Display for Compat<E> {
 }
 
 impl<E> Compat<E> {
-    /// Unwrap this into the inner Error.
+    /// Unwrap this into the inner error.
     pub fn into_inner(self) -> E {
         self.error
     }

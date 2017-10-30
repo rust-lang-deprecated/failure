@@ -1,4 +1,16 @@
 //! An experimental new error handling library.
+//! 
+//! The primary items exported by this library are:
+//!
+//! - `Fail`: a new trait for custom error types in Rust.
+//! - `Error`: a wrapper around `Fail` types to make it easy to coallesce them
+//!   at higher levels.
+//!
+//! As a general rule, library authors should create their own error types and
+//! implement `Fail` for them, whereas application authors should primarily
+//! deal with the `Error` type. There are exceptions to this rule, though, in
+//! both directions, and users should do whatever seems most appropriate to
+//! their situation.
 #![cfg_attr(not(feature = "std"), no_std)]
 #![deny(missing_docs)]
 
@@ -36,53 +48,88 @@ with_std! {
 /// All error types should implement `Fail`, which provides a baseline of
 /// functionality that they all share.
 ///
+/// `Fail` has no required methods, but it does require that your type
+/// implement several other traits:
+/// 
+/// - `Display`: to print a user-friendly representation of the error.
+/// - `Debug`: to print a verbose, developer-focused representation of the
+///   error.
+/// - `Send + Sync`: Your error type is required to be safe to transfer to and
+///   reference from another thread
+///
+/// Additionally, all `Fail`ures must be `'static`. This enables downcasting.
+///
+/// `Fail` provides several methods with default implementations. Two of these
+/// may be appropriate to override depending on the definition of your
+/// particular `Fail`ure: the `cause` and `backtrace` methods.
+///
 /// The `derive-fail` crate provides a way to derive the `Fail` trait for your
 /// type. Additionally, all types that already implement `std::error::Error`,
 /// and are also `Send` and `'static`, implement `Fail` by a blanket impl.
-pub trait Fail: Display + Debug + Send + 'static {
-    /// Returns a reference to the underlying cause of this failure, if it is
-    /// an error that wraps other errors.
+pub trait Fail: Display + Debug + Send + Sync + 'static {
+    /// Returns a reference to the underlying cause of this `Fail`ure, if it
+    /// is an error that wraps other errors.
+    ///
+    /// Returns `None` if this `Fail`ure does not have another error as its
+    /// underlying cause. By default, this returns `None`.
+    ///
+    /// This should **never** return a reference to self, but only return
+    /// `Some` when it can return a **different* `Fail`ure. Users may loop
+    /// loop the cause chain, and returning self would result in an infinite
+    /// loop.
     fn cause(&self) -> Option<&Fail> {
         None
     }
 
-    /// Returns a reference to the Backtrace carried by this Fail, if it
+    /// Returns a reference to the Backtrace carried by this `Fail`ure, if it
     /// carries one.
     ///
-    /// By default, this returns `Non`. If your `Fail` type does have a
-    /// Backtrace, you should override it.
+    /// Returns `None` if this `Fail`ure does not carry a backtrace. By 
+    /// default, this returns `None`.
     fn backtrace(&self) -> Option<&Backtrace> {
         None
     }
 
-    /// Chain this error with some context.
+    /// Provide context for this `Fail`ure.
+    ///
+    /// This can provide additional information about this error, appropriate
+    /// to the semantics of the current layer. That is, if you have a lower
+    /// level error, such as an IO error, you can provide additional context
+    /// about what that error means in the context of your function. This
+    /// gives users of this function more information about what has gone
+    /// wrong.
+    ///
+    /// This takes any type that implements Display, as well as
+    /// Send/Sync/'static. In practice, this means it can take a String or a
+    /// string literal, or another `Fail`ure, or some other custom context
+    /// carrying type.
     fn context<D>(self, context: D) -> Context<D> where
-        D: Display + Send + 'static,
+        D: Display + Send + Sync + 'static,
         Self: Sized,
     {
         Context::with_err(context, self)
     }
 
-    /// Wrap this in a compatibility wrapper that implements
+    /// Wrap this `Fail`ure in a compatibility wrapper that implements
     /// `std::error::Error`.
     ///
-    /// This allows `Fail` types to be compatible with older crates that
+    /// This allows `Fail`ures  to be compatible with older crates that
     /// expect types that implement the `Error` trait from `std::error`.
     fn compat(self) -> Compat<Self> where Self: Sized {
         Compat { error: self }
     }
 
     #[doc(hidden)]
-    fn __private_get_type_id__(&self) -> TypeId where Self: 'static {
+    fn __private_get_type_id__(&self) -> TypeId {
         TypeId::of::<Self>()
     }
 }
 
 impl Fail {
-    /// Attempt to downcast this Fail to a concrete type.
+    /// Attempt to downcast this `Fail`ure to a concrete type by reference.
     ///
     /// If the underlying error is not of type `T`, this will return `None`.
-    pub fn downcast<T: Fail + 'static>(&self) -> Option<&T> {
+    pub fn downcast_ref<T: Fail>(&self) -> Option<&T> {
         if self.__private_get_type_id__() == TypeId::of::<T>() {
             unsafe { Some(&*(self as *const Fail as *const T)) }
         } else {
@@ -90,10 +137,11 @@ impl Fail {
         }
     }
 
-    /// Attempt to downcast this Fail to a concrete type by mutable reference.
+    /// Attempt to downcast this `Fail`ure to a concrete type by mutable
+    /// reference.
     ///
     /// If the underlying error is not of type `T`, this will return `None`.
-    pub fn downcast_mut<T: Fail + 'static>(&mut self) -> Option<&mut T> {
+    pub fn downcast_mut<T: Fail>(&mut self) -> Option<&mut T> {
         if self.__private_get_type_id__() == TypeId::of::<T>() {
             unsafe { Some(&mut *(self as *mut Fail as *mut T)) }
         } else {
@@ -102,21 +150,5 @@ impl Fail {
     }
 }
 
-impl Fail + Send {
-    /// Attempt to downcast this Fail to a concrete type.
-    ///
-    /// If the underlying error is not of type `T`, this will return `None`.
-    pub fn downcast<T: Fail + 'static>(&self) -> Option<&T> {
-        Fail::downcast(self)
-    }
-
-    /// Attempt to downcast this Fail to a concrete type by mutable reference.
-    ///
-    /// If the underlying error is not of type `T`, this will return `None`.
-    pub fn downcast_mut<T: Fail + 'static>(&mut self) -> Option<&mut T> {
-        Fail::downcast_mut(self)
-    }
-}
-
 #[cfg(feature = "std")]
-impl<E: StdError + Send + 'static> Fail for E { }
+impl<E: StdError + Send + Sync + 'static> Fail for E { }

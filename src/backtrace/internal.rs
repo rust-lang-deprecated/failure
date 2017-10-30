@@ -6,8 +6,7 @@ use std::sync::Mutex;
 
 pub use super::backtrace::Backtrace;
 
-/// Internal representation of a backtrace
-pub(crate) struct InternalBacktrace {
+pub(super) struct InternalBacktrace {
     backtrace: Option<MaybeResolved>,
 }
 
@@ -20,10 +19,7 @@ unsafe impl Send for MaybeResolved {}
 unsafe impl Sync for MaybeResolved {}
 
 impl InternalBacktrace {
-    /// Returns a backtrace of the current call stack if `RUST_BACKTRACE`
-    /// is set to anything but ``0``, and `None` otherwise.  This is used
-    /// in the generated error implementations.
-    pub fn new() -> InternalBacktrace {
+    pub(super) fn new() -> InternalBacktrace {
         static ENABLED: AtomicUsize = ATOMIC_USIZE_INIT;
 
         match ENABLED.load(Ordering::SeqCst) {
@@ -49,17 +45,15 @@ impl InternalBacktrace {
         }
     }
 
-    pub fn none() -> InternalBacktrace {
+    pub(super) fn none() -> InternalBacktrace {
         InternalBacktrace { backtrace: None }
     }
 
-    pub fn is_prepared(&self) -> bool {
+    pub(super) fn is_prepared(&self) -> bool {
         self.backtrace.is_some()
     }
 
-    /// Acquire the internal backtrace
-    #[doc(hidden)]
-    pub fn as_backtrace(&self) -> Option<&Backtrace> {
+    pub(super) fn as_backtrace(&self) -> Option<&Backtrace> {
         let bt = match self.backtrace {
             Some(ref bt) => bt,
             None => return None,
