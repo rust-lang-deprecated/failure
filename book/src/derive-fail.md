@@ -114,8 +114,68 @@ enum MyError {
 
 ## Overriding `backtrace`
 
-TODO
+The backtrace method will be automatically overridden if the type contains a
+field with the type `Backtrace`. This works for both structs and enums.
+
+```rust
+extern crate failure;
+#[macro_use] derive_fail;
+
+use failure::Backtrace;
+
+/// MyError::backtrace will return a reference to the backtrace field
+#[derive(Fail, Debug)]
+#[fail(display = "An error occurred.")]
+struct MyError {
+    backtrace: Backtrace,
+}
+
+/// MyEnumError::bactkrace will return a reference to the backtrace only if it
+/// is Variant2, otherwise it will return None.
+#[derive(Fail, Debug)]
+enum MyEnumError {
+    #[fail(display = "An error occurred.")]
+    Variant1,
+    #[fail(display = "A different error occurred.")]
+    Variant2(Backtrace),
+}
+```
+
+This happens automatically; no other annotations are necessary. It only works
+if the type is named Backtrace, and not if you have created an alias for the
+Backtrace type.
 
 ## Overriding `cause`
 
-TODO
+In contrast to `backtrace`, the cause cannot be determined by type name alone
+because it could be any type which implements `Fail`. For this reason, if your
+error has an underlying cause field, you need to annotate that field with
+the `#[cause]` attribute.
+
+This can be used in fields of enums as well as structs.
+
+
+```rust
+#[derive(Fail, Debug)]
+extern crate failure;
+#[macro_use] derive_fail;
+
+use std::io;
+
+/// MyError::cause will return a reference to the io_error field
+#[derive(Fail, Debug)]
+#[fail(display = "An error occurred.")]
+struct MyError {
+    #[cause] io_error: io::Error,
+}
+
+/// MyEnumError::bactkrace will return a reference only if it is Variant2,
+/// otherwise it will return None.
+#[derive(Fail, Debug)]
+enum MyEnumError {
+    #[fail(display = "An error occurred.")]
+    Variant1,
+    #[fail(display = "A different error occurred.")]
+    Variant2(#[cause] io::Error),
+}
+```
