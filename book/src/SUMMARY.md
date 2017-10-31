@@ -1,6 +1,6 @@
 # Summary
 
-- [Introduction](./intro.md)
+- [failure](./intro.md)
 - [How to use failure](./howto.md)
     - [The Fail trait](./fail.md)
     - [Deriving Fail](./derive-fail.md)

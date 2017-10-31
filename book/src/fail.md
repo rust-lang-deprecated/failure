@@ -1,1 +1,3 @@
+# The `Fail` trait
+
 TODO
