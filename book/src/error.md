@@ -1,1 +1,3 @@
+# The `Error` type
+
 TODO
