@@ -12,7 +12,7 @@ without_std! {
     /// The Display impl for Context only prints the human-readable context, while the Debug
     /// impl also prints the underlying error.
     pub struct Context<D: Display + Send + Sync + 'static> {
-        pub(crate) context: D,
+        context: D,
     }
 
     impl<D: Display + Send + Sync + 'static> Context<D> {
@@ -53,8 +53,8 @@ with_std! {
     /// The Display impl for Context only prints the human-readable context, while the Debug
     /// impl also prints the underlying error.
     pub struct Context<D: Display + Send + Sync + 'static> {
-        pub(crate) context: D,
-        pub(crate) failure: Either<Backtrace, Error>,
+        context: D,
+        failure: Either<Backtrace, Error>,
     }
 
     impl<D: Display + Send + Sync + 'static> Context<D> {
@@ -93,7 +93,7 @@ with_std! {
         }
     }
 
-    pub(crate) enum Either<A, B> {
+    enum Either<A, B> {
         This(A),
         That(B),
     }
