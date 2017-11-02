@@ -55,7 +55,7 @@ downcast by reference or by value - when downcasting by value, the return type
 is `Result<T, Error>`, allowing you to get the error back out of it.
 
 ```rust
-match error.downcast::<io::Error> {
+match error.downcast::<io::Error>() {
     Ok(io_error)    => { ... }
     Err(error)      => { ... }
 }
