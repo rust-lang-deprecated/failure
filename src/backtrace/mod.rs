@@ -101,10 +101,6 @@ with_std! {
         pub(crate) fn none() -> Backtrace {
             Backtrace { internal: InternalBacktrace::none() }
         }
-
-        pub(crate) fn is_prepared(&self) -> bool {
-            self.internal.is_prepared()
-        }
     }
 
     impl Default for Backtrace {

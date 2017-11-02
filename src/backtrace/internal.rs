@@ -49,10 +49,6 @@ impl InternalBacktrace {
         InternalBacktrace { backtrace: None }
     }
 
-    pub(super) fn is_prepared(&self) -> bool {
-        self.backtrace.is_some()
-    }
-
     pub(super) fn as_backtrace(&self) -> Option<&Backtrace> {
         let bt = match self.backtrace {
             Some(ref bt) => bt,

@@ -75,9 +75,8 @@ with_std! {
             self.failure.cause()
         }
 
-        #[cfg(feature = "std")]
         fn backtrace(&self) -> Option<&Backtrace> {
-            self.failure.backtrace()
+            Some(self.failure.backtrace())
         }
     }
 
@@ -99,9 +98,9 @@ with_std! {
     }
 
     impl Either<Backtrace, Error> {
-        fn backtrace(&self) -> Option<&Backtrace> {
+        fn backtrace(&self) -> &Backtrace {
             match *self {
-                Either::This(ref backtrace) => Some(backtrace),
+                Either::This(ref backtrace) => backtrace,
                 Either::That(ref error)     => error.backtrace(),
             }
         }

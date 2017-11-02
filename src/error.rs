@@ -52,12 +52,8 @@ impl Error {
     /// If the failure this wrapped carried a backtrace, that backtrace will
     /// be returned. Otherwise, the backtrace will have been constructed at
     /// the point that failure was cast into the Error type.
-    pub fn backtrace(&self) -> Option<&Backtrace> {
-        if self.inner.backtrace.is_prepared() {
-            Some(&self.inner.backtrace)
-        } else {
-            self.inner.failure.backtrace()
-        }
+    pub fn backtrace(&self) -> &Backtrace {
+        self.inner.failure.backtrace().unwrap_or(&self.inner.backtrace)
     }
 
     /// Provide context for this Error.
