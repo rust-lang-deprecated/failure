@@ -40,6 +40,17 @@ impl<F: Fail> From<F> for Error {
 }
 
 impl Error {
+    /// Creates a new `Error` from `failure` without generating a new backtrace.
+    /// Existing backtraces stored in `failure` will be retained.
+    pub fn from_sans_backtrace<F: Fail>(failure: F) -> Self {
+        Error {
+            inner: Box::new(Inner {
+                backtrace: Backtrace::none(),
+                failure
+            })
+        }
+    }
+
     /// Returns a reference to the underlying cause of this Error. Unlike the
     /// method on `Fail`, this does not return an Option. The Error type
     /// always has an underlying `Fail`ure.
