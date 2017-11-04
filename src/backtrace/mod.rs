@@ -90,6 +90,9 @@ with_std! {
         internal: InternalBacktrace
     }
 
+
+    pub(crate) const NONE: Backtrace = Backtrace { internal: internal::NONE };
+
     impl Backtrace {
         /// Construct a new backtrace. This will only create a real backtrace
         /// if the cate is compiled in std mode and the `RUST_BACKTRACE`
@@ -98,8 +101,8 @@ with_std! {
             Backtrace { internal: InternalBacktrace::new() }
         }
 
-        pub(crate) fn none() -> Backtrace {
-            Backtrace { internal: InternalBacktrace::none() }
+        pub(crate) fn is_none(&self) -> bool {
+            self.internal.as_backtrace().is_none()
         }
     }
 

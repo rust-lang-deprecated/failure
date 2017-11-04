@@ -1,10 +1,7 @@
 use core::fmt::{self, Display, Debug};
 
-use core::mem;
-use core::ptr;
-
 use Fail;
-use backtrace::Backtrace;
+use backtrace::{self, Backtrace};
 use context::Context;
 use compat::Compat;
 
@@ -19,23 +16,59 @@ use compat::Compat;
 /// information, and can be downcast into the `Fail`ure that underlies it for
 /// more detailed inspection.
 pub struct Error {
-    pub(crate) inner: Box<Inner<Fail>>,
+    pub(crate) inner: Box<FailOrWithBacktrace>,
 }
 
-pub(crate) struct Inner<F: ?Sized + Fail> {
+pub(crate) struct WithBacktrace<F: Fail> {
     backtrace: Backtrace,
-    pub(crate) failure: F,
+    failure: F,
+}
+
+// Unsafe because the `is_withbacktrace` method must be correct for memory safety.
+pub(crate) unsafe trait FailOrWithBacktrace: Send + Sync + 'static {
+    fn fail_ref(&self) -> &Fail;
+    fn fail_mut(&mut self) -> &mut Fail;
+    fn backtrace(&self) -> &Backtrace;
+    fn is_withbacktrace(&self) -> bool;
+}
+
+unsafe impl<T: Fail> FailOrWithBacktrace for T {
+    fn fail_ref(&self) -> &Fail { self }
+    fn fail_mut(&mut self) -> &mut Fail { self }
+    fn backtrace(&self) -> &Backtrace {
+        static NONE: &'static Backtrace = &backtrace::NONE;
+        Fail::backtrace(self).unwrap_or(NONE)
+    }
+    fn is_withbacktrace(&self) -> bool { false }
+}
+
+unsafe impl<T: Fail> FailOrWithBacktrace for WithBacktrace<T> {
+    fn fail_ref(&self) -> &Fail { &self.failure }
+    fn fail_mut(&mut self) -> &mut Fail { &mut self.failure }
+    fn backtrace(&self) -> &Backtrace {
+        &self.backtrace
+    }
+    fn is_withbacktrace(&self) -> bool { true }
 }
 
 impl<F: Fail> From<F> for Error {
     fn from(failure: F) -> Error {
-        let inner: Inner<F> = {
-            let backtrace = if failure.backtrace().is_none() {
-                Backtrace::new()
-            } else { Backtrace::none() };
-            Inner { failure, backtrace }
+        let inner = if failure.backtrace().is_some() {
+            Box::new(failure)
+        } else {
+            // Attempt to add a backtrace
+            let backtrace = Backtrace::new();
+            if backtrace.is_none() {
+                Box::new(failure) as Box<FailOrWithBacktrace>
+            } else {
+                Box::new(WithBacktrace {
+                    backtrace,
+                    failure,
+                })
+            }
         };
-        Error { inner: Box::new(inner) }
+
+        Error { inner }
     }
 }
 
@@ -44,7 +77,7 @@ impl Error {
     /// method on `Fail`, this does not return an Option. The Error type
     /// always has an underlying `Fail`ure.
     pub fn cause(&self) -> &Fail {
-        &self.inner.failure
+        self.inner.fail_ref()
     }
 
     /// Get a reference to the Backtrace for this Error.
@@ -53,7 +86,7 @@ impl Error {
     /// be returned. Otherwise, the backtrace will have been constructed at
     /// the point that failure was cast into the Error type.
     pub fn backtrace(&self) -> &Backtrace {
-        self.inner.failure.backtrace().unwrap_or(&self.inner.backtrace)
+        self.inner.backtrace()
     }
 
     /// Provide context for this Error.
@@ -89,21 +122,19 @@ impl Error {
     /// the case that the underlying error is of a different type, the
     /// original Error is returned.
     pub fn downcast<T: Fail>(self) -> Result<T, Error> {
-        let ret: Option<T> = self.downcast_ref().map(|fail| {
-            unsafe {
-                // drop the backtrace
-                let _ = ptr::read(&self.inner.backtrace as *const Backtrace);
-                // read out the fail type
-                ptr::read(fail as *const T)
-            }
-        });
-        match ret {
-            Some(ret) => {
-                // forget self (backtrace is dropped, failure is moved
-                mem::forget(self);
-                Ok(ret)
-            }
-            _       => Err(self)
+        if self.downcast_ref::<T>().is_some() {
+            Ok(unsafe {
+                let is_withbacktrace = self.inner.is_withbacktrace();
+                let ptr: *mut FailOrWithBacktrace = Box::into_raw(self.inner);
+
+                if is_withbacktrace {
+                    Box::from_raw(ptr as *mut WithBacktrace<T>).failure
+                } else {
+                    *Box::from_raw(ptr as *mut T)
+                }
+            })
+        } else {
+            Err(self)
         }
     }
 
@@ -112,7 +143,7 @@ impl Error {
     ///
     /// If the underlying error is not of type `T`, this will return `None`.
     pub fn downcast_ref<T: Fail>(&self) -> Option<&T> {
-        self.inner.failure.downcast_ref()
+        self.inner.fail_ref().downcast_ref::<T>()
     }
 
     /// Attempt to downcast this Error to a particular `Fail` type by
@@ -120,25 +151,24 @@ impl Error {
     ///
     /// If the underlying error is not of type `T`, this will return `None`.
     pub fn downcast_mut<T: Fail>(&mut self) -> Option<&mut T> {
-        self.inner.failure.downcast_mut()
+        self.inner.fail_mut().downcast_mut::<T>()
     }
 }
 
 impl Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        Display::fmt(&self.inner.failure, f)
-    }
-}
-
-impl Debug for Inner<Fail> {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Error {{ failure: {:?} }}\n\n{:?}", &self.failure, &self.backtrace)
+        Display::fmt(&self.cause(), f)
     }
 }
 
 impl Debug for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{:?}", &self.inner)
+        write!(f, "Error {{ failure: {:?} }}\n\n", self.inner.fail_ref())?;
+        let backtrace = self.inner.backtrace();
+        if !backtrace.is_none() {
+            write!(f, "{:?}", backtrace)?;
+        }
+        Ok(())
     }
 }
 
