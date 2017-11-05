@@ -169,7 +169,7 @@ struct MyError {
     #[cause] io_error: io::Error,
 }
 
-/// MyEnumError::bactkrace will return a reference only if it is Variant2,
+/// MyEnumError::backtrace will return a reference only if it is Variant2,
 /// otherwise it will return None.
 #[derive(Fail, Debug)]
 enum MyEnumError {
