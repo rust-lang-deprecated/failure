@@ -145,6 +145,8 @@ This happens automatically; no other annotations are necessary. It only works
 if the type is named Backtrace, and not if you have created an alias for the
 Backtrace type.
 
+To initialize the field, simply call `Backtrace::new()` when constructing your error.
+
 ## Overriding `cause`
 
 In contrast to `backtrace`, the cause cannot be determined by type name alone
