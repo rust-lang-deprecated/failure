@@ -1,5 +1,5 @@
 //! An experimental new error handling library.
-//! 
+//!
 //! The primary items exported by this library are:
 //!
 //! - `Fail`: a new trait for custom error types in Rust.
@@ -50,7 +50,7 @@ with_std! {
 ///
 /// `Fail` has no required methods, but it does require that your type
 /// implement several other traits:
-/// 
+///
 /// - `Display`: to print a user-friendly representation of the error.
 /// - `Debug`: to print a verbose, developer-focused representation of the
 ///   error.
