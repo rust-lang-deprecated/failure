@@ -17,7 +17,7 @@ without_std! {
     ///   printing it). If the Backtrace is never used for anything, symbols
     ///   never get resolved.
     ///
-    /// Even with these optimizations, including a backtrace in your `Fail`ure
+    /// Even with these optimizations, including a backtrace in your failure
     /// may not be appropriate to your use case. You are not required to put a
     /// backtrace in a custom `Fail` type.
     ///
@@ -83,7 +83,7 @@ with_std! {
     ///   printing it). If the Backtrace is never used for anything, symbols
     ///   never get resolved.
     ///
-    /// Even with these optimizations, including a backtrace in your `Fail`ure
+    /// Even with these optimizations, including a backtrace in your failure
     /// may not be appropriate to your use case. You are not required to put a
     /// backtrace in a custom `Fail` type.
     pub struct Backtrace {

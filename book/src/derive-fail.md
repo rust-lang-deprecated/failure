@@ -22,7 +22,7 @@ impl fmt::Display for MyError {
 }
 ```
 
-All `Fail`ures need to implement `Display`, so we have added an impl of
+All failures need to implement `Display`, so we have added an impl of
 Display. However, implementing `Display` is much more boilerplate than
 implementing `Fail` - this is why we support deriving `Display` for you.
 
