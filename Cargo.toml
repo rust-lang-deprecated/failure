@@ -4,6 +4,9 @@ description = "Experimental error handling abstraction."
 license = "MIT OR Apache-2.0"
 name = "failure"
 version = "0.0.1"
+repository = "https://github.com/withoutboats/failure"
+documentation = "https://docs.rs/failure"
+homepage = "https://boats.gitlab.io/failure"
 
 [dependencies.backtrace]
 version = "0.3.3"
