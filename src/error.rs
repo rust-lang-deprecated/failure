@@ -107,6 +107,12 @@ impl Error {
         }
     }
 
+    /// Returns the "root cause" of this error - the last value in the
+    /// cause change which does not return an underlying `cause`.
+    pub fn root_cause(&self) -> &Fail {
+        ::find_root_cause(self.cause())
+    }
+
     /// Attempt to downcast this Error to a particular `Fail` type by
     /// reference.
     ///

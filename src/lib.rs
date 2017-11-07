@@ -120,6 +120,15 @@ pub trait Fail: Display + Debug + Send + Sync + 'static {
         Compat { error: self }
     }
 
+    /// Returns the "root cause" of this `Fail` - the last value in the
+    /// cause change which does not return an underlying `cause`.
+    ///
+    /// If this type does not have a cause, `self` is returned, because
+    /// it is its own root cause.
+    fn root_cause(&self) -> &Fail where Self: Sized {
+        find_root_cause(self)
+    }
+
     #[doc(hidden)]
     fn __private_get_type_id__(&self) -> TypeId {
         TypeId::of::<Self>()
@@ -149,7 +158,25 @@ impl Fail {
             None
         }
     }
+
+
+    /// Returns the "root cause" of this `Fail` - the last value in the
+    /// cause change which does not return an underlying `cause`.
+    ///
+    /// If this type does not have a cause, `self` is returned, because
+    /// it is its own root cause.
+    pub fn root_cause(&self) -> &Fail {
+        find_root_cause(self)
+    }
 }
 
 #[cfg(feature = "std")]
 impl<E: StdError + Send + Sync + 'static> Fail for E { }
+
+fn find_root_cause(mut fail: &Fail) -> &Fail {
+    while let Some(cause) = fail.cause() {
+        fail = cause;
+    }
+
+    fail
+}
