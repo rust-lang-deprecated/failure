@@ -72,7 +72,7 @@ perform method calls or use other arbitrary expressions.
 With regular structs, you can use the name of the field in string
 interpolation. When deriving Fail for a tuple struct, you might expect to use
 the numeric index to refer to fields `0`, `1`, et cetera. However, a compiler
-limitation prevents this from parsing today. 
+limitation prevents this from parsing today.
 
 For the time being, tuple field accesses in the display attribute need to be
 prefixed with an underscore:
