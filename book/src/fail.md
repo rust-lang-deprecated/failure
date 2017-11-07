@@ -3,10 +3,10 @@
 The `Fail` trait is a replacement for [`std::error::Error`][stderror]. It has
 been designed to support a number of operations:
 
-- Because it is bound by both `Debug` and `Display`, any `Fail`ure can be
+- Because it is bound by both `Debug` and `Display`, any failure can be
   printed in two ways.
 - It has both a `backtrace` and a `cause` method, allowing users to get
-- It supports wrapping `Fail`ures in additional contextual information.
+- It supports wrapping failures in additional contextual information.
 - Because it is bound by `Send` and `Sync`, failures can be moved and share
   between threads easily.
 - Because it is bound by `'static`, the abstract `Fail` trait object can be
@@ -16,6 +16,8 @@ Every new error type in your code should implement Fail, so it can be
 integrated into the entire system built around this trait. You can manually
 implement `Fail` yourself, or you can use the [derive][derive] for Fail defined
 in a separate crate and documented [here][derive-docs].
+
+Implementors of this trait are called 'failures'.
 
 ## Cause
 
@@ -41,7 +43,7 @@ while let Some(cause) = fail.cause() {
 ```
 
 Because `&Fail` supports downcasting, you can also inspect causes in more
-detail if you are expecting a certain `Fail`ure:
+detail if you are expecting a certain failure:
 
 ```rust
 while let Some(cause) = fail.cause() {
@@ -60,7 +62,7 @@ while let Some(cause) = fail.cause() {
 
 Errors can also generate a backtrace when they are constructed, helping you
 determine the place the error was generated and every function that called into
-that. Like causes, this is entirely optional - the authors of each `Fail`ure
+that. Like causes, this is entirely optional - the authors of each failure
 have to decide of generating a backtrace is appropriate in their use case.
 
 The backtrace method allows all errors to expose their backtrace if they have

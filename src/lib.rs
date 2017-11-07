@@ -45,6 +45,8 @@ with_std! {
 
 /// The `Fail` trait.
 ///
+/// Implementors of this trait are called 'failures'.
+///
 /// All error types should implement `Fail`, which provides a baseline of
 /// functionality that they all share.
 ///
@@ -57,41 +59,41 @@ with_std! {
 /// - `Send + Sync`: Your error type is required to be safe to transfer to and
 ///   reference from another thread
 ///
-/// Additionally, all `Fail`ures must be `'static`. This enables downcasting.
+/// Additionally, all failures must be `'static`. This enables downcasting.
 ///
 /// `Fail` provides several methods with default implementations. Two of these
 /// may be appropriate to override depending on the definition of your
-/// particular `Fail`ure: the `cause` and `backtrace` methods.
+/// particular failure: the `cause` and `backtrace` methods.
 ///
 /// The `derive-fail` crate provides a way to derive the `Fail` trait for your
 /// type. Additionally, all types that already implement `std::error::Error`,
 /// and are also `Send`, `Sync`, and `'static`, implement `Fail` by a blanket
 /// impl.
 pub trait Fail: Display + Debug + Send + Sync + 'static {
-    /// Returns a reference to the underlying cause of this `Fail`ure, if it
+    /// Returns a reference to the underlying cause of this failure, if it
     /// is an error that wraps other errors.
     ///
-    /// Returns `None` if this `Fail`ure does not have another error as its
+    /// Returns `None` if this failure does not have another error as its
     /// underlying cause. By default, this returns `None`.
     ///
     /// This should **never** return a reference to self, but only return
-    /// `Some` when it can return a **different* `Fail`ure. Users may loop
+    /// `Some` when it can return a **different* failure. Users may loop
     /// loop the cause chain, and returning self would result in an infinite
     /// loop.
     fn cause(&self) -> Option<&Fail> {
         None
     }
 
-    /// Returns a reference to the Backtrace carried by this `Fail`ure, if it
+    /// Returns a reference to the Backtrace carried by this failure, if it
     /// carries one.
     ///
-    /// Returns `None` if this `Fail`ure does not carry a backtrace. By 
+    /// Returns `None` if this failure does not carry a backtrace. By
     /// default, this returns `None`.
     fn backtrace(&self) -> Option<&Backtrace> {
         None
     }
 
-    /// Provide context for this `Fail`ure.
+    /// Provide context for this failure.
     ///
     /// This can provide additional information about this error, appropriate
     /// to the semantics of the current layer. That is, if you have a lower
@@ -102,7 +104,7 @@ pub trait Fail: Display + Debug + Send + Sync + 'static {
     ///
     /// This takes any type that implements Display, as well as
     /// Send/Sync/'static. In practice, this means it can take a String or a
-    /// string literal, or another `Fail`ure, or some other custom context
+    /// string literal, or another failure, or some other custom context
     /// carrying type.
     fn context<D>(self, context: D) -> Context<D> where
         D: Display + Send + Sync + 'static,
@@ -111,10 +113,10 @@ pub trait Fail: Display + Debug + Send + Sync + 'static {
         Context::with_err(context, self)
     }
 
-    /// Wrap this `Fail`ure in a compatibility wrapper that implements
+    /// Wrap this failure in a compatibility wrapper that implements
     /// `std::error::Error`.
     ///
-    /// This allows `Fail`ures  to be compatible with older crates that
+    /// This allows failures  to be compatible with older crates that
     /// expect types that implement the `Error` trait from `std::error`.
     fn compat(self) -> Compat<Self> where Self: Sized {
         Compat { error: self }
@@ -127,7 +129,7 @@ pub trait Fail: Display + Debug + Send + Sync + 'static {
 }
 
 impl Fail {
-    /// Attempt to downcast this `Fail`ure to a concrete type by reference.
+    /// Attempt to downcast this failure to a concrete type by reference.
     ///
     /// If the underlying error is not of type `T`, this will return `None`.
     pub fn downcast_ref<T: Fail>(&self) -> Option<&T> {
@@ -138,7 +140,7 @@ impl Fail {
         }
     }
 
-    /// Attempt to downcast this `Fail`ure to a concrete type by mutable
+    /// Attempt to downcast this failure to a concrete type by mutable
     /// reference.
     ///
     /// If the underlying error is not of type `T`, this will return `None`.

@@ -8,15 +8,15 @@ use backtrace::Backtrace;
 use context::Context;
 use compat::Compat;
 
-/// The `Error` type, which can contain any `Fail`ure.
+/// The `Error` type, which can contain any failure.
 ///
 /// Functions which accumulate many kinds of errors should return this type.
-/// All `Fail`ures can be converted into it, so functions which catch those
+/// All failures can be converted into it, so functions which catch those
 /// errors can be tried with `?` inside of a function that returns this kind
 /// of Error.
 ///
 /// In addition to implementing Debug and Display, this type carries Backtrace
-/// information, and can be downcast into the `Fail`ure that underlies it for
+/// information, and can be downcast into the failure that underlies it for
 /// more detailed inspection.
 pub struct Error {
     pub(crate) inner: Box<Inner<Fail>>,
@@ -42,7 +42,7 @@ impl<F: Fail> From<F> for Error {
 impl Error {
     /// Returns a reference to the underlying cause of this Error. Unlike the
     /// method on `Fail`, this does not return an Option. The Error type
-    /// always has an underlying `Fail`ure.
+    /// always has an underlying failure.
     pub fn cause(&self) -> &Fail {
         &self.inner.failure
     }
@@ -67,7 +67,7 @@ impl Error {
     ///
     /// This takes any type that implements Display, as well as
     /// Send/Sync/'static. In practice, this means it can take a String or a
-    /// string literal, or a `Fail`ure, or some other custom context
+    /// string literal, or a failure, or some other custom context
     /// carrying type.
     pub fn context<D: Display + Send + Sync + 'static>(self, context: D) -> Context<D> {
         Context::with_err(context, self)

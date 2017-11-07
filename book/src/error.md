@@ -37,13 +37,13 @@ return Options - an Error is *guaranteed* to have a cause and a backtrace.
 println!("{}, {}", error.cause(), error.backtrace())
 ```
 
-An `Error`'s cause is always the `Fail`ure that was cast into this `Error`.
-That `Fail`ure may have further underlying causes. Unlike Fail, this means that
+An `Error`'s cause is always the failure that was cast into this `Error`.
+That failure may have further underlying causes. Unlike Fail, this means that
 the cause of an Error will have the same Display representation as the Error
 itself.
 
 As to the error's guaranteed backtrace, when the conversion into the Error type
-happens, if the underlying `Fail`ure does not provide a backtrace, a new
+happens, if the underlying failure does not provide a backtrace, a new
 backtrace is constructed pointing to that conversion point (rather than the
 origin of the error). This construction only happens if there is no underlying
 backtrace; if it does have a backtrace no new backtrace is constructed.
@@ -64,7 +64,7 @@ match error.downcast::<io::Error>() {
 ## Implementation details
 
 `Error` is essentially a trait object, but with some fanciness to store the
-backtrace it may generate if the underlying `Fail`ure did not have one. In
+backtrace it may generate if the underlying failure did not have one. In
 particular, we use a custom dynamically sized type to store the backtrace
 information inline with the trait object data.
 
