@@ -35,8 +35,8 @@ pub use result_ext::ResultExt;
 with_std! {
     extern crate core;
 
-    mod error_ext;
-    pub use error_ext::{ErrorExt, SyncErr};
+    mod sync_failure;
+    pub use sync_failure::SyncFailure;
 
     mod error;
 
