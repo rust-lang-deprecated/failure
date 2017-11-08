@@ -98,8 +98,10 @@ with_std! {
             Backtrace { internal: InternalBacktrace::new() }
         }
 
-        pub(crate) fn none() -> Backtrace {
-            Backtrace { internal: InternalBacktrace::none() }
+        pub(crate) const NONE: Backtrace = Backtrace { internal: InternalBacktrace::NONE };
+
+        pub(crate) fn is_none(&self) -> bool {
+            self.internal.as_backtrace().is_none()
         }
     }
 

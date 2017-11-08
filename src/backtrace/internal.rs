@@ -45,9 +45,7 @@ impl InternalBacktrace {
         }
     }
 
-    pub(super) fn none() -> InternalBacktrace {
-        InternalBacktrace { backtrace: None }
-    }
+    pub(super) const NONE: InternalBacktrace = InternalBacktrace { backtrace: None };
 
     pub(super) fn as_backtrace(&self) -> Option<&Backtrace> {
         let bt = match self.backtrace {
