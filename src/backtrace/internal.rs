@@ -24,7 +24,7 @@ impl InternalBacktrace {
 
         match ENABLED.load(Ordering::SeqCst) {
             0 => {
-                let enabled = match env::var_os("RUST_BACKTRACE") {
+                let enabled = match env::var_os("ERROR_BACKTRACE") {
                     Some(ref val) if val != "0" => true,
                     _ => false,
                 };
