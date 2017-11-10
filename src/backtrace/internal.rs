@@ -6,6 +6,8 @@ use std::sync::Mutex;
 
 pub use super::backtrace::Backtrace;
 
+const BACKTRACE_VAR: &str = "RUST_ERROR_BACKTRACE";
+
 pub(super) struct InternalBacktrace {
     backtrace: Option<MaybeResolved>,
 }
@@ -24,7 +26,7 @@ impl InternalBacktrace {
 
         match ENABLED.load(Ordering::SeqCst) {
             0 => {
-                let enabled = match env::var_os("ERROR_BACKTRACE") {
+                let enabled = match env::var_os(BACKTRACE_VAR) {
                     Some(ref val) if val != "0" => true,
                     _ => false,
                 };
