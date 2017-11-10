@@ -135,6 +135,6 @@ The biggest hole in our backwards compatibility story is that you cannot
 implement `std::error::Error` and also override the backtrace and cause methods
 on `Fail`. We intend to enable this with specialization when it becomes stable.
 
-[derive]: https://github.com/withoutboats/derive-fail
+[derive]: https://github.com/withoutboats/failure_derive
 [derive-docs]: https://boats.gitlab.io/failure/derive-fail.html
 [stderror]: https://doc.rust-lang.org/std/error/trait.Error.html

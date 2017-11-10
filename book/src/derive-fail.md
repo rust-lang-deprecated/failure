@@ -1,14 +1,14 @@
 # Deriving `Fail`
 
 Though you can implement `Fail` yourself, we also provide a derive macro to
-generate the impl for you. This macro is provided through the `derive-fail`
+generate the impl for you. This macro is provided through the `failure_derive`
 crate.
 
 In its smallest form, deriving Fail looks like this:
 
 ```rust
 extern crate failure;
-#[macro_use] extern crate derive_fail;
+#[macro_use] extern crate failure_derive;
 
 use std::fmt;
 
@@ -32,7 +32,7 @@ You can derive an implementation of `Display` with a special attribute:
 
 ```rust
 extern crate failure;
-#[macro_use] extern crate derive_fail;
+#[macro_use] extern crate failure_derive;
 
 #[derive(Fail, Debug)]
 #[fail(display = "An error occurred.")]
@@ -51,7 +51,7 @@ formatting and printing macros:
 
 ```rust
 extern crate failure;
-#[macro_use] extern crate derive_fail;
+#[macro_use] extern crate failure_derive;
 
 #[derive(Fail, Debug)]
 #[fail(display = "An error occurred with error code {}. ({})", code, message)]
@@ -79,7 +79,7 @@ prefixed with an underscore:
 
 ```rust
 extern crate failure;
-#[macro_use] extern crate derive_fail;
+#[macro_use] extern crate failure_derive;
 
 #[derive(Fail, Debug)]
 #[fail(display = "An error occurred with error code {}." _0)]
@@ -99,7 +99,7 @@ will match over the enum to generate the correct error message. For example:
 
 ```rust
 extern crate failure;
-#[macro_use] extern crate derive_fail;
+#[macro_use] extern crate failure_derive;
 
 #[derive(Fail, Debug)]
 enum MyError {
@@ -119,7 +119,7 @@ field with the type `Backtrace`. This works for both structs and enums.
 
 ```rust
 extern crate failure;
-#[macro_use] extern crate derive_fail;
+#[macro_use] extern crate failure_derive;
 
 use failure::Backtrace;
 
@@ -158,7 +158,7 @@ This can be used in fields of enums as well as structs.
 ```rust
 #[derive(Fail, Debug)]
 extern crate failure;
-#[macro_use] extern crate derive_fail;
+#[macro_use] extern crate failure_derive;
 
 use std::io;
 

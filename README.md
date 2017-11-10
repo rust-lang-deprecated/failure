@@ -17,7 +17,7 @@ extern crate failure;
 extern crate serde;
 extern crate toml;
 
-#[macro_use] extern crate derive_fail;
+#[macro_use] extern crate failure_derive;
 #[macro_use] extern crate serde_derive;
 
 use std::collections::HashMap;
@@ -82,10 +82,10 @@ pub fn read_toolchains(path: PathBuf) -> Result<Toolchains, Error>
 
 ## Requirements
 
-Both failure and derive-fail are intended to compile on all stable versions of
-Rust newer than 1.18.0, as well as the latest beta and the latest nightly. If
-either crate fails to compile on any version newer than 1.18.0, please open an
-issue.
+Both failure and failure_derive are intended to compile on all stable versions
+of Rust newer than 1.18.0, as well as the latest beta and the latest nightly.
+If either crate fails to compile on any version newer than 1.18.0, please open
+an issue.
 
 failure is **no_std** compatible, though some aspects of it (primarily the
 `Error` type) will not be available in no_std mode.
