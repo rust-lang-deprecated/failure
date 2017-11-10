@@ -68,10 +68,10 @@ with_std! {
 /// may be appropriate to override depending on the definition of your
 /// particular failure: the `cause` and `backtrace` methods.
 ///
-/// The `derive-fail` crate provides a way to derive the `Fail` trait for your
-/// type. Additionally, all types that already implement `std::error::Error`,
-/// and are also `Send`, `Sync`, and `'static`, implement `Fail` by a blanket
-/// impl.
+/// The `failure_derive` crate provides a way to derive the `Fail` trait for
+/// your type. Additionally, all types that already implement
+/// `std::error::Error`, and are also `Send`, `Sync`, and `'static`, implement
+/// `Fail` by a blanket impl.
 pub trait Fail: Display + Debug + Send + Sync + 'static {
     /// Returns a reference to the underlying cause of this failure, if it
     /// is an error that wraps other errors.

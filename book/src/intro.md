@@ -5,18 +5,18 @@ creating and managing errors in Rust. Additional documentation is found here:
 
 * [API documentation][api]
 * [failure source code][repo]
-* [derive-fail source code][derive-repo]
+* [failure_derive source code][derive-repo]
 
 [api]: https://boats.gitlab.io/failure/doc/failure
 [repo]: https://github.com/withoutboats/failure
-[derive-repo]: https://github.com/withoutboats/derive-fail
+[derive-repo]: https://github.com/withoutboats/failure_derive
 
 ```rust
 extern crate failure;
 extern crate serde;
 extern crate toml;
 
-#[macro_use] extern crate derive_fail;
+#[macro_use] extern crate failure_derive;
 #[macro_use] extern crate serde_derive;
 
 use std::collections::HashMap;
