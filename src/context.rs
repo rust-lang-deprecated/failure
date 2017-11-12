@@ -18,7 +18,11 @@ without_std! {
     impl<D: Display + Send + Sync + 'static> Context<D> {
         /// Create a new context without an underlying error message.
         pub fn new(context: D) -> Context<D> {
-            Context { context}
+            Context { context }
+        }
+
+        pub fn get_context(&self) -> &D {
+            &self.context
         }
 
         pub(crate) fn with_err<E: Fail>(context: D, _: E) -> Context<D> {
@@ -62,6 +66,10 @@ with_std! {
         pub fn new(context: D) -> Context<D> {
             let failure = Either::This(Backtrace::new());
             Context { context, failure }
+        }
+
+        pub fn get_context(&self) -> &D {
+            &self.context
         }
 
         pub(crate) fn with_err<E: Into<Error>>(context: D, error: E) -> Context<D> {
