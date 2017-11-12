@@ -21,6 +21,7 @@ without_std! {
             Context { context }
         }
 
+        /// Returns a reference to the context provided with this error.
         pub fn get_context(&self) -> &D {
             &self.context
         }
@@ -68,6 +69,7 @@ with_std! {
             Context { context, failure }
         }
 
+        /// Returns a reference to the context provided with this error.
         pub fn get_context(&self) -> &D {
             &self.context
         }
