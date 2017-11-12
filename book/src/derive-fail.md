@@ -130,7 +130,7 @@ struct MyError {
     backtrace: Backtrace,
 }
 
-/// MyEnumError::bactkrace will return a reference to the backtrace only if it
+/// MyEnumError::backtrace will return a reference to the backtrace only if it
 /// is Variant2, otherwise it will return None.
 #[derive(Fail, Debug)]
 enum MyEnumError {
