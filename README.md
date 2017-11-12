@@ -1,5 +1,9 @@
 # failure - a new error management story
 
+[![Build Status](https://travis-ci.org/withoutboats/failure.svg?branch=master)](https://travis-ci.org/withoutboats/failure)
+[![Latest Version](https://img.shields.io/crates/v/failure.svg)](https://crates.io/crates/failure)
+[![docs](https://docs.rs/failure/badge.svg)](https://docs.rs/failure)
+
 `failure` is designed to make it easier to manage errors in Rust. It is
 intended to replace error management based on `std::error::Error` with a new
 system based on lessons learned over the past several years, including those
