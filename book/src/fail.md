@@ -23,7 +23,7 @@ Implementors of this trait are called 'failures'.
 
 Often, an error type contains (or could contain) another underlying error type
 which represents the "cause" of this error - for example, if your custom error
-contains an  `io::Error`, that is the cause of your error.
+contains an `io::Error`, that is the cause of your error.
 
 The cause method on the Fail trait allows all errors to expose their underlying
 cause - if they have one - in a consistent way. Users can loop over the chain
@@ -63,7 +63,7 @@ while let Some(cause) = fail.cause() {
 Errors can also generate a backtrace when they are constructed, helping you
 determine the place the error was generated and every function that called into
 that. Like causes, this is entirely optional - the authors of each failure
-have to decide of generating a backtrace is appropriate in their use case.
+have to decide if generating a backtrace is appropriate in their use case.
 
 The backtrace method allows all errors to expose their backtrace if they have
 one. This enables a consistent method for getting the backtrace from an error:
