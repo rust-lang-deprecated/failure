@@ -14,6 +14,16 @@ learned from experience with quick-error and error-chain.
 * `Fail`: A new trait for custom error types.
 * `Error`: A struct which any type that implements `Fail` can be cast into.
 
+## How to Install
+Failure is not currently released on crates.io. To install, add the following
+to your `Cargo.toml`
+
+```
+[dependencies]
+failure = {git = "https://github.com/withoutboats/failure"}
+failure_derive = {git = "https://github.com/withoutboats/failure_derive"}
+```
+
 ## Example
 
 ```rust
