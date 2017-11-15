@@ -7,12 +7,12 @@ use Fail;
 /// This is a convenient way to turn a string into an error value that
 /// can be passed around, if you do not want to create a new `Fail` type for
 /// this use case.
-pub fn error_msg<D: Display + Debug + Sync + Send + 'static>(msg: D) -> ErrorMessage<D> {
-    ErrorMessage { msg }
+pub fn err_msg<T, D: Display + Debug + Sync + Send + 'static>(msg: D) -> Result<T, ErrorMessage<D>> {
+    Err(ErrorMessage { msg })
 }
 
 /// A Fail type that just contains an error message. You can construct
-/// this from the `error_msg` function.
+/// this from the `err_msg` function.
 #[derive(Debug)]
 pub struct ErrorMessage<D: Display + Debug + Sync + Send + 'static> {
     msg: D,
@@ -34,10 +34,10 @@ impl<D: Display + Debug + Sync + Send + 'static> Display for ErrorMessage<D> {
 ///
 /// fn main() {
 ///     let code = 101;
-///     let err = format_err!("Error code: {}", code);
+///     let err: Result<(), _> = format_err!("Error code: {}", code);
 /// }
 /// ```
 #[macro_export]
 macro_rules! format_err {
-    ($($arg:tt)*) => { $crate::error_msg(format!($($arg)*)) }
+    ($($arg:tt)*) => { $crate::err_msg(format!($($arg)*)) }
 }
