@@ -82,12 +82,12 @@ extern crate failure;
 #[macro_use] extern crate failure_derive;
 
 #[derive(Fail, Debug)]
-#[fail(display = "An error occurred with error code {}." _0)]
+#[fail(display = "An error occurred with error code {}.", _0)]
 struct MyError(i32);
 
 
 #[derive(Fail, Debug)]
-#[fail(display = "An error occurred with error code {} ({})." _0, _1)]
+#[fail(display = "An error occurred with error code {} ({}).", _0, _1)]
 struct MyOtherError(i32, String);
 ```
 
