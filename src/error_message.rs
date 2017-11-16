@@ -1,20 +1,21 @@
 use core::fmt::{self, Display, Debug};
 
 use Fail;
+use Error;
 
 /// Construct a `Fail` type from a string.
 ///
 /// This is a convenient way to turn a string into an error value that
 /// can be passed around, if you do not want to create a new `Fail` type for
 /// this use case.
-pub fn err_msg<T, D: Display + Debug + Sync + Send + 'static>(msg: D) -> Result<T, ErrorMessage<D>> {
-    Err(ErrorMessage { msg })
+pub fn err_msg<D: Display + Debug + Sync + Send + 'static>(msg: D) -> Error {
+    Error::from(ErrorMessage { msg })
 }
 
 /// A Fail type that just contains an error message. You can construct
 /// this from the `err_msg` function.
 #[derive(Debug)]
-pub struct ErrorMessage<D: Display + Debug + Sync + Send + 'static> {
+struct ErrorMessage<D: Display + Debug + Sync + Send + 'static> {
     msg: D,
 }
 
@@ -26,15 +27,14 @@ impl<D: Display + Debug + Sync + Send + 'static> Display for ErrorMessage<D> {
     }
 }
 
-/// Construct an ErrorMessage type using the standard string
-/// interpolation syntax.
+/// Construct an Error using the standard string interpolation syntax.
 ///
 /// ```rust
 /// #[macro_use] extern crate failure;
 ///
 /// fn main() {
 ///     let code = 101;
-///     let err: Result<(), _> = format_err!("Error code: {}", code);
+///     let err = format_err!("Error code: {}", code);
 /// }
 /// ```
 #[macro_export]
