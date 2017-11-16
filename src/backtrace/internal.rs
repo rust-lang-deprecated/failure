@@ -22,6 +22,9 @@ struct MaybeResolved {
 unsafe impl Send for MaybeResolved {}
 unsafe impl Sync for MaybeResolved {}
 
+
+pub(super) const NONE: InternalBacktrace = InternalBacktrace { backtrace: None };
+
 impl InternalBacktrace {
     pub(super) fn new() -> InternalBacktrace {
         static ENABLED: AtomicUsize = ATOMIC_USIZE_INIT;
@@ -44,10 +47,6 @@ impl InternalBacktrace {
                 backtrace: UnsafeCell::new(Backtrace::new_unresolved()),
             }),
         }
-    }
-
-    pub(super) fn none() -> InternalBacktrace {
-        InternalBacktrace { backtrace: None }
     }
 
     pub(super) fn as_backtrace(&self) -> Option<&Backtrace> {
