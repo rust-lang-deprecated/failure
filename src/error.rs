@@ -136,15 +136,13 @@ impl Display for Error {
     }
 }
 
-impl Debug for Inner<Fail> {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Error {{ failure: {:?} }}\n\n{:?}", &self.failure, &self.backtrace)
-    }
-}
-
 impl Debug for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{:?}", &self.inner)
+        if self.inner.backtrace.is_none() {
+            Debug::fmt(&self.inner.failure, f)
+        } else {
+            write!(f, "{:?}\n\n{:?}", &self.inner.failure, self.inner.backtrace)
+        }
     }
 }
 
