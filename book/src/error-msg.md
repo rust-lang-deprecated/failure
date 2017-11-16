@@ -7,7 +7,7 @@ during prototyping, but maybe not in the final product.
 String types do not implement `Fail`, which is why there are two adapters to
 create failures from a string:
 
-- [`failure::error_msg`][error-msg-api] - a function that takes a displayable
+- [`failure::err-msg`][err--msg-api] - a function that takes a displayable
   type and creates a failure from it. This can take a String or a string
   literal.
 - [`format_err!`][format-err-api] - a macro with string interpolation, similar
@@ -55,5 +55,5 @@ to the users.
 
 [custom-fail]: ./custom-fail.md
 [use-error]: ./use-error.md
-[error-msg-api]:
+[error-msg-api]: https://boats.gitlab.io/failure/doc/failure/fn.err_msg.html
 [format-err-api]: https://boats.gitlab.io/failure/doc/failure/macro.format_err.html
