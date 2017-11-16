@@ -137,6 +137,6 @@ Additionally, like the Error type, the Context type may use an allocation and a
 dynamic dispatch internally. If you know this is too expensive for your use
 case, you should not use this pattern.
 
-[use-error]: ./use-error.md
-[custom-fail]: ./custom-fail.md
+[use-error]: ./use-error.html
+[custom-fail]: ./custom-fail.html
 [context-api]: https://boats.gitlab.io/failure/doc/failure/struct.Context.html

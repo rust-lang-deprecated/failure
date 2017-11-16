@@ -6,6 +6,7 @@ been designed to support a number of operations:
 - Because it is bound by both `Debug` and `Display`, any failure can be
   printed in two ways.
 - It has both a `backtrace` and a `cause` method, allowing users to get
+  information about how the error occurred.
 - It supports wrapping failures in additional contextual information.
 - Because it is bound by `Send` and `Sync`, failures can be moved and share
   between threads easily.

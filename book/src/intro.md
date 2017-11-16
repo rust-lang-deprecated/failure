@@ -28,7 +28,8 @@ use failure::Error;
 // This is a new error type that you've created. It represents the ways a
 // toolchain could be invalid.
 //
-// All we do is derive Fail and Display for it, no other "magic."
+// The custom derive for Fail derives an impl of both Fail and Derive.
+// We don't do any other magic like creating new types.
 #[derive(Debug, Fail)]
 enum ToolchainError {
     #[fail(display = "invalid toolchain name: {}", name)]

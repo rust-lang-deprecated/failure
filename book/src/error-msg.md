@@ -53,7 +53,7 @@ For these reasons, we strongly recommend against using this pattern except for
 prototyping and when you know the error is just going to get logged or reported
 to the users.
 
-[custom-fail]: ./custom-fail.md
-[use-error]: ./use-error.md
-[error-msg-api]: https://boats.gitlab.io/failure/doc/failure/fn.err_msg.html
+[custom-fail]: ./custom-fail.html
+[use-error]: ./use-error.html
+[err-msg-api]: https://boats.gitlab.io/failure/doc/failure/fn.err_msg.html
 [format-err-api]: https://boats.gitlab.io/failure/doc/failure/macro.format_err.html

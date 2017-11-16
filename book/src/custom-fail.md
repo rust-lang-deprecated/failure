@@ -70,6 +70,6 @@ Depending on your use case, as your function grows in complexity, it can be
 better to transition to [using Error][use-error] or [defining an Error &
 ErrorKind pair][error-errorkind].
 
-[derive-fail]: ./derive-fail.md
-[use-error]: ./use-error.md
-[error-errorkind]: ./error-errorkind.md
+[derive-fail]: ./derive-fail.html
+[use-error]: ./use-error.html
+[error-errorkind]: ./error-errorkind.html
