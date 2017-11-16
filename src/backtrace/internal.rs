@@ -64,6 +64,10 @@ impl InternalBacktrace {
             Some(&*bt.backtrace.get())
         }
     }
+
+    pub(super) fn is_none(&self) -> bool {
+        self.backtrace.is_none()
+    }
 }
 
 impl fmt::Debug for InternalBacktrace {

@@ -101,6 +101,10 @@ with_std! {
         pub(crate) fn none() -> Backtrace {
             Backtrace { internal: InternalBacktrace::none() }
         }
+
+        pub(crate) fn is_none(&self) -> bool {
+            self.internal.is_none()
+        }
     }
 
     impl Default for Backtrace {
