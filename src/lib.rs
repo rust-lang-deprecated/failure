@@ -3,7 +3,7 @@
 //! The primary items exported by this library are:
 //!
 //! - `Fail`: a new trait for custom error types in Rust.
-//! - `Error`: a wrapper around `Fail` types to make it easy to coallesce them
+//! - `Error`: a wrapper around `Fail` types to make it easy to coalesce them
 //!   at higher levels.
 //!
 //! As a general rule, library authors should create their own error types and
