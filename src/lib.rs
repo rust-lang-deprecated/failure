@@ -174,10 +174,38 @@ impl Fail {
     pub fn root_cause(&self) -> &Fail {
         find_root_cause(self)
     }
+
+    /// Returns a iterator over the causes of this `Fail`
+    pub fn causes(&self) -> CauseIter {
+        CauseIter { fail: self }
+    }
 }
 
 #[cfg(feature = "std")]
 impl<E: StdError + Send + Sync + 'static> Fail for E { }
+
+impl<'f> IntoIterator for &'f Fail {
+    type IntoIter = CauseIter<'f>;
+    type Item = &'f Fail;
+    fn into_iter(self) -> CauseIter<'f> {
+        self.causes()
+    }
+}
+
+/// A iterator over the causes of a `Fail`
+pub struct CauseIter<'f> {
+    fail: &'f Fail,
+}
+
+impl<'f> Iterator for CauseIter<'f> {
+    type Item = &'f Fail;
+    fn next(&mut self) -> Option<&'f Fail> {
+        self.fail.cause().map(|cause| {
+            self.fail = cause;
+            cause
+        })
+    }
+}
 
 fn find_root_cause(mut fail: &Fail) -> &Fail {
     while let Some(cause) = fail.cause() {
