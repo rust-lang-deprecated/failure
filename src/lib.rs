@@ -20,7 +20,6 @@ macro_rules! without_std { ($($i:item)*) => ($(#[cfg(not(feature = "std"))]$i)*)
 mod backtrace;
 mod compat;
 mod context;
-mod error_message;
 mod result_ext;
 
 use core::any::TypeId;
@@ -29,7 +28,6 @@ use core::fmt::{Display, Debug};
 pub use backtrace::Backtrace;
 pub use compat::Compat;
 pub use context::Context;
-pub use error_message::err_msg;
 pub use result_ext::ResultExt;
 
 with_std! {
@@ -43,6 +41,9 @@ with_std! {
     use std::error::Error as StdError;
 
     pub use error::Error;
+
+    mod error_message;
+    pub use error_message::err_msg;
 }
 
 
