@@ -7,7 +7,7 @@ during prototyping, but maybe not in the final product.
 String types do not implement `Fail`, which is why there are two adapters to
 create failures from a string:
 
-- [`failure::err-msg`][err--msg-api] - a function that takes a displayable
+- [`failure::err_msg`][err-msg-api] - a function that takes a displayable
   type and creates a failure from it. This can take a String or a string
   literal.
 - [`format_err!`][format-err-api] - a macro with string interpolation, similar
