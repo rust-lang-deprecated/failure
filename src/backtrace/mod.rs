@@ -30,7 +30,7 @@ without_std! {
 
     impl Backtrace {
         /// Construct a new backtrace. This will only create a real backtrace
-        /// if the cate is compiled in std mode and the `RUST_BACKTRACE`
+        /// if the crate is compiled in std mode and the `RUST_BACKTRACE`
         /// environmental variable is activated.
         ///
         /// > (We have detected that this crate was documented with no_std
@@ -92,7 +92,7 @@ with_std! {
 
     impl Backtrace {
         /// Construct a new backtrace. This will only create a real backtrace
-        /// if the cate is compiled in std mode and the `RUST_BACKTRACE`
+        /// if the crate is compiled in std mode and the `RUST_BACKTRACE`
         /// environmental variable is activated.
         pub fn new() -> Backtrace {
             Backtrace { internal: InternalBacktrace::new() }
