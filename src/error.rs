@@ -3,7 +3,7 @@ use core::fmt::{self, Display, Debug};
 use core::mem;
 use core::ptr;
 
-use Fail;
+use {Causes, Fail};
 use backtrace::Backtrace;
 use context::Context;
 use compat::Compat;
@@ -127,6 +127,14 @@ impl Error {
     /// If the underlying error is not of type `T`, this will return `None`.
     pub fn downcast_mut<T: Fail>(&mut self) -> Option<&mut T> {
         self.inner.failure.downcast_mut()
+    }
+
+    /// Returns a iterator over the causes of the `Error`.
+    ///
+    /// The returned iterator does not include the `Error` it self as
+    /// the first item
+    pub fn causes(&self) -> Causes {
+        Causes { fail: Some(self.cause()) }
     }
 }
 
