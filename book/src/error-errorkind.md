@@ -23,7 +23,7 @@ struct MyError {
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Fail)]
-struct MyErrorKind {
+enum MyErrorKind {
     // A plain enum with no data in any of its variants
     //
     // For example:
