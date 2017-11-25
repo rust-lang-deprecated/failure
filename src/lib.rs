@@ -23,7 +23,7 @@ mod context;
 mod result_ext;
 
 use core::any::TypeId;
-use core::fmt::{Display, Debug};
+use core::fmt::{Debug, Display};
 
 pub use backtrace::Backtrace;
 pub use compat::Compat;
@@ -44,6 +44,31 @@ with_std! {
 
     mod error_message;
     pub use error_message::err_msg;
+
+    #[macro_export]
+    macro_rules! bail {
+        ($e:expr) => {
+            return Err($crate::err_msg($e));
+        };
+        ($fmt:expr, $($arg:tt)+) => {
+            return Err($crate::err_msg(format!($fmt, $($arg)+)));
+        };
+    }
+
+    #[macro_export]
+    macro_rules! ensure {
+        ($cond:expr, $e:expr) => {
+            if !($cond) {
+                bail!($e);
+            }
+        };
+        ($cond:expr, $fmt:expr, $($arg:tt)+) => {
+            if !($cond) {
+                bail!($fmt, $($arg)+);
+            }
+        };
+    }
+
 }
 
 
@@ -110,7 +135,8 @@ pub trait Fail: Display + Debug + Send + Sync + 'static {
     /// Send/Sync/'static. In practice, this means it can take a String or a
     /// string literal, or another failure, or some other custom context
     /// carrying type.
-    fn context<D>(self, context: D) -> Context<D> where
+    fn context<D>(self, context: D) -> Context<D>
+    where
         D: Display + Send + Sync + 'static,
         Self: Sized,
     {
@@ -122,7 +148,10 @@ pub trait Fail: Display + Debug + Send + Sync + 'static {
     ///
     /// This allows failures  to be compatible with older crates that
     /// expect types that implement the `Error` trait from `std::error`.
-    fn compat(self) -> Compat<Self> where Self: Sized {
+    fn compat(self) -> Compat<Self>
+    where
+        Self: Sized,
+    {
         Compat { error: self }
     }
 
@@ -131,7 +160,10 @@ pub trait Fail: Display + Debug + Send + Sync + 'static {
     ///
     /// If this type does not have a cause, `self` is returned, because
     /// it is its own root cause.
-    fn root_cause(&self) -> &Fail where Self: Sized {
+    fn root_cause(&self) -> &Fail
+    where
+        Self: Sized,
+    {
         find_root_cause(self)
     }
 
@@ -177,7 +209,7 @@ impl Fail {
 }
 
 #[cfg(feature = "std")]
-impl<E: StdError + Send + Sync + 'static> Fail for E { }
+impl<E: StdError + Send + Sync + 'static> Fail for E {}
 
 fn find_root_cause(mut fail: &Fail) -> &Fail {
     while let Some(cause) = fail.cause() {
