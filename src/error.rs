@@ -59,7 +59,7 @@ impl Error {
     /// Provide context for this Error.
     ///
     /// This can provide additional information about this error, appropriate
-    /// to the semantics of the current layer. That is, if you have a lower
+    /// to the semantics of the current layer. That is, if you have a lower-
     /// level error, such as an IO error, you can provide additional context
     /// about what that error means in the context of your function. This
     /// gives users of this function more information about what has gone
@@ -67,7 +67,7 @@ impl Error {
     ///
     /// This takes any type that implements Display, as well as
     /// Send/Sync/'static. In practice, this means it can take a String or a
-    /// string literal, or a failure, or some other custom context
+    /// string literal, or a failure, or some other custom context-
     /// carrying type.
     pub fn context<D: Display + Send + Sync + 'static>(self, context: D) -> Context<D> {
         Context::with_err(context, self)
@@ -103,12 +103,12 @@ impl Error {
                 mem::forget(self);
                 Ok(ret)
             }
-            _       => Err(self)
+            _ => Err(self)
         }
     }
 
     /// Returns the "root cause" of this error - the last value in the
-    /// cause change which does not return an underlying `cause`.
+    /// cause chain which does not return an underlying `cause`.
     pub fn root_cause(&self) -> &Fail {
         ::find_root_cause(self.cause())
     }

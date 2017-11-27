@@ -6,7 +6,7 @@ without_std! {
     /// An error with context around it.
     ///
     /// The context is intended to be a human-readable, user-facing explanation for the
-    /// error that has occurred. The underlying error is not assumed to be end-user relevant
+    /// error that has occurred. The underlying error is not assumed to be end-user-relevant
     /// information.
     ///
     /// The Display impl for Context only prints the human-readable context, while the Debug
@@ -52,7 +52,7 @@ with_std! {
     /// An error with context around it.
     ///
     /// The context is intended to be a human-readable, user-facing explanation for the
-    /// error that has occurred. The underlying error is not assumed to be end-user relevant
+    /// error that has occurred. The underlying error is not assumed to be end-user-relevant
     /// information.
     ///
     /// The Display impl for Context only prints the human-readable context, while the Debug
