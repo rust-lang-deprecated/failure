@@ -1,4 +1,4 @@
-//! An experimental new error handling library.
+//! An experimental new error-handling library.
 //!
 //! The primary items exported by this library are:
 //!
@@ -81,8 +81,8 @@ pub trait Fail: Display + Debug + Send + Sync + 'static {
     /// underlying cause. By default, this returns `None`.
     ///
     /// This should **never** return a reference to self, but only return
-    /// `Some` when it can return a **different* failure. Users may loop
-    /// loop the cause chain, and returning self would result in an infinite
+    /// `Some` when it can return a **different** failure. Users may loop
+    /// over the cause chain, and returning self would result in an infinite
     /// loop.
     fn cause(&self) -> Option<&Fail> {
         None
@@ -100,7 +100,7 @@ pub trait Fail: Display + Debug + Send + Sync + 'static {
     /// Provide context for this failure.
     ///
     /// This can provide additional information about this error, appropriate
-    /// to the semantics of the current layer. That is, if you have a lower
+    /// to the semantics of the current layer. That is, if you have a lower-
     /// level error, such as an IO error, you can provide additional context
     /// about what that error means in the context of your function. This
     /// gives users of this function more information about what has gone
@@ -108,7 +108,7 @@ pub trait Fail: Display + Debug + Send + Sync + 'static {
     ///
     /// This takes any type that implements Display, as well as
     /// Send/Sync/'static. In practice, this means it can take a String or a
-    /// string literal, or another failure, or some other custom context
+    /// string literal, or another failure, or some other custom context-
     /// carrying type.
     fn context<D>(self, context: D) -> Context<D> where
         D: Display + Send + Sync + 'static,
@@ -127,7 +127,7 @@ pub trait Fail: Display + Debug + Send + Sync + 'static {
     }
 
     /// Returns the "root cause" of this `Fail` - the last value in the
-    /// cause change which does not return an underlying `cause`.
+    /// cause chain which does not return an underlying `cause`.
     ///
     /// If this type does not have a cause, `self` is returned, because
     /// it is its own root cause.
@@ -167,7 +167,7 @@ impl Fail {
 
 
     /// Returns the "root cause" of this `Fail` - the last value in the
-    /// cause change which does not return an underlying `cause`.
+    /// cause chain which does not return an underlying `cause`.
     ///
     /// If this type does not have a cause, `self` is returned, because
     /// it is its own root cause.
