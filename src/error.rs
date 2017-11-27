@@ -59,16 +59,16 @@ impl Error {
     /// Provides context for this `Error`.
     ///
     /// This can provide additional information about this error, appropriate
-    /// to the semantics of the current layer. That is, if you have a lower-
-    /// level error, such as an IO error, you can provide additional context
+    /// to the semantics of the current layer. That is, if you have a
+    /// lower-level error, such as an IO error, you can provide additional context
     /// about what that error means in the context of your function. This
     /// gives users of this function more information about what has gone
     /// wrong.
     ///
     /// This takes any type that implements `Display`, as well as
     /// `Send`/`Sync`/`'static`. In practice, this means it can take a `String`
-    /// or a string literal, or a failure, or some other custom context-
-    /// carrying type.
+    /// or a string literal, or a failure, or some other custom context-carrying
+    /// type.
     pub fn context<D: Display + Send + Sync + 'static>(self, context: D) -> Context<D> {
         Context::with_err(context, self)
     }
