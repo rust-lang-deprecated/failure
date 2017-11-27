@@ -3,7 +3,7 @@ use std::error::Error;
 use std::fmt::{self, Debug, Display};
 use std::sync::Mutex;
 
-/// Wrapper for std errors to make them Sync.
+/// Wrapper for `std` errors to make them `Sync`.
 ///
 /// This exists to coerce existing types that are only `Error + Send +
 /// 'static` into a `Fail`-compatible representation, most notably for

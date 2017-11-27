@@ -80,15 +80,15 @@ pub trait Fail: Display + Debug + Send + Sync + 'static {
     /// Returns `None` if this failure does not have another error as its
     /// underlying cause. By default, this returns `None`.
     ///
-    /// This should **never** return a reference to self, but only return
+    /// This should **never** return a reference to `self`, but only return
     /// `Some` when it can return a **different** failure. Users may loop
-    /// over the cause chain, and returning self would result in an infinite
+    /// over the cause chain, and returning `self` would result in an infinite
     /// loop.
     fn cause(&self) -> Option<&Fail> {
         None
     }
 
-    /// Returns a reference to the Backtrace carried by this failure, if it
+    /// Returns a reference to the `Backtrace` carried by this failure, if it
     /// carries one.
     ///
     /// Returns `None` if this failure does not carry a backtrace. By
@@ -106,9 +106,9 @@ pub trait Fail: Display + Debug + Send + Sync + 'static {
     /// gives users of this function more information about what has gone
     /// wrong.
     ///
-    /// This takes any type that implements Display, as well as
-    /// Send/Sync/'static. In practice, this means it can take a String or a
-    /// string literal, or another failure, or some other custom context-
+    /// This takes any type that implements `Display`, as well as
+    /// `Send`/`Sync`/`'static`. In practice, this means it can take a `String`
+    /// or a string literal, or another failure, or some other custom context-
     /// carrying type.
     fn context<D>(self, context: D) -> Context<D> where
         D: Display + Send + Sync + 'static,

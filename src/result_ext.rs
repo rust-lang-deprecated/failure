@@ -2,10 +2,10 @@ use core::fmt::Display;
 
 use {Fail, Compat, Context};
 
-/// Extension methods for Result.
+/// Extension methods for `Result`.
 pub trait ResultExt<T, E> {
     /// Wraps the error in `Compat` to make it compatible with older error
-    /// handling APIs that expect std::error::Error;
+    /// handling APIs that expect `std::error::Error`.
     fn compat(self) -> Result<T, Compat<E>>;
 
     /// Wraps the error type in a context type.

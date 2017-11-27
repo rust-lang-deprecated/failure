@@ -12,7 +12,7 @@ pub fn err_msg<D: Display + Debug + Sync + Send + 'static>(msg: D) -> Error {
     Error::from(ErrorMessage { msg })
 }
 
-/// A Fail type that just contains an error message. You can construct
+/// A `Fail` type that just contains an error message. You can construct
 /// this from the `err_msg` function.
 #[derive(Debug)]
 struct ErrorMessage<D: Display + Debug + Sync + Send + 'static> {
@@ -27,7 +27,7 @@ impl<D: Display + Debug + Sync + Send + 'static> Display for ErrorMessage<D> {
     }
 }
 
-/// Constructs an Error using the standard string interpolation syntax.
+/// Constructs an `Error` using the standard string interpolation syntax.
 ///
 /// ```rust
 /// #[macro_use] extern crate failure;

@@ -9,8 +9,8 @@ without_std! {
     /// error that has occurred. The underlying error is not assumed to be end-user-relevant
     /// information.
     ///
-    /// The Display impl for Context only prints the human-readable context, while the Debug
-    /// impl also prints the underlying error.
+    /// The `Display` impl for `Context` only prints the human-readable context, while the
+    /// `Debug` impl also prints the underlying error.
     pub struct Context<D: Display + Send + Sync + 'static> {
         context: D,
     }
@@ -55,8 +55,8 @@ with_std! {
     /// error that has occurred. The underlying error is not assumed to be end-user-relevant
     /// information.
     ///
-    /// The Display impl for Context only prints the human-readable context, while the Debug
-    /// impl also prints the underlying error.
+    /// The `Display` impl for `Context` only prints the human-readable context, while the
+    /// `Debug` impl also prints the underlying error.
     pub struct Context<D: Display + Send + Sync + 'static> {
         context: D,
         failure: Either<Backtrace, Error>,
