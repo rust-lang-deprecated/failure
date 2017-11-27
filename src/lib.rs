@@ -100,16 +100,16 @@ pub trait Fail: Display + Debug + Send + Sync + 'static {
     /// Provides context for this failure.
     ///
     /// This can provide additional information about this error, appropriate
-    /// to the semantics of the current layer. That is, if you have a lower-
-    /// level error, such as an IO error, you can provide additional context
+    /// to the semantics of the current layer. That is, if you have a
+    /// lower-level error, such as an IO error, you can provide additional context
     /// about what that error means in the context of your function. This
     /// gives users of this function more information about what has gone
     /// wrong.
     ///
     /// This takes any type that implements `Display`, as well as
     /// `Send`/`Sync`/`'static`. In practice, this means it can take a `String`
-    /// or a string literal, or another failure, or some other custom context-
-    /// carrying type.
+    /// or a string literal, or another failure, or some other custom context-carrying
+    /// type.
     fn context<D>(self, context: D) -> Context<D> where
         D: Display + Send + Sync + 'static,
         Self: Sized,
