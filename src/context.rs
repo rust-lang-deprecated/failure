@@ -16,7 +16,7 @@ without_std! {
     }
 
     impl<D: Display + Send + Sync + 'static> Context<D> {
-        /// Create a new context without an underlying error message.
+        /// Creates a new context without an underlying error message.
         pub fn new(context: D) -> Context<D> {
             Context { context }
         }
@@ -63,7 +63,7 @@ with_std! {
     }
 
     impl<D: Display + Send + Sync + 'static> Context<D> {
-        /// Create a new context without an underlying error message.
+        /// Creates a new context without an underlying error message.
         pub fn new(context: D) -> Context<D> {
             let failure = Either::This(Backtrace::new());
             Context { context, failure }

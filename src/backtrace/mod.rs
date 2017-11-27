@@ -29,7 +29,7 @@ without_std! {
     }
 
     impl Backtrace {
-        /// Construct a new backtrace. This will only create a real backtrace
+        /// Constructs a new backtrace. This will only create a real backtrace
         /// if the crate is compiled in std mode and the `RUST_BACKTRACE`
         /// environmental variable is activated.
         ///
@@ -91,7 +91,7 @@ with_std! {
     }
 
     impl Backtrace {
-        /// Construct a new backtrace. This will only create a real backtrace
+        /// Constructs a new backtrace. This will only create a real backtrace
         /// if the crate is compiled in std mode and the `RUST_BACKTRACE`
         /// environmental variable is activated.
         pub fn new() -> Backtrace {

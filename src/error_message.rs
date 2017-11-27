@@ -3,7 +3,7 @@ use core::fmt::{self, Display, Debug};
 use Fail;
 use Error;
 
-/// Construct a `Fail` type from a string.
+/// Constructs a `Fail` type from a string.
 ///
 /// This is a convenient way to turn a string into an error value that
 /// can be passed around, if you do not want to create a new `Fail` type for
@@ -27,7 +27,7 @@ impl<D: Display + Debug + Sync + Send + 'static> Display for ErrorMessage<D> {
     }
 }
 
-/// Construct an Error using the standard string interpolation syntax.
+/// Constructs an Error using the standard string interpolation syntax.
 ///
 /// ```rust
 /// #[macro_use] extern crate failure;

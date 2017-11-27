@@ -18,7 +18,7 @@ pub struct SyncFailure<T> {
 }
 
 impl<E: Error + Send + 'static> SyncFailure<E> {
-    /// Wrap a non-`Sync` `Error` in order to make it implement `Fail`.
+    /// Wraps a non-`Sync` `Error` in order to make it implement `Fail`.
     ///
     /// # Example
     ///

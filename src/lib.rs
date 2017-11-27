@@ -97,7 +97,7 @@ pub trait Fail: Display + Debug + Send + Sync + 'static {
         None
     }
 
-    /// Provide context for this failure.
+    /// Provides context for this failure.
     ///
     /// This can provide additional information about this error, appropriate
     /// to the semantics of the current layer. That is, if you have a lower-
@@ -117,7 +117,7 @@ pub trait Fail: Display + Debug + Send + Sync + 'static {
         Context::with_err(context, self)
     }
 
-    /// Wrap this failure in a compatibility wrapper that implements
+    /// Wraps this failure in a compatibility wrapper that implements
     /// `std::error::Error`.
     ///
     /// This allows failures  to be compatible with older crates that
@@ -142,7 +142,7 @@ pub trait Fail: Display + Debug + Send + Sync + 'static {
 }
 
 impl Fail {
-    /// Attempt to downcast this failure to a concrete type by reference.
+    /// Attempts to downcast this failure to a concrete type by reference.
     ///
     /// If the underlying error is not of type `T`, this will return `None`.
     pub fn downcast_ref<T: Fail>(&self) -> Option<&T> {
@@ -153,7 +153,7 @@ impl Fail {
         }
     }
 
-    /// Attempt to downcast this failure to a concrete type by mutable
+    /// Attempts to downcast this failure to a concrete type by mutable
     /// reference.
     ///
     /// If the underlying error is not of type `T`, this will return `None`.
