@@ -47,7 +47,7 @@ impl Error {
         &self.inner.failure
     }
 
-    /// Get a reference to the Backtrace for this Error.
+    /// Gets a reference to the Backtrace for this Error.
     ///
     /// If the failure this wrapped carried a backtrace, that backtrace will
     /// be returned. Otherwise, the backtrace will have been constructed at
@@ -56,7 +56,7 @@ impl Error {
         self.inner.failure.backtrace().unwrap_or(&self.inner.backtrace)
     }
 
-    /// Provide context for this Error.
+    /// Provides context for this Error.
     ///
     /// This can provide additional information about this error, appropriate
     /// to the semantics of the current layer. That is, if you have a lower-
@@ -73,7 +73,7 @@ impl Error {
         Context::with_err(context, self)
     }
 
-    /// Wrap `Error` in a compatibility type.
+    /// Wraps `Error` in a compatibility type.
     ///
     /// This type implements the `Error` trait from `std::error`. If you need
     /// to pass failure's Error to an interface that takes any `Error`, you
@@ -82,7 +82,7 @@ impl Error {
         Compat { error: self }
     }
 
-    /// Attempt to downcast this Error to a particular `Fail` type.
+    /// Attempts to downcast this Error to a particular `Fail` type.
     ///
     /// This downcasts by value, returning an owned `T` if the underlying
     /// failure is of the type `T`. For this reason it returns a `Result` - in
@@ -113,7 +113,7 @@ impl Error {
         ::find_root_cause(self.cause())
     }
 
-    /// Attempt to downcast this Error to a particular `Fail` type by
+    /// Attempts to downcast this Error to a particular `Fail` type by
     /// reference.
     ///
     /// If the underlying error is not of type `T`, this will return `None`.
@@ -121,7 +121,7 @@ impl Error {
         self.inner.failure.downcast_ref()
     }
 
-    /// Attempt to downcast this Error to a particular `Fail` type by
+    /// Attempts to downcast this Error to a particular `Fail` type by
     /// mutable reference.
     ///
     /// If the underlying error is not of type `T`, this will return `None`.
