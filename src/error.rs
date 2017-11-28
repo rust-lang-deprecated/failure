@@ -129,10 +129,9 @@ impl Error {
         self.inner.failure.downcast_mut()
     }
 
-    /// Returns a iterator over the causes of the `Error`.
-    ///
-    /// The returned iterator does not include the `Error` it self as
-    /// the first item
+    /// Returns a iterator over the causes of the `Error`, beginning with
+    /// the failure returned by the `cause` method and ending with the failure
+    /// returned by `root_cause`.
     pub fn causes(&self) -> Causes {
         Causes { fail: Some(self.cause()) }
     }

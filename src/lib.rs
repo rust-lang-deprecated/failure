@@ -135,6 +135,12 @@ pub trait Fail: Display + Debug + Send + Sync + 'static {
         Compat { error: self }
     }
 
+    /// Returns a iterator over the causes of this `Fail` with itself
+    /// as the first item and the `root_cause` as the final item.
+    fn causes(&self) -> Causes where Self: Sized {
+        Causes { fail: Some(self) }
+    }
+
     /// Returns the "root cause" of this `Fail` - the last value in the
     /// cause chain which does not return an underlying `cause`.
     ///
@@ -184,8 +190,8 @@ impl Fail {
         find_root_cause(self)
     }
 
-    /// Returns a iterator over the causes of this `Fail` with it self
-    /// as the first item
+    /// Returns a iterator over the causes of this `Fail` with itself
+    /// as the first item and the `root_cause` as the final item.
     pub fn causes(&self) -> Causes {
         Causes { fail: Some(self) }
     }
