@@ -132,3 +132,11 @@ with_std! {
         }
     }
 }
+
+impl<D> From<D> for Context<D> where
+    D: Display + Send + Sync + 'static
+{
+    fn from(display: D) -> Context<D> {
+        Context::new(display)
+    }
+}
