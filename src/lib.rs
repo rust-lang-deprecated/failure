@@ -51,33 +51,9 @@ with_std! {
 
     pub use error::Error;
 
+    mod macros;
     mod error_message;
     pub use error_message::err_msg;
-
-    #[macro_export]
-    macro_rules! bail {
-        ($e:expr) => {
-            return Err($crate::err_msg($e));
-        };
-        ($fmt:expr, $($arg:tt)+) => {
-            return Err($crate::err_msg(format!($fmt, $($arg)+)));
-        };
-    }
-
-    #[macro_export]
-    macro_rules! ensure {
-        ($cond:expr, $e:expr) => {
-            if !($cond) {
-                bail!($e);
-            }
-        };
-        ($cond:expr, $fmt:expr, $($arg:tt)+) => {
-            if !($cond) {
-                bail!($fmt, $($arg)+);
-            }
-        };
-    }
-
 }
 
 
