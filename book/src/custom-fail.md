@@ -10,8 +10,8 @@ this context.
 3. Callers can destructure your error without any sort of downcasting.
 
 To implement this pattern, you should define your own type that implements
-`Fail`. You can use the [custom derive][derive-fail] provided in failure_derive
-to make this easier. For example:
+`Fail`. You can use the [custom derive][derive-fail] to make this easier. For
+example:
 
 ```rust
 #[derive(Fail, Debug)]

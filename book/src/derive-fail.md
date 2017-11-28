@@ -1,14 +1,17 @@
 # Deriving `Fail`
 
 Though you can implement `Fail` yourself, we also provide a derive macro to
-generate the impl for you. This macro is provided through the `failure_derive`
-crate.
+generate the impl for you. To get access to this macro, you must tag the extenr
+crate declaration with `#[macro_use]`, as in:
+
+```rust
+#[macro_use] extern crate failure;
+```
 
 In its smallest form, deriving Fail looks like this:
 
 ```rust
-extern crate failure;
-#[macro_use] extern crate failure_derive;
+#[macro_use] extern crate failure;
 
 use std::fmt;
 
@@ -31,8 +34,7 @@ implementing `Fail` - this is why we support deriving `Display` for you.
 You can derive an implementation of `Display` with a special attribute:
 
 ```rust
-extern crate failure;
-#[macro_use] extern crate failure_derive;
+#[macro_use] extern crate failure;
 
 #[derive(Fail, Debug)]
 #[fail(display = "An error occurred.")]
@@ -50,8 +52,7 @@ do this with failure using the same string interpolation syntax as Rust's
 formatting and printing macros:
 
 ```rust
-extern crate failure;
-#[macro_use] extern crate failure_derive;
+#[macro_use] extern crate failure;
 
 #[derive(Fail, Debug)]
 #[fail(display = "An error occurred with error code {}. ({})", code, message)]
@@ -78,8 +79,7 @@ For the time being, tuple field accesses in the display attribute need to be
 prefixed with an underscore:
 
 ```rust
-extern crate failure;
-#[macro_use] extern crate failure_derive;
+#[macro_use] extern crate failure;
 
 #[derive(Fail, Debug)]
 #[fail(display = "An error occurred with error code {}.", _0)]
@@ -98,8 +98,7 @@ each variant of the enum, rather than to the enum as a whole. The Display impl
 will match over the enum to generate the correct error message. For example:
 
 ```rust
-extern crate failure;
-#[macro_use] extern crate failure_derive;
+#[macro_use] extern crate failure;
 
 #[derive(Fail, Debug)]
 enum MyError {
@@ -118,8 +117,7 @@ The backtrace method will be automatically overridden if the type contains a
 field with the type `Backtrace`. This works for both structs and enums.
 
 ```rust
-extern crate failure;
-#[macro_use] extern crate failure_derive;
+#[macro_use] extern crate failure;
 
 use failure::Backtrace;
 
@@ -156,9 +154,7 @@ This can be used in fields of enums as well as structs.
 
 
 ```rust
-#[derive(Fail, Debug)]
-extern crate failure;
-#[macro_use] extern crate failure_derive;
+#[macro_use] extern crate failure;
 
 use std::io;
 
