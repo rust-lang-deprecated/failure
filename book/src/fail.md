@@ -15,7 +15,7 @@ been designed to support a number of operations:
 
 Every new error type in your code should implement Fail, so it can be
 integrated into the entire system built around this trait. You can manually
-implement `Fail` yourself, or you can use the [derive][derive] for Fail defined
+implement `Fail` yourself, or you can use the derive for Fail defined
 in a separate crate and documented [here][derive-docs].
 
 Implementors of this trait are called 'failures'.
@@ -136,6 +136,5 @@ The biggest hole in our backwards compatibility story is that you cannot
 implement `std::error::Error` and also override the backtrace and cause methods
 on `Fail`. We intend to enable this with specialization when it becomes stable.
 
-[derive]: https://github.com/withoutboats/failure_derive
 [derive-docs]: https://boats.gitlab.io/failure/derive-fail.html
 [stderror]: https://doc.rust-lang.org/std/error/trait.Error.html

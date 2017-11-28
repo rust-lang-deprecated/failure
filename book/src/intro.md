@@ -12,11 +12,10 @@ creating and managing errors in Rust. Additional documentation is found here:
 [derive-repo]: https://github.com/withoutboats/failure_derive
 
 ```rust
-extern crate failure;
 extern crate serde;
 extern crate toml;
 
-#[macro_use] extern crate failure_derive;
+#[macro_use] extern crate failure;
 #[macro_use] extern crate serde_derive;
 
 use std::collections::HashMap;
