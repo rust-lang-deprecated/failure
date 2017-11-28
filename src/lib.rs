@@ -30,6 +30,15 @@ pub use compat::Compat;
 pub use context::Context;
 pub use result_ext::ResultExt;
 
+#[cfg(feature = "derive")]
+#[allow(unused_imports)]
+#[macro_use]
+extern crate failure_derive;
+
+#[cfg(feature = "derive")]
+#[doc(hidden)]
+pub use failure_derive::*;
+
 with_std! {
     extern crate core;
 

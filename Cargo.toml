@@ -1,17 +1,22 @@
 [package]
 authors = ["Without Boats <boats@mozilla.com>"]
 description = "Experimental error handling abstraction."
-license = "MIT OR Apache-2.0"
-name = "failure"
-version = "0.1.0"
-repository = "https://github.com/withoutboats/failure"
 documentation = "https://docs.rs/failure"
 homepage = "https://boats.gitlab.io/failure"
+license = "MIT OR Apache-2.0"
+name = "failure"
+repository = "https://github.com/withoutboats/failure"
+version = "0.1.1"
+
+[dependencies.failure_derive]
+optional = true
+version = "0.1.1"
 
 [dependencies.backtrace]
-version = "0.3.3"
 optional = true
+version = "0.3.3"
 
 [features]
-default = ["std"]
+default = ["std", "derive"]
 std = ["backtrace"]
+derive = ["failure_derive"]
