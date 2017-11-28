@@ -1,3 +1,11 @@
+/// Exits a function early with an `Error`.
+///
+/// The `bail!` macro provides an easy way to exit a function. `bail!(X)` is
+/// equivalent to writing:
+///
+/// ```rust,ignore
+/// return Err(format_err!(X))
+/// ```
 #[macro_export]
 macro_rules! bail {
     ($e:expr) => {
@@ -8,6 +16,11 @@ macro_rules! bail {
     };
 }
 
+/// Exits a function early with an `Error` if the condition is not satisfied.
+///
+/// Similar to `assert!`, `ensure!` takes a condition and exits the function
+/// if the condition fails. Unlike `assert!`, `ensure!` returns an `Error`,
+/// it does not panic.
 #[macro_export]
 macro_rules! ensure {
     ($cond:expr, $e:expr) => {
