@@ -26,18 +26,3 @@ impl<D: Display + Debug + Sync + Send + 'static> Display for ErrorMessage<D> {
         Display::fmt(&self.msg, f)
     }
 }
-
-/// Constructs an `Error` using the standard string interpolation syntax.
-///
-/// ```rust
-/// #[macro_use] extern crate failure;
-///
-/// fn main() {
-///     let code = 101;
-///     let err = format_err!("Error code: {}", code);
-/// }
-/// ```
-#[macro_export]
-macro_rules! format_err {
-    ($($arg:tt)*) => { $crate::err_msg(format!($($arg)*)) }
-}
