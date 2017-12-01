@@ -49,7 +49,7 @@ with_std! {
 
     use std::error::Error as StdError;
 
-    pub use error::Error;
+    pub use error::{Error, Result};
 
     mod macros;
     mod error_message;
