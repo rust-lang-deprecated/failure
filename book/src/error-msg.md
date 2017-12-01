@@ -25,6 +25,30 @@ fn check_range(x: usize, range: Range<usize>) -> Result<usize, Error> {
 }
 ```
 
+There are also two macros that simplify returning early from a function with
+an error.
+
+- [`bail!`][bail-api] - a macro that returns an error.
+- [`ensure!`][ensure-api] - a macro that returns an error if given condition
+  is not satisfied.
+
+Both macros support returning an error from a displayable type or via string
+interpolation, similar to `format!` or `println!`.
+
+The example above can be re-written in a more concise way using the macros.
+
+```rust
+fn check_range(x: usize, range: Range<usize>) -> Result<usize, Error> {
+    // shorter
+    if x < range.start {
+        bail!("{} is below {}", x, range.start);
+    }
+    // even shorter
+    ensure!(x >= range.end, "{} is above {}", x, range.end);
+    Ok(x)
+}
+```
+
 If you're going to use strings as errors, we recommend [using
 `Error`][use-error] as your error type, rather than `ErrorMessage`; this way,
 if some of your strings are `String` and some are `&'static str`, you don't
@@ -57,3 +81,5 @@ to the users.
 [use-error]: ./use-error.html
 [err-msg-api]: https://boats.gitlab.io/failure/doc/failure/fn.err_msg.html
 [format-err-api]: https://boats.gitlab.io/failure/doc/failure/macro.format_err.html
+[bail-api]: https://boats.gitlab.io/failure/doc/failure/macro.bail.html
+[ensure-api]: https://boats.gitlab.io/failure/doc/failure/macro.ensure.html
