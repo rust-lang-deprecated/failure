@@ -27,7 +27,7 @@ use std::collections::HashMap;
 use std::path::PathBuf;
 use std::str::FromStr;
 
-use failure::Error;
+use failure::Fail;
 
 // This is a new error type that you've created. It represents the ways a
 // toolchain could be invalid.
