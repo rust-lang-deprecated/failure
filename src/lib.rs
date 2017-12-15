@@ -205,6 +205,16 @@ impl Fail {
 #[cfg(feature = "std")]
 impl<E: StdError + Send + Sync + 'static> Fail for E {}
 
+impl Fail for Box<Fail> {
+    fn cause(&self) -> Option<&Fail> {
+        (**self).cause()
+    }
+
+    fn backtrace(&self) -> Option<&Backtrace> {
+        (**self).backtrace()
+    }
+}
+
 /// A iterator over the causes of a `Fail`
 pub struct Causes<'f> {
     fail: Option<&'f Fail>,
