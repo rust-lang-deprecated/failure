@@ -5,3 +5,6 @@ rust:
     - beta
     - nightly
 cache: cargo
+script:
+- cargo test
+- cargo test --no-default-features
