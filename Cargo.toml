@@ -20,3 +20,8 @@ version = "0.3.3"
 default = ["std", "derive"]
 std = ["backtrace"]
 derive = ["failure_derive"]
+
+[[example]]
+name = "bail_ensure"
+path = "./examples/bail_ensure.rs"
+required-features = ["std"]
