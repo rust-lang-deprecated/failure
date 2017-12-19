@@ -205,6 +205,7 @@ impl Fail {
 #[cfg(feature = "std")]
 impl<E: StdError + Send + Sync + 'static> Fail for E {}
 
+#[cfg(feature = "std")]
 impl Fail for Box<Fail> {
     fn cause(&self) -> Option<&Fail> {
         (**self).cause()
