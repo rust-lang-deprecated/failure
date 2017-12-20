@@ -79,7 +79,7 @@ impl From<Context<MyErrorKind>> for MyError {
 ```
 
 With this code set up, you can use the context method from failure to apply
-your ErrorKind to `Result`s from in underlying libraries:
+your ErrorKind to `Result`s from underlying libraries:
 
 ```rust
 use failure::ResultExt;
