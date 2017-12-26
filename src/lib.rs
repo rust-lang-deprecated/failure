@@ -1,4 +1,5 @@
-//! An experimental new error-handling library.
+//! An experimental new error-handling library. Guide-style introduction
+//! is available [here](https://boats.gitlab.io/failure/).
 //!
 //! The primary items exported by this library are:
 //!
