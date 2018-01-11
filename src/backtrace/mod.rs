@@ -1,6 +1,6 @@
 use core::fmt::{self, Debug, Display};
 
-without_std! {
+without_backtrace! {
     /// A `Backtrace`.
     ///
     /// This is an opaque wrapper around the backtrace provided by
@@ -39,6 +39,16 @@ without_std! {
         pub fn new() -> Backtrace {
             Backtrace { _secret: () }
         }
+
+        with_backtrace! {
+            pub(crate) fn none() -> Backtrace {
+                Backtrace { _secret: () }
+            }
+
+            pub(crate) fn is_none(&self) -> bool {
+                true
+            }
+        }
     }
 
     impl Default for Backtrace {
@@ -60,7 +70,7 @@ without_std! {
     }
 }
 
-with_std! {
+with_backtrace! {
     extern crate backtrace;
 
     mod internal;

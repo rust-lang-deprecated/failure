@@ -16,6 +16,12 @@
 
 macro_rules! with_std { ($($i:item)*) => ($(#[cfg(feature = "std")]$i)*) }
 macro_rules! without_std { ($($i:item)*) => ($(#[cfg(not(feature = "std"))]$i)*) }
+macro_rules! with_backtrace {
+    ($($i:item)*) => ($(#[cfg(all(feature = "backtrace", feature = "std"))]$i)*)
+}
+macro_rules! without_backtrace {
+    ($($i:item)*) => ($(#[cfg(any(not(feature = "backtrace"), not(feature = "std")))]$i)*)
+}
 
 mod backtrace;
 mod compat;
