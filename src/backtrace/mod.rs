@@ -40,14 +40,14 @@ without_backtrace! {
             Backtrace { _secret: () }
         }
 
-        with_backtrace! {
-            pub(crate) fn none() -> Backtrace {
-                Backtrace { _secret: () }
-            }
+        #[cfg(feature = "std")]
+        pub(crate) fn none() -> Backtrace {
+            Backtrace { _secret: () }
+        }
 
-            pub(crate) fn is_none(&self) -> bool {
-                true
-            }
+        #[cfg(feature = "std")]
+        pub(crate) fn is_none(&self) -> bool {
+            true
         }
     }
 
