@@ -90,7 +90,7 @@ where
     T: Debug,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        self.inner.lock().unwrap().fmt(f)
+        (*self.inner.lock().unwrap()).fmt(f)
     }
 }
 
