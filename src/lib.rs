@@ -9,9 +9,9 @@
 //!
 //! As a general rule, library authors should create their own error types and
 //! implement `Fail` for them, whereas application authors should primarily
-//! deal with the `Error` type. There are exceptions to this rule, though, in
-//! both directions, and users should do whatever seems most appropriate to
-//! their situation.
+//! deal with the `Error` type. There are exceptions (no pun intended) to this rule,
+//! though, in both directions, and users should do whatever seems most appropriate
+//! to their situation.
 #![cfg_attr(not(feature = "std"), no_std)]
 #![deny(missing_docs)]
 
