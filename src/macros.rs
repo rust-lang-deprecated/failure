@@ -9,7 +9,7 @@
 #[macro_export]
 macro_rules! bail {
     ($e:expr) => {
-        return Err($crate::err_msg($e));
+        return Err(From::from($e));
     };
     ($fmt:expr, $($arg:tt)+) => {
         return Err($crate::err_msg(format!($fmt, $($arg)+)));
