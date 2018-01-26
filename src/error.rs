@@ -1,4 +1,5 @@
 use core::fmt::{self, Display, Debug};
+use core::result;
 
 use core::mem;
 use core::ptr;
@@ -21,6 +22,9 @@ use compat::Compat;
 pub struct Error {
     pub(crate) inner: Box<Inner<Fail>>,
 }
+
+/// Type alias for `std::result::Result<T, Error>`.
+pub type Result<T> = result::Result<T, Error>;
 
 pub(crate) struct Inner<F: ?Sized + Fail> {
     backtrace: Backtrace,
@@ -88,7 +92,7 @@ impl Error {
     /// failure is of the type `T`. For this reason it returns a `Result` - in
     /// the case that the underlying error is of a different type, the
     /// original `Error` is returned.
-    pub fn downcast<T: Fail>(self) -> Result<T, Error> {
+    pub fn downcast<T: Fail>(self) -> result::Result<T, Error> {
         let ret: Option<T> = self.downcast_ref().map(|fail| {
             unsafe {
                 // drop the backtrace
