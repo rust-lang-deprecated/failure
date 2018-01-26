@@ -17,8 +17,8 @@ optional = true
 version = "0.3.3"
 
 [features]
-default = ["std", "derive"]
-std = ["backtrace"]
+default = ["std", "derive", "backtrace"]
+std = []
 derive = ["failure_derive"]
 
 [[example]]
