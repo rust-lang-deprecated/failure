@@ -1,0 +1,24 @@
+[package]
+authors = ["Without Boats <woboats@gmail.com>"]
+description = "derives for the failure crate"
+license = "MIT OR Apache-2.0"
+name = "failure_derive"
+repository = "https://github.com/withoutboats/failure_derive"
+homepage = "https://boats.gitlab.io/failure"
+documentation = "https://boats.gitlab.io/failure"
+version = "0.1.2"
+
+[dependencies]
+quote = "0.3.15"
+syn = "0.11.11"
+synstructure = "0.6.0"
+
+[dev-dependencies.failure]
+version = "0.1.0"
+
+[lib]
+proc-macro = true
+
+[features]
+default = ["std"]
+std = []
