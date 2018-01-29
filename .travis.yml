@@ -1,3 +1,4 @@
+sudo: false
 language: rust
 rust:
     - 1.18.0
@@ -5,6 +6,4 @@ rust:
     - beta
     - nightly
 cache: cargo
-script:
-- cargo test
-- cargo test --no-default-features
+script: bash travis.sh
