@@ -19,5 +19,5 @@ version = "0.3.3"
 
 [features]
 default = ["std", "derive"]
-std = ["backtrace"]
+std = []
 derive = ["failure_derive"]

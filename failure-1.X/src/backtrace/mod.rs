@@ -1,6 +1,9 @@
 use core::fmt::{self, Debug, Display};
 
-without_std! {
+macro_rules! with_backtrace { ($($i:item)*) => ($(#[cfg(feature = "backtrace")]$i)*) }
+macro_rules! without_backtrace { ($($i:item)*) => ($(#[cfg(not(feature = "backtrace"))]$i)*) }
+
+without_backtrace! {
     /// A `Backtrace`.
     ///
     /// This is an opaque wrapper around the backtrace provided by
@@ -39,6 +42,14 @@ without_std! {
         pub fn new() -> Backtrace {
             Backtrace { _secret: () }
         }
+
+        pub(crate) fn none() -> Backtrace {
+            Backtrace { _secret: () }
+        }
+
+        pub(crate) fn is_none(&self) -> bool {
+            false
+        }
     }
 
     impl Default for Backtrace {
@@ -60,7 +71,7 @@ without_std! {
     }
 }
 
-with_std! {
+with_backtrace! {
     extern crate backtrace;
 
     mod internal;
