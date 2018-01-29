@@ -8,16 +8,23 @@ name = "failure"
 repository = "https://github.com/withoutboats/failure"
 version = "0.1.2"
 
+[dependencies.failure_compat_shim]
+version = "1.0.0"
+path = "../failure_compat_shim"
+default-features = false
+
 [dependencies.failure_derive]
 optional = true
 version = "0.1.2"
 path = "./failure_derive"
 
-[dependencies.backtrace]
-optional = true
-version = "0.3.3"
-
 [features]
 default = ["std", "derive"]
-std = ["backtrace"]
-derive = ["failure_derive"]
+backtrace = ["failure_compat_shim/backtrace"]
+std = ["backtrace", "failure_compat_shim/std"]
+derive = ["failure_derive", "failure_compat_shim/derive"]
+
+[[example]]
+name = "bail_ensure"
+path = "./examples/bail_ensure.rs"
+required-features = ["std"]

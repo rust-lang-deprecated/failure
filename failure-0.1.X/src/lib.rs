@@ -17,7 +17,7 @@
 
 macro_rules! with_std { ($($i:item)*) => ($(#[cfg(feature = "std")]$i)*) }
 
-extern crate failure;
+extern crate failure_compat_shim as failure;
 
 #[cfg(feature = "derive")]
 #[allow(unused_imports)]
