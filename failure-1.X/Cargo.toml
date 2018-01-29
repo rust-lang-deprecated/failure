@@ -6,25 +6,18 @@ homepage = "https://boats.gitlab.io/failure"
 license = "MIT OR Apache-2.0"
 name = "failure"
 repository = "https://github.com/withoutboats/failure"
-version = "0.2.0"
-
-[dependencies.failure]
-version = "0.1.2"
-path = "./failure-0.1"
-default-features = false
+version = "1.0.0"
 
 [dependencies.failure_derive]
 optional = true
-version = "0.2.0"
+version = "1.0.0"
 path = "./failure_derive"
+
+[dependencies.backtrace]
+optional = true
+version = "0.3.3"
 
 [features]
 default = ["std", "derive"]
-backtrace = ["failure/backtrace"]
-std = ["backtrace", "failure/std"]
-derive = ["failure_derive", "failure/derive"]
-
-[[example]]
-name = "bail_ensure"
-path = "./examples/bail_ensure.rs"
-required-features = ["std"]
+std = ["backtrace"]
+derive = ["failure_derive"]
