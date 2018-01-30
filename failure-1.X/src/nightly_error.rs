@@ -1,4 +1,5 @@
 use core::fmt::{self, Display, Debug};
+use std::heap::{Heap, Alloc, Layout};
 
 use core::mem;
 use core::ptr;
@@ -19,23 +20,84 @@ use compat::Compat;
 /// information, and can be downcast into the failure that underlies it for
 /// more detailed inspection.
 pub struct Error {
-    pub(crate) inner: Box<Inner<Fail>>,
+    inner: &'static mut Inner,
 }
 
-pub(crate) struct Inner<F: ?Sized + Fail> {
+// Dynamically sized inner value
+struct Inner {
     backtrace: Backtrace,
-    pub(crate) failure: F,
+    vtable: *const VTable,
+    failure: FailData,
+}
+
+unsafe impl Send for Inner { }
+unsafe impl Sync for Inner { }
+
+extern {
+    type VTable;
+    type FailData;
+}
+
+struct InnerRaw<F> {
+    header: InnerHeader,
+    failure: F,
+}
+
+struct InnerHeader {
+    backtrace: Backtrace,
+    vtable: *const VTable,
+}
+
+struct TraitObject {
+    #[allow(dead_code)]
+    data: *const FailData,
+    vtable: *const VTable,
 }
 
 impl<F: Fail> From<F> for Error {
     fn from(failure: F) -> Error {
-        let inner: Inner<F> = {
-            let backtrace = if failure.backtrace().is_none() {
-                Backtrace::new()
-            } else { Backtrace::none() };
-            Inner { failure, backtrace }
-        };
-        Error { inner: Box::new(inner) }
+        unsafe { 
+            let ptr: *mut InnerRaw<F> = match Heap.alloc(Layout::new::<InnerRaw<F>>()) {
+                Ok(p)   => p as *mut InnerRaw<F>,
+                Err(e)  => Heap.oom(e),
+            };
+
+            if failure.backtrace().is_none() {
+                (*ptr).header.backtrace = Backtrace::new();
+            } else {
+                (*ptr).header.backtrace = Backtrace::none();
+            };
+
+            let vtable: *const VTable = mem::transmute::<_, TraitObject>(&failure as &Fail).vtable;
+
+            (*ptr).header.vtable = vtable;
+
+            (*ptr).failure = failure;
+
+            let inner: &'static mut Inner = mem::transmute(ptr);
+
+            Error { inner }
+        }
+    }
+}
+
+impl Inner {
+    fn failure(&self) -> &Fail {
+        unsafe {
+            mem::transmute::<TraitObject, &Fail>(TraitObject {
+                data: &self.failure as *const FailData,
+                vtable: self.vtable,
+            })
+        }
+    }
+
+    fn failure_mut(&mut self) -> &mut Fail {
+        unsafe {
+            mem::transmute::<TraitObject, &mut Fail>(TraitObject {
+                data: &mut self.failure as *const FailData,
+                vtable: self.vtable,
+            })
+        }
     }
 }
 
@@ -44,7 +106,7 @@ impl Error {
     /// method on `Fail`, this does not return an `Option`. The `Error` type
     /// always has an underlying failure.
     pub fn cause(&self) -> &Fail {
-        &self.inner.failure
+        self.inner.failure()
     }
 
     /// Gets a reference to the `Backtrace` for this `Error`.
@@ -53,7 +115,7 @@ impl Error {
     /// be returned. Otherwise, the backtrace will have been constructed at
     /// the point that failure was cast into the `Error` type.
     pub fn backtrace(&self) -> &Backtrace {
-        self.inner.failure.backtrace().unwrap_or(&self.inner.backtrace)
+        self.inner.failure().backtrace().unwrap_or(&self.inner.backtrace)
     }
 
     /// Provides context for this `Error`.
@@ -118,7 +180,7 @@ impl Error {
     ///
     /// If the underlying error is not of type `T`, this will return `None`.
     pub fn downcast_ref<T: Fail>(&self) -> Option<&T> {
-        self.inner.failure.downcast_ref()
+        self.inner.failure().downcast_ref()
     }
 
     /// Attempts to downcast this `Error` to a particular `Fail` type by
@@ -126,7 +188,7 @@ impl Error {
     ///
     /// If the underlying error is not of type `T`, this will return `None`.
     pub fn downcast_mut<T: Fail>(&mut self) -> Option<&mut T> {
-        self.inner.failure.downcast_mut()
+        self.inner.failure_mut().downcast_mut()
     }
 
     /// Returns a iterator over the causes of the `Error`, beginning with
@@ -139,26 +201,59 @@ impl Error {
 
 impl Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        Display::fmt(&self.inner.failure, f)
+        Display::fmt(self.inner.failure(), f)
     }
 }
 
 impl Debug for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         if self.inner.backtrace.is_none() {
-            Debug::fmt(&self.inner.failure, f)
+            Debug::fmt(self.inner.failure(), f)
         } else {
-            write!(f, "{:?}\n\n{:?}", &self.inner.failure, self.inner.backtrace)
+            write!(f, "{:?}\n\n{:?}", self.inner.failure(), self.inner.backtrace)
+        }
+    }
+}
+
+impl Drop for Error {
+    fn drop(&mut self) {
+        unsafe {
+            let layout = {
+                let header = Layout::new::<InnerHeader>();
+                header.extend(Layout::for_value(self.inner.failure())).unwrap().0
+            };
+            Heap.dealloc(self.inner as *const _ as *const u8 as *mut u8, layout);
         }
     }
 }
 
 #[cfg(test)]
 mod test {
-    fn assert_just_data<T: Send + Sync + 'static>() { }
+    use std::mem::size_of;
+    use std::io;
+
+    use super::Error;
 
     #[test]
     fn assert_error_is_just_data() {
-        assert_just_data::<super::Error>();
+        fn assert_just_data<T: Send + Sync + 'static>() { }
+        assert_just_data::<Error>();
+    }
+
+    #[test]
+    fn assert_is_one_word() {
+        assert_eq!(size_of::<Error>(), size_of::<usize>());
+    }
+
+    #[test]
+    fn methods_seem_to_work() {
+        let io_error: io::Error = io::Error::new(io::ErrorKind::NotFound, "test");
+        let error: Error = io::Error::new(io::ErrorKind::NotFound, "test").into();
+        assert!(error.downcast_ref::<io::Error>().is_some());
+        let _: ::Backtrace = *error.backtrace();
+        assert_eq!(format!("{:?}", io_error), format!("{:?}", error));
+        assert_eq!(format!("{}", io_error), format!("{}", error));
+        drop(error);
+        assert!(true);
     }
 }
