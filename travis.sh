@@ -13,6 +13,7 @@ run_tests_in() {
 test_nightly_features_in() {
   cd $1
   cargo test --features small-error
+  cargo test --features small-error backtrace
   cd $DIR
 }
 

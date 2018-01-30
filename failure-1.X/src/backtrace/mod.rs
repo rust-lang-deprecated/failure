@@ -50,7 +50,7 @@ without_backtrace! {
 
         #[cfg(feature = "std")]
         pub(crate) fn is_none(&self) -> bool {
-            false
+            true
         }
     }
 
