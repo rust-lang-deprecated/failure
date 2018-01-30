@@ -19,6 +19,6 @@ version = "0.3.3"
 
 [features]
 default = ["std", "derive"]
-nightly = []
+small-error = ["std"]
 std = []
 derive = ["failure_derive"]
