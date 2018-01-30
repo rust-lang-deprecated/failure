@@ -2,18 +2,22 @@
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+cargo_test() {
+   cargo test "$@" || { exit 101; }
+}
+
 run_tests_in() {
   cd $1
-  cargo test
-  cargo test --no-default-features
-  cargo test --features backtrace
+  cargo_test
+  cargo_test --no-default-features
+  cargo_test --features backtrace
   cd $DIR
 }
 
 test_nightly_features_in() {
   cd $1
-  cargo test --features small-error
-  cargo test --features small-error backtrace
+  cargo_test --features small-error
+  cargo_test --all-features
   cd $DIR
 }
 
