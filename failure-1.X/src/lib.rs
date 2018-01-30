@@ -14,7 +14,7 @@
 //! their situation.
 #![cfg_attr(not(feature = "std"), no_std)]
 #![deny(missing_docs)]
-#![feature(extern_types, allocator_api)]
+#![cfg_attr(feature = "nightly", feature(extern_types, allocator_api))]
 
 macro_rules! with_std { ($($i:item)*) => ($(#[cfg(feature = "std")]$i)*) }
 macro_rules! without_std { ($($i:item)*) => ($(#[cfg(not(feature = "std"))]$i)*) }
@@ -47,6 +47,7 @@ with_std! {
     mod sync_failure;
     pub use sync_failure::SyncFailure;
 
+    #[cfg_attr(feature = "nightly", path = "./nightly_error.rs")]
     mod error;
 
     use std::error::Error as StdError;
