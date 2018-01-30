@@ -1,7 +1,7 @@
 use core::fmt::{self, Debug, Display};
 
-macro_rules! with_backtrace { ($($i:item)*) => ($(#[cfg(feature = "backtrace")]$i)*) }
-macro_rules! without_backtrace { ($($i:item)*) => ($(#[cfg(not(feature = "backtrace"))]$i)*) }
+macro_rules! with_backtrace { ($($i:item)*) => ($(#[cfg(all(feature = "backtrace", feature = "std"))]$i)*) }
+macro_rules! without_backtrace { ($($i:item)*) => ($(#[cfg(not(all(feature = "backtrace", feature = "std")))]$i)*) }
 
 without_backtrace! {
     /// A `Backtrace`.
@@ -43,10 +43,12 @@ without_backtrace! {
             Backtrace { _secret: () }
         }
 
+        #[cfg(feature = "std")]
         pub(crate) fn none() -> Backtrace {
             Backtrace { _secret: () }
         }
 
+        #[cfg(feature = "std")]
         pub(crate) fn is_none(&self) -> bool {
             false
         }
