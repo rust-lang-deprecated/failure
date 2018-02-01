@@ -4,8 +4,6 @@ extern crate syn;
 #[macro_use] extern crate synstructure;
 #[macro_use] extern crate quote;
 
-use std::io::{self, Write};
-
 decl_derive!([Fail, attributes(fail, cause)] => fail_derive);
 
 fn fail_derive(s: synstructure::Structure) -> quote::Tokens {
@@ -72,14 +70,6 @@ fn is_backtrace(bi: &&synstructure::BindingInfo) -> bool {
 fn is_cause(bi: &&synstructure::BindingInfo) -> bool {
     let mut found_cause = false;
     for attr in &bi.ast().attrs {
-        if attr.name() == "cause" {
-            if found_cause { panic!("Cannot have two `cause` attributes"); }
-            writeln!(
-                io::stderr(),
-                "WARNING: failure's `#[cause]` attribute is deprecated. Use `#[fail(cause)]` instead."
-            ).unwrap();
-            found_cause = true;
-        }
         if attr.name() == "fail" {
             if let syn::MetaItem::List(_, ref list) = attr.value {
                 if let Some(&syn::NestedMetaItem::MetaItem(syn::MetaItem::Word(ref word))) = list.get(0) {
