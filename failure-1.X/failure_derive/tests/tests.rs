@@ -1,8 +1,9 @@
 extern crate failure;
 #[macro_use] extern crate failure_derive;
+#[macro_use] extern crate display_derive;
 
-#[derive(Fail, Debug)]
-#[fail(display = "An error has occurred.")]
+#[derive(Fail, Debug, Display)]
+#[display(fmt = "An error has occurred.")]
 struct UnitError;
 
 #[test]
@@ -11,8 +12,8 @@ fn unit_struct() {
     assert_eq!(&s[..], "An error has occurred.");
 }
 
-#[derive(Fail, Debug)]
-#[fail(display = "Error code: {}", code)]
+#[derive(Fail, Debug, Display)]
+#[display(fmt = "Error code: {}", code)]
 struct RecordError {
     code: u32,
 }
@@ -23,8 +24,8 @@ fn record_struct() {
     assert_eq!(&s[..], "Error code: 0");
 }
 
-#[derive(Fail, Debug)]
-#[fail(display = "Error code: {}", _0)]
+#[derive(Fail, Debug, Display)]
+#[display(fmt = "Error code: {}", _0)]
 struct TupleError(i32);
 
 #[test]
@@ -33,15 +34,15 @@ fn tuple_struct() {
     assert_eq!(&s[..], "Error code: 2");
 }
 
-#[derive(Fail, Debug)]
+#[derive(Fail, Debug, Display)]
 enum EnumError {
-    #[fail(display = "Error code: {}", code)]
+    #[display(fmt = "Error code: {}", code)]
     StructVariant {
         code: i32,
     },
-    #[fail(display = "Error: {}", _0)]
+    #[display(fmt = "Error: {}", _0)]
     TupleVariant(&'static str),
-    #[fail(display = "An error has occurred.")]
+    #[display(fmt = "An error has occurred.")]
     UnitVariant,
 }
 

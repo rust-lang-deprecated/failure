@@ -6,8 +6,8 @@
 /// ```
 /// #[macro_use] extern crate failure;
 ///
-/// #[derive(Fail, Debug)]
-/// #[fail(display = "An error occurred.")]
+/// #[derive(Fail, Debug, Display)]
+/// #[display(fmt = "An error occurred.")]
 /// struct CustomFailure;
 /// 
 /// fn example(success: bool) -> Result<(), failure::Error> {
