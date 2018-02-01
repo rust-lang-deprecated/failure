@@ -6,11 +6,18 @@ cargo_test() {
    cargo test "$@" || { exit 101; }
 }
 
-run_tests_in() {
+test_failure_in() {
   cd $1
   cargo_test
   cargo_test --no-default-features
   cargo_test --features backtrace
+  test_derive_in "$1/failure_derive"
+  cd $DIR
+}
+
+test_derive_in() {
+  cd $1
+  cargo_test
   cd $DIR
 }
 
@@ -22,8 +29,8 @@ test_nightly_features_in() {
 }
 
 main() {
-  run_tests_in "$DIR/failure-1.X"
-  run_tests_in "$DIR/failure-0.1.X"
+  test_failure_in "$DIR/failure-1.X"
+  test_failure_in "$DIR/failure-0.1.X"
   if [ "${TRAVIS_RUST_VERSION}" = "nightly" ]; then
     test_nightly_features_in "$DIR/failure-1.X"
   fi
