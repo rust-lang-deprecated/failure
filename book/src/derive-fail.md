@@ -1,7 +1,7 @@
 # Deriving `Fail`
 
 Though you can implement `Fail` yourself, we also provide a derive macro to
-generate the impl for you. To get access to this macro, you must tag the extenr
+generate the impl for you. To get access to this macro, you must tag the extern
 crate declaration with `#[macro_use]`, as in:
 
 ```rust
