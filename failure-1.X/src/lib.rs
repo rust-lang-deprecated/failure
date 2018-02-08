@@ -12,6 +12,14 @@
 //! deal with the `Error` type. There are exceptions to this rule, though, in
 //! both directions, and users should do whatever seems most appropriate to
 //! their situation.
+//!
+//! ## Backtraces
+//!
+//! Backtraces are disabled by default. To turn backtraces on, enable
+//! the `backtrace` Cargo feature and set the `RUST_BACKTRACE` environment
+//! variable to a non-zero value (this also enables backtraces for panics).
+//! Use the `RUST_FAILURE_BACKTRACE` variable to enable or disable backtraces
+//! for `failure` specifically.
 #![cfg_attr(not(feature = "std"), no_std)]
 #![deny(missing_docs)]
 #![cfg_attr(feature = "small-error", feature(extern_types, allocator_api))]
