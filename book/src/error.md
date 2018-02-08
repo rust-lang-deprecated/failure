@@ -63,8 +63,8 @@ match error.downcast::<io::Error>() {
 
 ## Implementation details
 
-`Error` is essentially a trait object, but with some fanciness to store the
-backtrace it may generate if the underlying failure did not have one. In
+`Error` is essentially a trait object, but with some fanciness it may generate
+and store the backtrace if the underlying failure did not have one. In
 particular, we use a custom dynamically sized type to store the backtrace
 information inline with the trait object data.
 
