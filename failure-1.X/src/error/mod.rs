@@ -1,12 +1,14 @@
 use core::fmt::{self, Display, Debug};
 
-use core::mem;
-use core::ptr;
-
 use {Causes, Fail};
 use backtrace::Backtrace;
 use context::Context;
 use compat::Compat;
+
+#[cfg_attr(feature = "small-error", path = "./error_impl_small.rs")]
+mod error_impl;
+use self::error_impl::ErrorImpl;
+
 
 /// The `Error` type, which can contain any failure.
 ///
@@ -19,23 +21,14 @@ use compat::Compat;
 /// information, and can be downcast into the failure that underlies it for
 /// more detailed inspection.
 pub struct Error {
-    pub(crate) inner: Box<Inner<Fail>>,
-}
-
-pub(crate) struct Inner<F: ?Sized + Fail> {
-    backtrace: Backtrace,
-    pub(crate) failure: F,
+    imp: ErrorImpl,
 }
 
 impl<F: Fail> From<F> for Error {
     fn from(failure: F) -> Error {
-        let inner: Inner<F> = {
-            let backtrace = if failure.backtrace().is_none() {
-                Backtrace::new()
-            } else { Backtrace::none() };
-            Inner { failure, backtrace }
-        };
-        Error { inner: Box::new(inner) }
+        Error {
+            imp: ErrorImpl::from(failure)
+        }
     }
 }
 
@@ -44,7 +37,7 @@ impl Error {
     /// method on `Fail`, this does not return an `Option`. The `Error` type
     /// always has an underlying failure.
     pub fn cause(&self) -> &Fail {
-        &self.inner.failure
+        self.imp.failure()
     }
 
     /// Gets a reference to the `Backtrace` for this `Error`.
@@ -53,7 +46,7 @@ impl Error {
     /// be returned. Otherwise, the backtrace will have been constructed at
     /// the point that failure was cast into the `Error` type.
     pub fn backtrace(&self) -> &Backtrace {
-        self.inner.failure.backtrace().unwrap_or(&self.inner.backtrace)
+        self.imp.failure().backtrace().unwrap_or(&self.imp.backtrace())
     }
 
     /// Provides context for this `Error`.
@@ -89,24 +82,8 @@ impl Error {
     /// the case that the underlying error is of a different type, the
     /// original `Error` is returned.
     pub fn downcast<T: Fail>(self) -> Result<T, Error> {
-        let ret: Option<T> = self.downcast_ref().map(|fail| {
-            unsafe {
-                // drop the backtrace
-                let _ = ptr::read(&self.inner.backtrace as *const Backtrace);
-                // read out the fail type
-                ptr::read(fail as *const T)
-            }
-        });
-        match ret {
-            Some(ret) => {
-                // forget self (backtrace is dropped, failure is moved
-                mem::forget(self);
-                Ok(ret)
-            }
-            _ => Err(self)
-        }
+        self.imp.downcast().map_err(|imp| Error { imp })
     }
-
     /// Returns the "root cause" of this error - the last value in the
     /// cause chain which does not return an underlying `cause`.
     pub fn root_cause(&self) -> &Fail {
@@ -118,7 +95,7 @@ impl Error {
     ///
     /// If the underlying error is not of type `T`, this will return `None`.
     pub fn downcast_ref<T: Fail>(&self) -> Option<&T> {
-        self.inner.failure.downcast_ref()
+        self.imp.failure().downcast_ref()
     }
 
     /// Attempts to downcast this `Error` to a particular `Fail` type by
@@ -126,7 +103,7 @@ impl Error {
     ///
     /// If the underlying error is not of type `T`, this will return `None`.
     pub fn downcast_mut<T: Fail>(&mut self) -> Option<&mut T> {
-        self.inner.failure.downcast_mut()
+        self.imp.failure_mut().downcast_mut()
     }
 
     /// Returns a iterator over the causes of the `Error`, beginning with
@@ -139,26 +116,42 @@ impl Error {
 
 impl Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        Display::fmt(&self.inner.failure, f)
+        Display::fmt(&self.imp.failure(), f)
     }
 }
 
 impl Debug for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        if self.inner.backtrace.is_none() {
-            Debug::fmt(&self.inner.failure, f)
+        let backtrace = self.imp.backtrace();
+        if backtrace.is_none() {
+            Debug::fmt(&self.imp.failure(), f)
         } else {
-            write!(f, "{:?}\n\n{:?}", &self.inner.failure, self.inner.backtrace)
+            write!(f, "{:?}\n\n{:?}", &self.imp.failure(), backtrace)
         }
     }
 }
 
 #[cfg(test)]
 mod test {
+    use std::io;
+    use super::Error;
+
     fn assert_just_data<T: Send + Sync + 'static>() { }
 
     #[test]
     fn assert_error_is_just_data() {
-        assert_just_data::<super::Error>();
+        assert_just_data::<Error>();
+    }
+
+    #[test]
+    fn methods_seem_to_work() {
+        let io_error: io::Error = io::Error::new(io::ErrorKind::NotFound, "test");
+        let error: Error = io::Error::new(io::ErrorKind::NotFound, "test").into();
+        assert!(error.downcast_ref::<io::Error>().is_some());
+        let _: ::Backtrace = *error.backtrace();
+        assert_eq!(format!("{:?}", io_error), format!("{:?}", error));
+        assert_eq!(format!("{}", io_error), format!("{}", error));
+        drop(error);
+        assert!(true);
     }
 }
