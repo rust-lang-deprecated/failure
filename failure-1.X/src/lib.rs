@@ -56,6 +56,8 @@ with_std! {
     mod sync_failure;
     pub use sync_failure::SyncFailure;
 
+    mod box_std;
+
     #[cfg_attr(feature = "small-error", path = "./small_error.rs")]
     mod error;
 

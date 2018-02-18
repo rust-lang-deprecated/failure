@@ -2,11 +2,13 @@ use core::fmt::{self, Display, Debug};
 
 use core::mem;
 use core::ptr;
+use std::error::Error as StdError;
 
 use {Causes, Fail};
 use backtrace::Backtrace;
 use context::Context;
 use compat::Compat;
+use box_std::BoxStd;
 
 /// The `Error` type, which can contain any failure.
 ///
@@ -40,6 +42,30 @@ impl<F: Fail> From<F> for Error {
 }
 
 impl Error {
+    /// Creates an `Error` from `Box<std::error::Error>`.
+    ///
+    /// This method is useful for comparability with code,
+    /// which does not use the `Fail` trait.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use std::error::Error as StdError;
+    /// use failure::Error;
+    ///
+    /// fn app_fn() -> Result<i32, Error> {
+    ///     let x = library_fn().map_err(Error::from_compat)?;
+    ///     Ok(x * 2)
+    /// }
+    ///
+    /// fn library_fn() -> Result<i32, Box<StdError + Sync + Send + 'static>> {
+    ///     Ok(92)
+    /// }
+    /// ```
+    pub fn from_compat(err: Box<StdError + Sync + Send + 'static>) -> Error {
+        Error::from(BoxStd(err))
+    }
+
     /// Returns a reference to the underlying cause of this `Error`. Unlike the
     /// method on `Fail`, this does not return an `Option`. The `Error` type
     /// always has an underlying failure.
