@@ -3,7 +3,7 @@ use core::fmt::{self, Display, Debug};
 use core::mem;
 use core::ptr;
 
-use {Causes, Fail};
+use {Causes, Fail, PrettyFail};
 use backtrace::Backtrace;
 use context::Context;
 use compat::Compat;
@@ -135,6 +135,10 @@ impl Error {
     pub fn causes(&self) -> Causes {
         Causes { fail: Some(self.cause()) }
     }
+
+    /// Returns an implementer of `Display` that displays the `Error` and all
+    /// its causes delimited by the string ": ".
+    pub fn pretty(&self) -> PrettyFail { PrettyFail(self.cause()) }
 }
 
 impl Display for Error {
