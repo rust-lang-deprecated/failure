@@ -56,23 +56,28 @@ struct TraitObject {
 
 impl<F: Fail> From<F> for Error {
     fn from(failure: F) -> Error {
-        unsafe { 
+        let backtrace = if failure.backtrace().is_none() {
+            Backtrace::new()
+        } else {
+            Backtrace::none()
+        };
+
+        unsafe {
+            let vtable = mem::transmute::<_, TraitObject>(&failure as &Fail).vtable;
+
             let ptr: *mut InnerRaw<F> = match Heap.alloc(Layout::new::<InnerRaw<F>>()) {
                 Ok(p)   => p as *mut InnerRaw<F>,
                 Err(e)  => Heap.oom(e),
             };
 
-            if failure.backtrace().is_none() {
-                (*ptr).header.backtrace = Backtrace::new();
-            } else {
-                (*ptr).header.backtrace = Backtrace::none();
-            };
-
-            let vtable: *const VTable = mem::transmute::<_, TraitObject>(&failure as &Fail).vtable;
-
-            (*ptr).header.vtable = vtable;
-
-            (*ptr).failure = failure;
+            // N.B. must use `ptr::write`, not `=`, to avoid dropping the contents of `*ptr`
+            ptr::write(ptr, InnerRaw {
+                header: InnerHeader {
+                    backtrace,
+                    vtable,
+                },
+                failure,
+            });
 
             let inner: &'static mut Inner = mem::transmute(ptr);
 
