@@ -2,6 +2,7 @@
 
 - [failure](./intro.md)
 - [How to use failure](./howto.md)
+	- [bail! and ensure!](./bail-and-ensure.md)
     - [The Fail trait](./fail.md)
     - [Deriving Fail](./derive-fail.md)
     - [The Error type](./error.md)
