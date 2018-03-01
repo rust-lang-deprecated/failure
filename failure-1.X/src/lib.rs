@@ -25,7 +25,7 @@ mod context;
 mod result_ext;
 
 use core::any::TypeId;
-use core::fmt::{Debug, Display};
+use core::fmt::{self, Debug, Display};
 
 pub use backtrace::Backtrace;
 pub use compat::Compat;
@@ -167,6 +167,10 @@ pub trait Fail: Display + Debug + Send + Sync + 'static {
         find_root_cause(self)
     }
 
+    /// Returns an implementer of `Display` that displays this `Fail` and all
+    /// its causes delimited by the string ": ".
+    fn pretty(&self) -> PrettyFail where Self: Sized { PrettyFail(self) }
+
     #[doc(hidden)]
     fn __private_get_type_id__(&self) -> TypeId {
         TypeId::of::<Self>()
@@ -212,6 +216,10 @@ impl Fail {
     pub fn causes(&self) -> Causes {
         Causes { fail: Some(self) }
     }
+
+    /// Returns an implementer of `Display` that displays this `Fail` and all
+    /// its causes delimited by the string ": ".
+    pub fn pretty(&self) -> PrettyFail { PrettyFail(self) }
 }
 
 #[cfg(feature = "std")]
@@ -249,4 +257,21 @@ fn find_root_cause(mut fail: &Fail) -> &Fail {
     }
 
     fail
+}
+
+/// A short-lived wrapper for some `Fail` type that displays it and all its
+/// causes delimited by the string ": ".
+pub struct PrettyFail<'a>(&'a Fail);
+
+impl<'a> Display for PrettyFail<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        Display::fmt(&self.0, f)?;
+        let mut x: &Fail = self.0;
+        while let Some(cause) = x.cause() {
+            f.write_str(": ")?;
+            Display::fmt(&cause, f)?;
+            x = cause;
+        }
+        Ok(())
+    }
 }
