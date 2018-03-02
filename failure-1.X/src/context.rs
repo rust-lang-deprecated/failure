@@ -82,7 +82,7 @@ with_std! {
 
     impl<D: Display + Send + Sync + 'static> Fail for Context<D> {
         fn cause(&self) -> Option<&Fail> {
-            self.failure.cause()
+            self.failure.as_cause()
         }
 
         fn backtrace(&self) -> Option<&Backtrace> {
@@ -115,10 +115,10 @@ with_std! {
             }
         }
 
-        fn cause(&self) -> Option<&Fail> {
+        fn as_cause(&self) -> Option<&Fail> {
             match *self {
                 Either::This(_)         => None,
-                Either::That(ref error) => Some(error.cause())
+                Either::That(ref error) => Some(error.as_fail())
             }
         }
     }
