@@ -1,6 +1,6 @@
 extern crate proc_macro;
-extern crate syn;
 
+#[macro_use] extern crate syn;
 #[macro_use] extern crate synstructure;
 #[macro_use] extern crate quote;
 
@@ -24,7 +24,7 @@ fn fail_derive(s: synstructure::Structure) -> quote::Tokens {
     });
 
     #[cfg(feature = "std")]
-    let fail = s.bound_impl("::failure::Fail", quote! {
+    let fail = s.bound_impl(quote!(::failure::Fail), quote! {
         #[allow(unreachable_code)]
         fn cause(&self) -> ::std::option::Option<&::failure::Fail> {
             match *self { #cause_body }
@@ -39,7 +39,7 @@ fn fail_derive(s: synstructure::Structure) -> quote::Tokens {
     });
 
     #[cfg(not(feature = "std"))]
-    let fail = s.bound_impl("::failure::Fail", quote! {
+    let fail = s.bound_impl(quote!(::failure::Fail), quote! {
         #[allow(unreachable_code)]
         fn cause(&self) -> ::core::option::Option<&::failure::Fail> {
             match *self { #cause_body }
@@ -60,8 +60,8 @@ fn fail_derive(s: synstructure::Structure) -> quote::Tokens {
 
 fn is_backtrace(bi: &&synstructure::BindingInfo) -> bool {
         match bi.ast().ty {
-            syn::Ty::Path(None, syn::Path { segments: ref path, .. }) => {
-                path.last().map_or(false, |s| s.ident == "Backtrace" && s.parameters.is_empty())
+            syn::Type::Path(syn::TypePath { qself: None, path: syn::Path { ref segments, .. } }) => {
+                segments.last().map_or(false, |p| p.value().ident == "Backtrace" && p.value().arguments.is_empty())
             }
             _ => false
         }
@@ -70,12 +70,14 @@ fn is_backtrace(bi: &&synstructure::BindingInfo) -> bool {
 fn is_cause(bi: &&synstructure::BindingInfo) -> bool {
     let mut found_cause = false;
     for attr in &bi.ast().attrs {
-        if attr.name() == "fail" {
-            if let syn::MetaItem::List(_, ref list) = attr.value {
-                if let Some(&syn::NestedMetaItem::MetaItem(syn::MetaItem::Word(ref word))) = list.get(0) {
-                    if word == "cause" {
-                        if found_cause { panic!("Cannot have two `cause` attributes"); }
-                        found_cause = true;
+        if attr.path == parse_quote!(fail) {
+            if let Some(syn::Meta::List(ref list)) = attr.interpret_meta() {
+                if let Some(pair) = list.nested.first() {
+                    if let &syn::NestedMeta::Meta(syn::Meta::Word(ref word)) = pair.into_value() {
+                        if word == "cause" {
+                            if found_cause { panic!("Cannot have two `cause` attributes"); }
+                            found_cause = true;
+                        }
                     }
                 }
             }
