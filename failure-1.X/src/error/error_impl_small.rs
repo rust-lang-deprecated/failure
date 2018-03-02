@@ -25,11 +25,13 @@ extern {
     type FailData;
 }
 
+#[allow(dead_code)]
 struct InnerRaw<F> {
     header: InnerHeader,
     failure: F,
 }
 
+#[allow(dead_code)]
 struct InnerHeader {
     backtrace: Backtrace,
     vtable: *const VTable,
