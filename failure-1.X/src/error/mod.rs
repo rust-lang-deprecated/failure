@@ -33,11 +33,21 @@ impl<F: Fail> From<F> for Error {
 }
 
 impl Error {
+    /// Return a reference to the underlying failure that this `Error`
+    /// contains.
+    pub fn as_fail(&self) -> &Fail {
+        self.imp.failure()
+    }
+
     /// Returns a reference to the underlying cause of this `Error`. Unlike the
     /// method on `Fail`, this does not return an `Option`. The `Error` type
     /// always has an underlying failure.
+    ///
+    /// This method has been deprecated in favor of the [Error::as_fail] method,
+    /// which does the same thing.
+    #[deprecated(since = "1.0.0", note = "please use 'as_fail()' method instead")]
     pub fn cause(&self) -> &Fail {
-        self.imp.failure()
+        self.as_fail()
     }
 
     /// Gets a reference to the `Backtrace` for this `Error`.
@@ -87,7 +97,7 @@ impl Error {
     /// Returns the "root cause" of this error - the last value in the
     /// cause chain which does not return an underlying `cause`.
     pub fn root_cause(&self) -> &Fail {
-        ::find_root_cause(self.cause())
+        ::find_root_cause(self.as_fail())
     }
 
     /// Attempts to downcast this `Error` to a particular `Fail` type by
@@ -110,7 +120,7 @@ impl Error {
     /// the failure returned by the `cause` method and ending with the failure
     /// returned by `root_cause`.
     pub fn causes(&self) -> Causes {
-        Causes { fail: Some(self.cause()) }
+        Causes { fail: Some(self.as_fail()) }
     }
 }
 
@@ -128,6 +138,12 @@ impl Debug for Error {
         } else {
             write!(f, "{:?}\n\n{:?}", &self.imp.failure(), backtrace)
         }
+    }
+}
+
+impl AsRef<Fail> for Error {
+    fn as_ref(&self) -> &Fail {
+        self.as_fail()
     }
 }
 
