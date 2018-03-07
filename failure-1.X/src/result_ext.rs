@@ -14,12 +14,8 @@ pub trait ResultExt<T, E> {
     /// #    tests::run_test();
     /// # }
     /// #
-    /// # #[cfg(not(all(feature = "std", feature = "derive")))] mod tests {
-    /// # pub fn run_test() {
-    /// #
-    /// # }
-    /// # }
-    ///   
+    /// # #[cfg(not(all(feature = "std", feature = "derive")))] mod tests { pub fn run_test() { } }
+    /// #  
     /// # #[cfg(all(feature = "std", feature = "derive"))] mod tests {
     /// use std::error::Error;
     /// # use std::fmt;
@@ -69,22 +65,24 @@ pub trait ResultExt<T, E> {
     /// # Examples
     ///
     /// ```
+    /// # #[cfg(all(feature = "std", feature = "derive"))]
+    /// # #[macro_use] extern crate failure;
+    /// #
+    /// # #[cfg(all(feature = "std", feature = "derive"))]
+    /// # #[macro_use] extern crate failure_derive;
+    /// #
+    /// # #[cfg(all(feature = "std", feature = "derive"))]
+    /// # #[macro_use] extern crate display_derive;
+    /// #
     /// # fn main() {
     /// #    tests::run_test();
     /// # }
     /// #
-    /// # #[cfg(not(all(feature = "std", feature = "derive")))] mod tests {
-    /// # pub fn run_test() {
-    /// #
-    /// # }
-    /// # }
-    ///  
+    /// # #[cfg(not(all(feature = "std", feature = "derive")))] mod tests { pub fn run_test() { } }
+    /// # 
     /// # #[cfg(all(feature = "std", feature = "derive"))] mod tests {
-    /// # extern crate failure;
-    /// # #[macro_use] extern crate failure_derive;
-    /// # #[macro_use] extern crate display_derive;
     /// #
-    /// # use tests::failure::ResultExt;
+    /// # use failure::{self, ResultExt};
     /// #
     /// #[derive(Fail, Debug, Display)]
     /// #[display(fmt = "")]
@@ -112,22 +110,24 @@ pub trait ResultExt<T, E> {
     /// # Examples
     /// 
     /// ```
+    /// # #[cfg(all(feature = "std", feature = "derive"))]
+    /// # #[macro_use] extern crate failure;
+    /// #
+    /// # #[cfg(all(feature = "std", feature = "derive"))]
+    /// # #[macro_use] extern crate failure_derive;
+    /// #
+    /// # #[cfg(all(feature = "std", feature = "derive"))]
+    /// # #[macro_use] extern crate display_derive;
+    /// #
     /// # fn main() {
     /// #    tests::run_test();
     /// # }
     /// #
-    /// # #[cfg(not(all(feature = "std", feature = "derive")))] mod tests {
-    /// # pub fn run_test() {
-    /// #
-    /// # }
-    /// # }
-    ///  
+    /// # #[cfg(not(all(feature = "std", feature = "derive")))] mod tests { pub fn run_test() { } }
+    /// # 
     /// # #[cfg(all(feature = "std", feature = "derive"))] mod tests {
-    /// # #[macro_use] extern crate failure;
-    /// # #[macro_use] extern crate failure_derive;
-    /// # #[macro_use] extern crate display_derive;
     /// #
-    /// # use tests::failure::ResultExt;
+    /// # use failure::{self, ResultExt};
     /// #
     /// #[derive(Fail, Debug, Display)]
     /// #[display(fmt = "My custom error message")]
