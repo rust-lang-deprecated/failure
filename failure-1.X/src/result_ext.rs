@@ -10,12 +10,23 @@ pub trait ResultExt<T, E> {
     /// # Examples
     ///
     /// ```
+    /// # fn main() {
+    /// #    tests::run_test();
+    /// # }
+    /// #
+    /// # #[cfg(not(all(feature = "std", feature = "derive")))] mod tests {
+    /// # pub fn run_test() {
+    /// #
+    /// # }
+    /// # }
+    ///   
+    /// # #[cfg(all(feature = "std", feature = "derive"))] mod tests {
     /// use std::error::Error;
     /// # use std::fmt;
     /// # 
     /// # extern crate failure;
     /// # 
-    /// # use failure::ResultExt;
+    /// # use tests::failure::ResultExt;
     /// # 
     /// # #[derive(Debug)]
     /// struct CustomError;
@@ -35,8 +46,8 @@ pub trait ResultExt<T, E> {
     /// #         write!(f, "{}", self.description())
     /// #     }
     /// # }
-    /// # 
-    /// # fn main() {
+    /// #
+    /// # pub fn run_test() {
     /// 
     /// let x = (|| -> Result<(), failure::Error> {
     ///     Err(CustomError).compat()?
@@ -49,6 +60,7 @@ pub trait ResultExt<T, E> {
     /// assert_eq!(x, "An error occured: My custom error message");
     /// # }
     ///
+    /// # }
     /// ```
     fn compat(self) -> Result<T, Compat<E>>;
 
@@ -57,17 +69,28 @@ pub trait ResultExt<T, E> {
     /// # Examples
     ///
     /// ```
+    /// # fn main() {
+    /// #    tests::run_test();
+    /// # }
+    /// #
+    /// # #[cfg(not(all(feature = "std", feature = "derive")))] mod tests {
+    /// # pub fn run_test() {
+    /// #
+    /// # }
+    /// # }
+    ///  
+    /// # #[cfg(all(feature = "std", feature = "derive"))] mod tests {
     /// # extern crate failure;
     /// # #[macro_use] extern crate failure_derive;
     /// # #[macro_use] extern crate display_derive;
     /// #
-    /// # use failure::ResultExt;
+    /// # use tests::failure::ResultExt;
     /// #
     /// #[derive(Fail, Debug, Display)]
     /// #[display(fmt = "")]
     /// struct CustomError;
     /// # 
-    /// # fn main() {
+    /// # pub fn run_test() {
     ///  
     /// let x = (|| -> Result<(), failure::Error> {
     ///     Err(CustomError)?
@@ -78,6 +101,7 @@ pub trait ResultExt<T, E> {
     /// assert_eq!(x, "An error occured");
     /// # }
     ///
+    /// # }
     /// ```
     fn context<D>(self, context: D) -> Result<T, Context<D>> where
         D: Display + Send + Sync + 'static;
@@ -88,17 +112,28 @@ pub trait ResultExt<T, E> {
     /// # Examples
     /// 
     /// ```
-    /// # extern crate failure;
+    /// # fn main() {
+    /// #    tests::run_test();
+    /// # }
+    /// #
+    /// # #[cfg(not(all(feature = "std", feature = "derive")))] mod tests {
+    /// # pub fn run_test() {
+    /// #
+    /// # }
+    /// # }
+    ///  
+    /// # #[cfg(all(feature = "std", feature = "derive"))] mod tests {
+    /// # #[macro_use] extern crate failure;
     /// # #[macro_use] extern crate failure_derive;
     /// # #[macro_use] extern crate display_derive;
     /// #
-    /// # use failure::ResultExt;
+    /// # use tests::failure::ResultExt;
     /// #
     /// #[derive(Fail, Debug, Display)]
     /// #[display(fmt = "My custom error message")]
     /// struct CustomError;
     /// #
-    /// # fn main() {
+    /// # pub fn run_test() {
     /// 
     /// let x = (|| -> Result<(), failure::Error> {
     ///     Err(CustomError)?
@@ -109,6 +144,8 @@ pub trait ResultExt<T, E> {
     /// let x = format!("{}", x);
     ///
     /// assert_eq!(x, "An error occured: My custom error message");
+    /// # }
+    ///
     /// # }
     /// ```
     fn with_context<F, D>(self, f: F) -> Result<T, Context<D>> where
