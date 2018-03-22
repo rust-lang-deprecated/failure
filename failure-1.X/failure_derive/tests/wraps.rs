@@ -68,3 +68,23 @@ fn wrap_enum_error() {
     assert!(err.cause().and_then(|err| err.downcast_ref::<fmt::Error>()).is_some());
     assert!(err.backtrace().is_some());
 }
+
+#[derive(Fail, Debug, Display)]
+#[display(fmt = "An error has occured.")]
+struct WrapFailureError {
+    #[fail(flat_cause)] inner: failure::Error
+}
+
+#[derive(Fail, Debug, Display)]
+#[display(fmt = "Unit error.")]
+struct UnitError;
+
+#[test]
+fn wrap_failure_error() {
+    let inner: failure::Error  = UnitError.into();
+    let err = WrapFailureError { inner };
+    assert!(err.cause().and_then(|err| err.downcast_ref::<UnitError>()).is_some());
+    assert!(err.backtrace().is_none());
+}
+
+
