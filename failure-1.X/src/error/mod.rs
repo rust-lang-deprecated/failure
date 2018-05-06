@@ -1,4 +1,5 @@
 use core::fmt::{self, Display, Debug};
+use core::result;
 
 use {Causes, Fail};
 use backtrace::Backtrace;
@@ -23,6 +24,12 @@ use self::error_impl::ErrorImpl;
 pub struct Error {
     imp: ErrorImpl,
 }
+
+
+/// A convenience `Result` type for use with this crate.
+///
+/// This type alias merely provides a shorthand for `Result<T, failure::Error>`.
+pub type Result<T> = result::Result<T, Error>;
 
 impl<F: Fail> From<F> for Error {
     fn from(failure: F) -> Error {
@@ -91,7 +98,7 @@ impl Error {
     /// failure is of the type `T`. For this reason it returns a `Result` - in
     /// the case that the underlying error is of a different type, the
     /// original `Error` is returned.
-    pub fn downcast<T: Fail>(self) -> Result<T, Error> {
+    pub fn downcast<T: Fail>(self) -> Result<T> {
         self.imp.downcast().map_err(|imp| Error { imp })
     }
     /// Returns the "root cause" of this error - the last value in the
