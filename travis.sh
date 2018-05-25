@@ -23,7 +23,7 @@ test_derive_in() {
 
 test_nightly_features_in() {
   cd $1
-  cargo_test --features small-error
+  #cargo_test --features small-error
   cargo_test --all-features
   cd $DIR
 }
