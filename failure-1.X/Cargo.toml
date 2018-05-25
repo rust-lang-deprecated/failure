@@ -23,6 +23,6 @@ version = "0.3.3"
 
 [features]
 default = ["std", "derive"]
-small-error = ["std"]
+#small-error = ["std"]
 std = []
 derive = ["failure_derive", "display_derive"]
