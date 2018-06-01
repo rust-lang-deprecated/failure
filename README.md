@@ -1,6 +1,6 @@
 # failure - a new error management story
 
-[![Build Status](https://travis-ci.org/withoutboats/failure.svg?branch=master)](https://travis-ci.org/withoutboats/failure)
+[![Build Status](https://travis-ci.org/rust-lang-nursery/failure.svg?branch=master)](https://travis-ci.org/rust-lang-nursery/failure)
 [![Latest Version](https://img.shields.io/crates/v/failure.svg)](https://crates.io/crates/failure)
 [![docs](https://docs.rs/failure/badge.svg)](https://docs.rs/failure)
 
