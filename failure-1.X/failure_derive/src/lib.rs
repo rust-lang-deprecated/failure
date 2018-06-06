@@ -3,10 +3,13 @@ extern crate proc_macro;
 #[macro_use] extern crate syn;
 #[macro_use] extern crate synstructure;
 #[macro_use] extern crate quote;
+extern crate proc_macro2;
+
+use proc_macro2::TokenStream;
 
 decl_derive!([Fail, attributes(fail, cause)] => fail_derive);
 
-fn fail_derive(s: synstructure::Structure) -> quote::Tokens {
+fn fail_derive(s: synstructure::Structure) -> TokenStream {
     let cause_body = s.each_variant(|v| {
         if let Some(cause) = v.bindings().iter().find(is_cause) {
             quote!(return Some(#cause))
