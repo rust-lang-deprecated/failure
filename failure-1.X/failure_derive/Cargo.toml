@@ -9,11 +9,10 @@ documentation = "https://boats.gitlab.io/failure"
 version = "1.0.0"
 
 [dependencies]
-quote = "0.5"
-syn = "0.13"
-# synstructure 0.8.0 could be built only for Rust 1.20+, 0.8.1 fixed that.
-# Details on the issue: https://github.com/mystor/synstructure/issues/14
-synstructure = "^0.8.1"
+quote = "0.6"
+syn = "0.14"
+synstructure = "0.9"
+proc-macro2 = "0.4"
 
 [dev-dependencies.failure]
 version = "0.1.0"
