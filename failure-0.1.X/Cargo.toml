@@ -17,11 +17,12 @@ default-features = false
 optional = true
 version = "0.1.2"
 path = "./failure_derive"
+default-features = false
 
 [features]
 default = ["std", "derive"]
 backtrace = ["failure_compat_shim/backtrace"]
-std = ["backtrace", "failure_compat_shim/std"]
+std = ["backtrace", "failure_compat_shim/std", "failure_derive/std"]
 derive = ["failure_derive", "failure_compat_shim/derive"]
 
 [[example]]
