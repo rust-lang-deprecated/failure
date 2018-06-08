@@ -12,10 +12,12 @@ version = "1.0.0"
 optional = true
 version = "1.0.0"
 path = "./failure_derive"
+default-features = false
 
 [dependencies.display_derive]
 optional = true
 git = "https://github.com/withoutboats/display_derive"
+default-features = false
 
 [dependencies.backtrace]
 optional = true
@@ -24,5 +26,5 @@ version = "0.3.3"
 [features]
 default = ["std", "derive"]
 #small-error = ["std"]
-std = []
+std = ["failure_derive/std", "display_derive/std"]
 derive = ["failure_derive", "display_derive"]
