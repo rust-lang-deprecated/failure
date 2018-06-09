@@ -93,7 +93,7 @@ fn display_body(s: &synstructure::Structure) -> Option<quote::Tokens> {
             panic!("Expected at least one argument to fail attribute");
         }
 
-        let s = match msg[0] {
+        let format_string = match msg[0] {
             syn::NestedMetaItem::MetaItem(syn::MetaItem::NameValue(ref i, ref lit)) if i == "display" => {
                 lit.clone()
             }
@@ -116,13 +116,13 @@ fn display_body(s: &synstructure::Structure) -> Option<quote::Tokens> {
                         return quote!(#bi);
                     }
                 }
-                panic!("Couldn't find a field with this name!");
+                panic!("Couldn't find field `{}` in `{}::{}`", id, s.ast().ident, v.ast().ident);
             }
             _ => panic!("Invalid argument to fail attribute!"),
         });
 
         quote! {
-            return write!(f, #s #(, #args)*)
+            return write!(f, #format_string #(, #args)*)
         }
     }))
 }
