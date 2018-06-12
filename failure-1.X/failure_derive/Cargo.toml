@@ -3,7 +3,6 @@ authors = ["Without Boats <woboats@gmail.com>"]
 description = "derives for the failure crate"
 license = "MIT OR Apache-2.0"
 name = "failure_derive"
-repository = "https://github.com/withoutboats/failure_derive"
 homepage = "https://boats.gitlab.io/failure"
 documentation = "https://boats.gitlab.io/failure"
 version = "1.0.0"
