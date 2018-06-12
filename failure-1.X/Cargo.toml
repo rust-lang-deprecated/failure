@@ -5,7 +5,7 @@ documentation = "https://docs.rs/failure"
 homepage = "https://boats.gitlab.io/failure"
 license = "MIT OR Apache-2.0"
 name = "failure"
-repository = "https://github.com/withoutboats/failure"
+repository = "https://github.com/rust-lang-nursery/failure"
 version = "1.0.0"
 
 [dependencies.failure_derive]
