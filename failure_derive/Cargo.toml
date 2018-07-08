@@ -24,5 +24,5 @@ git = "https://github.com/withoutboats/display_derive"
 proc-macro = true
 
 [features]
-default = ["std"]
+# This is kept for backward-compatibility reasons, but is otherwise a no-op
 std = []

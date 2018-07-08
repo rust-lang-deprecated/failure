@@ -25,59 +25,27 @@ fn fail_derive(s: synstructure::Structure) -> TokenStream {
         }
     });
 
-    #[cfg(feature = "std")]
     let fail = s.gen_impl(quote! {
         gen impl ::failure::Fail for @Self {
             #[allow(unreachable_code)]
-            fn cause(&self) -> ::std::option::Option<&::failure::Fail> {
+            fn cause(&self) -> ::failure::_core::option::Option<&::failure::Fail> {
                 match *self { #cause_body }
                 None
             }
 
             #[allow(unreachable_code)]
-            fn backtrace(&self) -> ::std::option::Option<&::failure::Backtrace> {
+            fn backtrace(&self) -> ::failure::_core::option::Option<&::failure::Backtrace> {
                 match *self { #bt_body }
                 None
             }
         }
     });
 
-    #[cfg(not(feature = "std"))]
-    let fail = s.gen_impl(quote! {
-        gen impl ::failure::Fail for @Self {
-            #[allow(unreachable_code)]
-            fn cause(&self) -> ::core::option::Option<&::failure::Fail> {
-                match *self { #cause_body }
-                None
-            }
-
-            #[allow(unreachable_code)]
-            fn backtrace(&self) -> ::core::option::Option<&::failure::Backtrace> {
-                match *self { #bt_body }
-                None
-            }
-        }
-    });
-
-    #[cfg(feature = "std")]
     let display = display_body(&s).map(|display_body| {
         s.gen_impl(quote! {
-            gen impl ::std::fmt::Display for @Self {
+            gen impl ::failure::_core::fmt::Display for @Self {
                 #[allow(unreachable_code)]
-                fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
-                    match *self { #display_body }
-                    write!(f, "An error has occurred.")
-                }
-            }
-        })
-    });
-
-    #[cfg(not(feature = "std"))]
-    let display = display_body(&s).map(|display_body| {
-        s.gen_impl(quote! {
-            gen impl ::core::fmt::Display for @Self {
-                #[allow(unreachable_code)]
-                fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+                fn fmt(&self, f: &mut ::failure::_core::fmt::Formatter) -> ::failure::_core::fmt::Result {
                     match *self { #display_body }
                     write!(f, "An error has occurred.")
                 }
