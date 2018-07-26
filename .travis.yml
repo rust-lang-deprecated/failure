@@ -7,4 +7,4 @@ rust:
 cache: cargo
 script:
   - cargo test
-  - cargo test --no-default-features --lib --bins --tests --benches
+  - cargo test --no-default-features --lib --tests --benches
