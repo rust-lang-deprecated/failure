@@ -71,9 +71,6 @@ pub trait ResultExt<T, E> {
     /// # #[cfg(all(feature = "std", feature = "derive"))]
     /// # #[macro_use] extern crate failure_derive;
     /// #
-    /// # #[cfg(all(feature = "std", feature = "derive"))]
-    /// # #[macro_use] extern crate display_derive;
-    /// #
     /// # fn main() {
     /// #    tests::run_test();
     /// # }
@@ -84,8 +81,8 @@ pub trait ResultExt<T, E> {
     /// #
     /// # use failure::{self, ResultExt};
     /// #
-    /// #[derive(Fail, Debug, Display)]
-    /// #[display(fmt = "")]
+    /// #[derive(Fail, Debug)]
+    /// #[fail(display = "")]
     /// struct CustomError;
     /// # 
     /// # pub fn run_test() {
@@ -116,9 +113,6 @@ pub trait ResultExt<T, E> {
     /// # #[cfg(all(feature = "std", feature = "derive"))]
     /// # #[macro_use] extern crate failure_derive;
     /// #
-    /// # #[cfg(all(feature = "std", feature = "derive"))]
-    /// # #[macro_use] extern crate display_derive;
-    /// #
     /// # fn main() {
     /// #    tests::run_test();
     /// # }
@@ -129,8 +123,8 @@ pub trait ResultExt<T, E> {
     /// #
     /// # use failure::{self, ResultExt};
     /// #
-    /// #[derive(Fail, Debug, Display)]
-    /// #[display(fmt = "My custom error message")]
+    /// #[derive(Fail, Debug)]
+    /// #[fail(display = "My custom error message")]
     /// struct CustomError;
     /// #
     /// # pub fn run_test() {

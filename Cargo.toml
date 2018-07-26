@@ -13,10 +13,6 @@ optional = true
 version = "0.1.2"
 path = "./failure_derive"
 
-[dependencies.display_derive]
-optional = true
-version = "0.0.0"
-
 [dependencies.backtrace]
 optional = true
 version = "0.3.3"
@@ -25,4 +21,4 @@ version = "0.3.3"
 default = ["std", "derive"]
 #small-error = ["std"]
 std = []
-derive = ["failure_derive", "display_derive"]
+derive = ["failure_derive"]

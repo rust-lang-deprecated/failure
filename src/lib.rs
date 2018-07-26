@@ -50,15 +50,6 @@ extern crate failure_derive;
 #[doc(hidden)]
 pub use failure_derive::*;
 
-#[cfg(feature = "display_derive")]
-#[allow(unused_imports)]
-#[macro_use]
-extern crate display_derive;
-
-#[cfg(feature = "display_derive")]
-#[doc(hidden)]
-pub use display_derive::*;
-
 with_std! {
     extern crate core;
 
