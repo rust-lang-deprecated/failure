@@ -4,7 +4,6 @@ extern crate syn;
 #[macro_use] extern crate synstructure;
 #[macro_use] extern crate quote;
 
-use std::io::{self, Write};
 use proc_macro2::TokenStream;
 
 decl_derive!([Fail, attributes(fail, cause)] => fail_derive);
@@ -148,7 +147,7 @@ fn find_error_msg(attrs: &[syn::Attribute]) -> Option<syn::MetaList> {
                     if let syn::Meta::List(list)  = meta {
                         error_msg = Some(list);
                     } else {
-                        panic!("fail attribute must take a list in parantheses")
+                        panic!("fail attribute must take a list in parentheses")
                     }
                 }
             }
@@ -177,11 +176,6 @@ fn is_cause(bi: &&synstructure::BindingInfo) -> bool {
         if let Some(meta) = attr.interpret_meta() {
             if meta.name() == "cause" {
                 if found_cause { panic!("Cannot have two `cause` attributes"); }
-                writeln!(
-                    io::stderr(),
-                    "WARNING: failure's `#[cause]` attribute is deprecated. \
-                     Use `#[fail(cause)]` instead."
-                ).unwrap();
                 found_cause = true;
             }
             if meta.name() == "fail" {
