@@ -17,6 +17,9 @@ path = "./failure_derive"
 optional = true
 version = "0.3.3"
 
+[workspace]
+members = [".", "failure_derive"]
+
 [features]
 default = ["std", "derive"]
 #small-error = ["std"]

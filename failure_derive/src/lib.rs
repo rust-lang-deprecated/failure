@@ -1,8 +1,10 @@
 extern crate proc_macro2;
 extern crate syn;
 
-#[macro_use] extern crate synstructure;
-#[macro_use] extern crate quote;
+#[macro_use]
+extern crate synstructure;
+#[macro_use]
+extern crate quote;
 
 use proc_macro2::TokenStream;
 
@@ -66,10 +68,13 @@ fn fail_derive(s: synstructure::Structure) -> TokenStream {
 
 fn display_body(s: &synstructure::Structure) -> Option<quote::__rt::TokenStream> {
     let mut msgs = s.variants().iter().map(|v| find_error_msg(&v.ast().attrs));
-    if msgs.all(|msg| msg.is_none()) { return None; }
+    if msgs.all(|msg| msg.is_none()) {
+        return None;
+    }
 
     Some(s.each_variant(|v| {
-        let msg = find_error_msg(&v.ast().attrs).expect("All variants must have display attribute.");
+        let msg =
+            find_error_msg(&v.ast().attrs).expect("All variants must have display attribute.");
         if msg.nested.is_empty() {
             panic!("Expected at least one argument to fail attribute");
         }
@@ -78,7 +83,9 @@ fn display_body(s: &synstructure::Structure) -> Option<quote::__rt::TokenStream>
             syn::NestedMeta::Meta(syn::Meta::NameValue(ref nv)) if nv.ident == "display" => {
                 nv.lit.clone()
             }
-            _ => panic!("Fail attribute must begin `display = \"\"` to control the Display message."),
+            _ => {
+                panic!("Fail attribute must begin `display = \"\"` to control the Display message.")
+            }
         };
         let args = msg.nested.iter().skip(1).map(|arg| match *arg {
             syn::NestedMeta::Literal(syn::Lit::Int(ref i)) => {
@@ -92,16 +99,18 @@ fn display_body(s: &synstructure::Structure) -> Option<quote::__rt::TokenStream>
                         let bi = match v.bindings().get(idx) {
                             Some(bi) => bi,
                             None => {
-                                panic!("display attempted to access field `{}` in `{}::{}` which \
-                                        does not exist (there are {} field{})",
-                                       idx,
-                                       s.ast().ident,
-                                       v.ast().ident,
-                                       v.bindings().len(),
-                                       if v.bindings().len() != 1 { "s" } else { "" });
+                                panic!(
+                                    "display attempted to access field `{}` in `{}::{}` which \
+                                     does not exist (there are {} field{})",
+                                    idx,
+                                    s.ast().ident,
+                                    v.ast().ident,
+                                    v.bindings().len(),
+                                    if v.bindings().len() != 1 { "s" } else { "" }
+                                );
                             }
                         };
-                        return quote!(#bi)
+                        return quote!(#bi);
                     }
                 }
                 for bi in v.bindings() {
@@ -109,7 +118,12 @@ fn display_body(s: &synstructure::Structure) -> Option<quote::__rt::TokenStream>
                         return quote!(#bi);
                     }
                 }
-                panic!("Couldn't find field `{}` in `{}::{}`", id, s.ast().ident, v.ast().ident);
+                panic!(
+                    "Couldn't find field `{}` in `{}::{}`",
+                    id,
+                    s.ast().ident,
+                    v.ast().ident
+                );
             }
             _ => panic!("Invalid argument to fail attribute!"),
         });
@@ -128,7 +142,7 @@ fn find_error_msg(attrs: &[syn::Attribute]) -> Option<syn::MetaList> {
                 if error_msg.is_some() {
                     panic!("Cannot have two display attributes")
                 } else {
-                    if let syn::Meta::List(list)  = meta {
+                    if let syn::Meta::List(list) = meta {
                         error_msg = Some(list);
                     } else {
                         panic!("fail attribute must take a list in parentheses")
@@ -141,17 +155,17 @@ fn find_error_msg(attrs: &[syn::Attribute]) -> Option<syn::MetaList> {
 }
 
 fn is_backtrace(bi: &&synstructure::BindingInfo) -> bool {
-        match bi.ast().ty {
-            syn::Type::Path(syn::TypePath {
-                qself: None,
-                path: syn::Path { segments: ref path, .. }
-            }) => {
-                path.last().map_or(false, |s| {
-                    s.value().ident == "Backtrace" && s.value().arguments.is_empty()
-                })
-            }
-            _ => false
-        }
+    match bi.ast().ty {
+        syn::Type::Path(syn::TypePath {
+            qself: None,
+            path: syn::Path {
+                segments: ref path, ..
+            },
+        }) => path.last().map_or(false, |s| {
+            s.value().ident == "Backtrace" && s.value().arguments.is_empty()
+        }),
+        _ => false,
+    }
 }
 
 fn is_cause(bi: &&synstructure::BindingInfo) -> bool {
@@ -159,7 +173,9 @@ fn is_cause(bi: &&synstructure::BindingInfo) -> bool {
     for attr in &bi.ast().attrs {
         if let Some(meta) = attr.interpret_meta() {
             if meta.name() == "cause" {
-                if found_cause { panic!("Cannot have two `cause` attributes"); }
+                if found_cause {
+                    panic!("Cannot have two `cause` attributes");
+                }
                 found_cause = true;
             }
             if meta.name() == "fail" {
@@ -167,7 +183,9 @@ fn is_cause(bi: &&synstructure::BindingInfo) -> bool {
                     if let Some(ref pair) = list.nested.first() {
                         if let &&syn::NestedMeta::Meta(syn::Meta::Word(ref word)) = pair.value() {
                             if word == "cause" {
-                                if found_cause { panic!("Cannot have two `cause` attributes"); }
+                                if found_cause {
+                                    panic!("Cannot have two `cause` attributes");
+                                }
                                 found_cause = true;
                             }
                         }

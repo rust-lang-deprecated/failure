@@ -1,8 +1,9 @@
 extern crate failure;
-#[macro_use] extern crate failure_derive;
+#[macro_use]
+extern crate failure_derive;
 
-use std::fmt::{self, Display};
 use failure::Fail;
+use std::fmt::{self, Display};
 
 #[derive(Debug, Fail)]
 struct Foo;

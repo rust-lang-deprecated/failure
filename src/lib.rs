@@ -34,11 +34,11 @@ macro_rules! without_std { ($($i:item)*) => ($(#[cfg(not(feature = "std"))]$i)*)
 pub extern crate core as _core;
 
 mod backtrace;
+#[cfg(feature = "std")]
+mod box_std;
 mod compat;
 mod context;
 mod result_ext;
-#[cfg(feature = "std")]
-mod box_std;
 
 use core::any::TypeId;
 use core::fmt::{Debug, Display};
@@ -73,7 +73,6 @@ with_std! {
     mod error_message;
     pub use error_message::err_msg;
 }
-
 
 /// The `Fail` trait.
 ///
@@ -138,7 +137,8 @@ pub trait Fail: Display + Debug + Send + Sync + 'static {
     /// `Send`/`Sync`/`'static`. In practice, this means it can take a `String`
     /// or a string literal, or another failure, or some other custom context-carrying
     /// type.
-    fn context<D>(self, context: D) -> Context<D> where
+    fn context<D>(self, context: D) -> Context<D>
+    where
         D: Display + Send + Sync + 'static,
         Self: Sized,
     {
@@ -150,7 +150,8 @@ pub trait Fail: Display + Debug + Send + Sync + 'static {
     ///
     /// This allows failures  to be compatible with older crates that
     /// expect types that implement the `Error` trait from `std::error`.
-    fn compat(self) -> Compat<Self> where
+    fn compat(self) -> Compat<Self>
+    where
         Self: Sized,
     {
         Compat { error: self }
@@ -158,7 +159,10 @@ pub trait Fail: Display + Debug + Send + Sync + 'static {
 
     /// Returns a iterator over the causes of this `Fail` with itself
     /// as the first item and the `root_cause` as the final item.
-    fn causes(&self) -> Causes where Self: Sized {
+    fn causes(&self) -> Causes
+    where
+        Self: Sized,
+    {
         Causes { fail: Some(self) }
     }
 
@@ -167,7 +171,8 @@ pub trait Fail: Display + Debug + Send + Sync + 'static {
     ///
     /// If this type does not have a cause, `self` is returned, because
     /// it is its own root cause.
-    fn root_cause(&self) -> &Fail where
+    fn root_cause(&self) -> &Fail
+    where
         Self: Sized,
     {
         find_root_cause(self)
@@ -202,7 +207,6 @@ impl Fail {
             None
         }
     }
-
 
     /// Returns the "root cause" of this `Fail` - the last value in the
     /// cause chain which does not return an underlying `cause`.

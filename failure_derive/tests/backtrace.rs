@@ -1,7 +1,8 @@
 extern crate failure;
-#[macro_use] extern crate failure_derive;
+#[macro_use]
+extern crate failure_derive;
 
-use failure::{Fail, Backtrace};
+use failure::{Backtrace, Fail};
 
 #[derive(Fail, Debug)]
 #[fail(display = "Error code: {}", code)]
@@ -12,7 +13,10 @@ struct BacktraceError {
 
 #[test]
 fn backtrace_error() {
-    let err = BacktraceError { backtrace: Backtrace::new(), code: 7 };
+    let err = BacktraceError {
+        backtrace: Backtrace::new(),
+        code: 7,
+    };
     let s = format!("{}", err);
     assert_eq!(&s[..], "Error code: 7");
     assert!(err.backtrace().is_some());
@@ -33,10 +37,7 @@ fn backtrace_tuple_error() {
 #[derive(Fail, Debug)]
 enum BacktraceEnumError {
     #[fail(display = "Error code: {}", code)]
-    StructVariant {
-        code: i32,
-        backtrace: Backtrace,
-    },
+    StructVariant { code: i32, backtrace: Backtrace },
     #[fail(display = "Error: {}", _0)]
     TupleVariant(&'static str, Backtrace),
     #[fail(display = "An error has occurred.")]
@@ -45,7 +46,10 @@ enum BacktraceEnumError {
 
 #[test]
 fn backtrace_enum_error() {
-    let err = BacktraceEnumError::StructVariant { code: 2, backtrace: Backtrace::new() };
+    let err = BacktraceEnumError::StructVariant {
+        code: 2,
+        backtrace: Backtrace::new(),
+    };
     let s = format!("{}", err);
     assert_eq!(&s[..], "Error code: 2");
     assert!(err.backtrace().is_some());

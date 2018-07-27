@@ -1,4 +1,4 @@
-use core::fmt::{self, Display, Debug};
+use core::fmt::{self, Debug, Display};
 
 use Fail;
 
@@ -133,8 +133,9 @@ with_std! {
     }
 }
 
-impl<D> From<D> for Context<D> where
-    D: Display + Send + Sync + 'static
+impl<D> From<D> for Context<D>
+where
+    D: Display + Send + Sync + 'static,
 {
     fn from(display: D) -> Context<D> {
         Context::new(display)

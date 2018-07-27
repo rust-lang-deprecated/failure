@@ -19,9 +19,6 @@ proc-macro2 = "0.4.8"
 version = "0.1.0"
 path = ".."
 
-[dev-dependencies.display_derive]
-git = "https://github.com/withoutboats/display_derive"
-
 [lib]
 proc-macro = true
 

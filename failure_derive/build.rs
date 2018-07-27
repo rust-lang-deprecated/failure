@@ -1,15 +1,13 @@
 use std::env;
+use std::process::Command;
 use std::str;
 use std::str::FromStr;
-use std::process::Command;
-
 
 fn main() {
     if rustc_has_dyn_trait() {
         println!("cargo:rustc-cfg=has_dyn_trait");
     }
 }
-
 
 fn rustc_has_dyn_trait() -> bool {
     let rustc = match env::var_os("RUSTC") {
