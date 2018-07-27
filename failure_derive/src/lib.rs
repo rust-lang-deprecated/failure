@@ -122,7 +122,18 @@ fn display_body(s: &synstructure::Structure) -> Option<quote::__rt::TokenStream>
                 let id_s = id.to_string();
                 if id_s.starts_with("_") {
                     if let Ok(idx) = id_s[1..].parse::<usize>() {
-                        let bi = &v.bindings()[idx];
+                        let bi = match v.bindings().get(idx) {
+                            Some(bi) => bi,
+                            None => {
+                                panic!("display attempted to access field `{}` in `{}::{}` which \
+                                        does not exist (there are {} field{})",
+                                       idx,
+                                       s.ast().ident,
+                                       v.ast().ident,
+                                       v.bindings().len(),
+                                       if v.bindings().len() != 1 { "s" } else { "" });
+                            }
+                        };
                         return quote!(#bi)
                     }
                 }
