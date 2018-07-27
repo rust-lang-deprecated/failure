@@ -9,6 +9,12 @@ use proc_macro2::TokenStream;
 decl_derive!([Fail, attributes(fail, cause)] => fail_derive);
 
 fn fail_derive(s: synstructure::Structure) -> TokenStream {
+    let make_dyn = if cfg!(has_dyn_trait) {
+        quote! { &dyn }
+    } else {
+        quote! { & }
+    };
+
     let cause_body = s.each_variant(|v| {
         if let Some(cause) = v.bindings().iter().find(is_cause) {
             quote!(return Some(#cause))
@@ -29,7 +35,7 @@ fn fail_derive(s: synstructure::Structure) -> TokenStream {
     let fail = s.gen_impl(quote! {
         gen impl ::failure::Fail for @Self {
             #[allow(unreachable_code)]
-            fn cause(&self) -> ::std::option::Option<&::failure::Fail> {
+            fn cause(&self) -> ::std::option::Option<#make_dyn(::failure::Fail)> {
                 match *self { #cause_body }
                 None
             }
@@ -46,7 +52,7 @@ fn fail_derive(s: synstructure::Structure) -> TokenStream {
     let fail = s.gen_impl(quote! {
         gen impl ::failure::Fail for @Self {
             #[allow(unreachable_code)]
-            fn cause(&self) -> ::core::option::Option<&::failure::Fail> {
+            fn cause(&self) -> ::core::option::Option<#make_dyn(::failure::Fail)> {
                 match *self { #cause_body }
                 None
             }
