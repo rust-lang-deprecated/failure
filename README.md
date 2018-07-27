@@ -14,6 +14,19 @@ learned from experience with quick-error and error-chain.
 * `Fail`: A new trait for custom error types.
 * `Error`: A struct which any type that implements `Fail` can be cast into.
 
+## Evolution
+
+Failure is currently evolving as a library.  First of all there is work going
+on in Rust itself to [fix the error trait](https://github.com/rust-lang/rfcs/pull/2504)
+secondarily the original plan for Failure towards 1.0 is unlikely to happen
+in the current form.
+
+As such the original master branch towards 1.0 of failure was removed and
+master now represents the future iteration steps of 0.1 until it's clear
+what happens in the stdlib.
+
+The original 1.0 branch can be found in [evolution/1.0](https://github.com/rust-lang-nursery/failure/tree/evolution/1.0).
+
 ## Example
 
 ```rust
