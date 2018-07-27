@@ -33,29 +33,25 @@ fn fail_derive(s: synstructure::Structure) -> TokenStream {
         }
     });
 
-    let fail = s.gen_impl(quote! {
-        gen impl ::failure::Fail for @Self {
-            #[allow(unreachable_code)]
-            fn cause(&self) -> ::failure::_core::option::Option<#make_dyn(::failure::Fail)> {
-                match *self { #cause_body }
-                None
-            }
+    let fail = s.unbound_impl(quote!(::failure::Fail), quote! {
+        #[allow(unreachable_code)]
+        fn cause(&self) -> ::failure::_core::option::Option<#make_dyn(::failure::Fail)> {
+            match *self { #cause_body }
+            None
+        }
 
-            #[allow(unreachable_code)]
-            fn backtrace(&self) -> ::failure::_core::option::Option<&::failure::Backtrace> {
-                match *self { #bt_body }
-                None
-            }
+        #[allow(unreachable_code)]
+        fn backtrace(&self) -> ::failure::_core::option::Option<&::failure::Backtrace> {
+            match *self { #bt_body }
+            None
         }
     });
     let display = display_body(&s).map(|display_body| {
-        s.gen_impl(quote! {
-            gen impl ::failure::_core::fmt::Display for @Self {
-                #[allow(unreachable_code)]
-                fn fmt(&self, f: &mut ::failure::_core::fmt::Formatter) -> ::failure::_core::fmt::Result {
-                    match *self { #display_body }
-                    write!(f, "An error has occurred.")
-                }
+        s.unbound_impl(quote!(::failure::_core::fmt::Display), quote! {
+            #[allow(unreachable_code)]
+            fn fmt(&self, f: &mut ::failure::_core::fmt::Formatter) -> ::failure::_core::fmt::Result {
+                match *self { #display_body }
+                write!(f, "An error has occurred.")
             }
         })
     });
