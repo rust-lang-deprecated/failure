@@ -69,6 +69,9 @@ with_std! {
 
     pub use error::Error;
 
+    /// A common result with an `Error`.
+    pub type Fallible<T> = Result<T, Error>;
+
     mod macros;
     mod error_message;
     pub use error_message::err_msg;
