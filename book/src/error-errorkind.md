@@ -79,9 +79,10 @@ impl From<Context<MyErrorKind>> for MyError {
 ```
 
 With this code set up, you can use the context method from failure to apply
-your ErrorKind to errors in underlying libraries:
+your ErrorKind to `Result`s in underlying libraries:
 
 ```rust
+use failure::ResultExt;
 perform_some_io().context(ErrorKind::NetworkFailure)?;
 ```
 
