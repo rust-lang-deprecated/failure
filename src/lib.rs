@@ -37,6 +37,8 @@ mod backtrace;
 mod compat;
 mod context;
 mod result_ext;
+#[cfg(feature = "std")]
+mod box_std;
 
 use core::any::TypeId;
 use core::fmt::{Debug, Display};
