@@ -28,6 +28,11 @@
 macro_rules! with_std { ($($i:item)*) => ($(#[cfg(feature = "std")]$i)*) }
 macro_rules! without_std { ($($i:item)*) => ($(#[cfg(not(feature = "std"))]$i)*) }
 
+// Re-export libcore using an alias so that the macros can work without
+// requiring `extern crate core` downstream.
+#[doc(hidden)]
+pub extern crate core as _core;
+
 mod backtrace;
 mod compat;
 mod context;
