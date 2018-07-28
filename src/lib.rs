@@ -222,6 +222,10 @@ impl Fail {
 
     /// Returns a iterator over the causes of this `Fail` with itself
     /// as the first item and the `root_cause` as the final item.
+    ///
+    /// This means that `causes` also includes the fail itself which
+    /// means that it does *not* start with `cause`.  To skip the outermost
+    /// fail use the `skip` method (`fail.causes().skip(1)`).
     pub fn iter_causes(&self) -> Causes {
         Causes { fail: Some(self) }
     }

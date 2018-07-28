@@ -133,7 +133,7 @@ impl Error {
     }
 
     /// Returns a iterator over the causes of the `Error`, beginning with
-    /// the failure returned by the `cause` method and ending with the failure
+    /// the failure returned by the `as_fail` method and ending with the failure
     /// returned by `find_root_cause`.
     pub fn iter_causes(&self) -> Causes {
         self.as_fail().iter_causes()

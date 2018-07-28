@@ -59,6 +59,17 @@ while let Some(cause) = fail.cause() {
 }
 ```
 
+For convenience an iterator is also provided:
+
+```rust
+// Assume err is a type that implements `Fail`
+let mut fail: &Fail = err;
+
+for cause in fail.iter_causes() {
+    println!("{}", cause);
+}
+```
+
 ## Backtraces
 
 Errors can also generate a backtrace when they are constructed, helping you
