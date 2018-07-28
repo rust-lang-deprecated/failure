@@ -1,4 +1,5 @@
-#[macro_use] extern crate failure;
+#[macro_use]
+extern crate failure;
 
 use std::fmt::Debug;
 
@@ -37,5 +38,8 @@ pub struct CustomBoundsGenericTupleError<T: NoDisplay>(T);
 fn custom_bounds_generic_tuple_error() {
     let error = CustomBoundsGenericTupleError("more details unavailable.");
     let s = format!("{}", error);
-    assert_eq!(&s[..], "An error has occurred: \"more details unavailable.\"");
+    assert_eq!(
+        &s[..],
+        "An error has occurred: \"more details unavailable.\""
+    );
 }
