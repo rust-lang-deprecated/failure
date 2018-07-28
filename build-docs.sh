@@ -1,3 +1,4 @@
+#!/bin/bash
 mkdir public
 cargo doc --no-deps
 cargo install mdbook --no-default-features
