@@ -125,10 +125,18 @@ impl Error {
     pub fn downcast<T: Fail>(self) -> Result<T, Error> {
         self.imp.downcast().map_err(|imp| Error { imp })
     }
+
     /// Returns the "root cause" of this error - the last value in the
     /// cause chain which does not return an underlying `cause`.
-    pub fn root_cause(&self) -> &Fail {
-        ::find_root_cause(self.as_fail())
+    pub fn find_root_cause(&self) -> &Fail {
+        self.as_fail().find_root_cause()
+    }
+
+    /// Returns a iterator over the causes of the `Error`, beginning with
+    /// the failure returned by the `cause` method and ending with the failure
+    /// returned by `find_root_cause`.
+    pub fn iter_causes(&self) -> Causes {
+        self.as_fail().iter_causes()
     }
 
     /// Attempts to downcast this `Error` to a particular `Fail` type by
@@ -147,9 +155,14 @@ impl Error {
         self.imp.failure_mut().downcast_mut()
     }
 
-    /// Returns a iterator over the causes of the `Error`, beginning with
-    /// the failure returned by the `cause` method and ending with the failure
-    /// returned by `root_cause`.
+    /// Deprecated alias to `find_root_cause`.
+    #[deprecated(since = "0.1.2", note = "please use the 'find_root_cause()' method instead")]
+    pub fn root_cause(&self) -> &Fail {
+        ::find_root_cause(self.as_fail())
+    }
+
+    /// Deprecated alias to `iter_causes`.
+    #[deprecated(since = "0.1.2", note = "please use the 'iter_causes()' method instead")]
     pub fn causes(&self) -> Causes {
         Causes { fail: Some(self.as_fail()) }
     }
