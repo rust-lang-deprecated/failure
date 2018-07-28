@@ -1,4 +1,4 @@
-use std::fmt;
+use _core::fmt;
 
 use Fail;
 use backtrace::Backtrace;
