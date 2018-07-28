@@ -160,8 +160,8 @@ pub trait Fail: Display + Debug + Send + Sync + 'static {
         Compat { error: self }
     }
 
-    /// Returns a iterator over the causes of this `Fail` with itself
-    /// as the first item and the `root_cause` as the final item.
+    #[doc(hidden)]
+    #[deprecated(since = "0.1.2", note = "please use the 'iter_causes()' method instead")]
     fn causes(&self) -> Causes
     where
         Self: Sized,
@@ -169,11 +169,8 @@ pub trait Fail: Display + Debug + Send + Sync + 'static {
         Causes { fail: Some(self) }
     }
 
-    /// Returns the "root cause" of this `Fail` - the last value in the
-    /// cause chain which does not return an underlying `cause`.
-    ///
-    /// If this type does not have a cause, `self` is returned, because
-    /// it is its own root cause.
+    #[doc(hidden)]
+    #[deprecated(since = "0.1.2", note = "please use the 'find_root_cause()' method instead")]
     fn root_cause(&self) -> &Fail
     where
         Self: Sized,
@@ -216,12 +213,27 @@ impl Fail {
     ///
     /// If this type does not have a cause, `self` is returned, because
     /// it is its own root cause.
-    pub fn root_cause(&self) -> &Fail {
+    ///
+    /// This is equivalent to iterating over `iter_causes()` and taking
+    /// the last item.
+    pub fn find_root_cause(&self) -> &Fail {
         find_root_cause(self)
     }
 
     /// Returns a iterator over the causes of this `Fail` with itself
     /// as the first item and the `root_cause` as the final item.
+    pub fn iter_causes(&self) -> Causes {
+        Causes { fail: Some(self) }
+    }
+
+    /// Deprecated alias to `find_root_cause`.
+    #[deprecated(since = "0.1.2", note = "please use the 'find_root_cause()' method instead")]
+    pub fn root_cause(&self) -> &Fail {
+        find_root_cause(self)
+    }
+
+    /// Deprecated alias to `iter_causes`.
+    #[deprecated(since = "0.1.2", note = "please use the 'iter_causes()' method instead")]
     pub fn causes(&self) -> Causes {
         Causes { fail: Some(self) }
     }
