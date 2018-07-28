@@ -222,6 +222,8 @@ impl Fail {
 
     /// Returns a iterator over the causes of this `Fail` with the cause
     /// of this fail as the first item and the `root_cause` as the final item.
+    ///
+    /// Use `iter_chain` to also include the fail itself.
     pub fn iter_causes(&self) -> Causes {
         Causes { fail: self.cause() }
     }
@@ -243,7 +245,7 @@ impl Fail {
     }
 
     /// Deprecated alias to `iter_causes`.
-    #[deprecated(since = "0.1.2", note = "please use the 'iter_causes()' method instead")]
+    #[deprecated(since = "0.1.2", note = "please use the 'iter_chain()' method instead")]
     pub fn causes(&self) -> Causes {
         Causes { fail: Some(self) }
     }

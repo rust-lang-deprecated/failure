@@ -173,7 +173,7 @@ impl Error {
     }
 
     /// Deprecated alias to `iter_causes`.
-    #[deprecated(since = "0.1.2", note = "please use the 'iter_causes()' method instead")]
+    #[deprecated(since = "0.1.2", note = "please use the 'iter_chain()' method instead")]
     pub fn causes(&self) -> Causes {
         Causes { fail: Some(self.as_fail()) }
     }
