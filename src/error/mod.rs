@@ -132,11 +132,22 @@ impl Error {
         self.as_fail().find_root_cause()
     }
 
-    /// Returns a iterator over the causes of the `Error`, beginning with
-    /// the failure returned by the `as_fail` method and ending with the failure
-    /// returned by `find_root_cause`.
+    /// Returns a iterator over the causes of this error with the cause
+    /// of the fail as the first item and the `root_cause` as the final item.
+    ///
+    /// Use `iter_chain` to also include the fail of this error itself.
     pub fn iter_causes(&self) -> Causes {
         self.as_fail().iter_causes()
+    }
+
+    /// Returns a iterator over all fails up the chain from the current
+    /// as the first item up to the `root_cause` as the final item.
+    ///
+    /// This means that the chain also includes the fail itself which
+    /// means that it does *not* start with `cause`.  To skip the outermost
+    /// fail use `iter_causes` instead.
+    pub fn iter_chain(&self) -> Causes {
+        self.as_fail().iter_chain()
     }
 
     /// Attempts to downcast this `Error` to a particular `Fail` type by
