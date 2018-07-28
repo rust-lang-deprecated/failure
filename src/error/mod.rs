@@ -76,7 +76,7 @@ impl Error {
     ///
     /// This method has been deprecated in favor of the [Error::as_fail] method,
     /// which does the same thing.
-    #[deprecated(since = "1.0.0", note = "please use 'as_fail()' method instead")]
+    #[deprecated(since = "0.1.2", note = "please use 'as_fail()' method instead")]
     pub fn cause(&self) -> &Fail {
         self.as_fail()
     }
