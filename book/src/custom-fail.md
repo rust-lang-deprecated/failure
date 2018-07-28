@@ -47,7 +47,7 @@ more complex type like `Error` or your custom Error/ErrorKind.
 
 When you have a dependency which returns a different error type, often you will
 be inclined to add it as a variant on your own error type. When you do that,
-you should tag the underlying error as the `#[cause]` of your error:
+you should tag the underlying error as the `#[fail(cause)]` of your error:
 
 ```rust
 #[derive(Fail, Debug)]
@@ -55,7 +55,7 @@ pub enum MyError {
     #[fail(display = "Input was invalid UTF-8 at index {}", _0)]
     Utf8Error(usize),
     #[fail(display = "{}", _0)]
-    Io(#[cause] io::Error),
+    Io(#[fail(cause)] io::Error),
 }
 ```
 
