@@ -62,5 +62,5 @@ There are two primary downsides to this pattern:
   your API needs to express more contextual information about the error, use
   the [Error and ErrorKind][error-errorkind] pattern.
 
-[custom-fail]: ./custom-fail.html
-[error-errorkind]: ./error-errorkind.html
+[custom-fail]: ./custom-fail.md
+[error-errorkind]: ./error-errorkind.md
