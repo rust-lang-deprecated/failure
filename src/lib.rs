@@ -48,7 +48,7 @@ pub use backtrace::Backtrace;
 pub use compat::Compat;
 pub use context::Context;
 pub use result_ext::ResultExt;
-pub use display::FailDisplay;
+pub use display::ChainDisplay;
 
 #[cfg(feature = "failure_derive")]
 #[allow(unused_imports)]
@@ -240,9 +240,9 @@ impl Fail {
         Causes { fail: Some(self) }
     }
 
-    /// Displays the failure.
-    pub fn display(&self) -> FailDisplay {
-        FailDisplay(self, None)
+    /// Return a custom `Display` adapter which show the entire chain of causes.
+    pub fn chain_display(&self) -> ChainDisplay {
+        ChainDisplay(self, None)
     }
 
     /// Deprecated alias to `find_root_cause`.
@@ -256,6 +256,14 @@ impl Fail {
     pub fn causes(&self) -> Causes {
         Causes { fail: Some(self) }
     }
+}
+
+/// Return a custom `Display` adapter which shows the entire chain from the
+/// provided `Fail` and all causes. The adapter will use single line
+/// formatting with `{}` or multiple-lines incl. backtrace via the (alternate)
+/// `{:#}`
+pub fn chain_display(fail: &Fail) -> ChainDisplay {
+    ChainDisplay(fail, None)
 }
 
 #[cfg(feature = "std")]

@@ -3,41 +3,48 @@ use _core::fmt;
 use Fail;
 use backtrace::Backtrace;
 
+/// A custom `Display` adapter for a `Fail` and an optional top-level
+/// Backtrace.  Displays the entire chain from the `Fail` through all causes.
+/// Uses single line formatting with `{}` or multiple-lines incl. backtrace
+/// via the (alternate) `{:#}`
+pub struct ChainDisplay<'a>(pub(crate) &'a Fail, pub(crate) Option<&'a Backtrace>);
 
-/// Renders a fail with all causes.
-pub struct FailDisplay<'a>(pub(crate) &'a Fail, pub(crate) Option<&'a Backtrace>);
-
-impl<'a> fmt::Display for FailDisplay<'a> {
+impl<'a> fmt::Display for ChainDisplay<'a> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let mut ptr = Some(self.0);
+        let mut next = Some(self.0);
         let mut idx = 0;
         let mut was_backtrace = false;
 
-        while let Some(fail) = ptr {
+        while let Some(fail) = next {
             if was_backtrace {
-                write!(f, "\n")?;
+                writeln!(f)?;
             }
             was_backtrace = false;
             if idx == 0 {
-                write!(f, "error: {}", fail)?;
+                if f.alternate() {
+                    write!(f, "error: {:#}", fail)?;
+                } else {
+                    write!(f, "error: {}", fail)?;
+                }
+            } else if f.alternate() {
+                write!(f, "\n  caused by: {:#}", fail)?;
             } else {
-                write!(f, "\n  caused by: {}", fail)?;
+                write!(f, "; caused by: {}", fail)?;
             }
             if f.alternate() {
-                let backtrace = if idx == 0 && self.1.is_some() {
-                    Some(self.1.unwrap())
+                let backtrace = if idx == 0 {
+                    self.1.or_else(|| fail.backtrace())
                 } else {
                     fail.backtrace()
                 };
                 if let Some(backtrace) = backtrace {
-                    write!(f, "\nbacktrace:\n{}", backtrace)?;
+                    write!(f, ", backtrace:\n{:#}", backtrace)?;
                     was_backtrace = true;
                 }
             }
-            ptr = fail.cause();
+            next = fail.cause();
             idx += 1;
         }
-
         Ok(())
     }
 }

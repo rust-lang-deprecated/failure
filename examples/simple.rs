@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate failure;
 
-use failure::Fail;
+use failure::chain_display;
 
 #[derive(Debug, Fail)]
 #[fail(display = "my error")]
@@ -16,5 +16,22 @@ fn bad_function() -> Result<(), WrappingError> {
 }
 
 fn main() {
-    println!("{}", Fail::display(&bad_function().unwrap_err()));
+    println!("### default fail(display = \"...\") ###");
+    if let Err(ref e) = bad_function() {
+        println!("{}", e);
+        println!("{:#} (with {{:#}})", e);
+    }
+    println!();
+
+    println!("### line ({{}}) chain_display ###");
+    if let Err(ref e) = bad_function() {
+        println!("{}", chain_display(e));
+    }
+    println!();
+
+    println!("### block ({{:#}}) chain_display ###");
+    if let Err(ref e) = bad_function() {
+        println!("{:#}", chain_display(e));
+    }
+    println!();
 }

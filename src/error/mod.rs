@@ -15,8 +15,7 @@ use self::error_impl::ErrorImpl;
 #[cfg(feature = "std")]
 use std::error::Error as StdError;
 
-use display::FailDisplay;
-
+use display::ChainDisplay;
 
 /// The `Error` type, which can contain any failure.
 ///
@@ -168,9 +167,9 @@ impl Error {
         self.imp.failure_mut().downcast_mut()
     }
 
-    /// Displays the error.
-    pub fn display(&self) -> FailDisplay {
-        FailDisplay(self.as_fail(), Some(self.backtrace()))
+    /// Return a custom `Display` adapter which show the entire chain of causes.
+    pub fn chain_display(&self) -> ChainDisplay {
+        ChainDisplay(self.as_fail(), Some(self.backtrace()))
     }
 
     /// Deprecated alias to `find_root_cause`.
