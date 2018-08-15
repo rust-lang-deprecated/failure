@@ -1,6 +1,7 @@
 extern crate failure;
 
 use std::fmt;
+
 use failure::{Fail, chain_display};
 
 #[derive(Debug)]
@@ -29,20 +30,20 @@ impl Fail for OutsideError {
     }
 }
 
-fn bad_function() -> Result<(), OutsideError> {
-    Err(OutsideError(InsideError))
+fn bad_function() -> Result<(), failure::Error> {
+    Err(OutsideError(InsideError).into())
 }
 
 fn main() {
     println!("### line ({{}}) chain_display ###");
     if let Err(ref e) = bad_function() {
-        println!("{}", chain_display(e));
+        println!("{}", chain_display(e.as_fail()));
     }
     println!();
 
     println!("### block ({{:#}}) chain_display ###");
     if let Err(ref e) = bad_function() {
-        println!("{:#}", chain_display(e));
+        println!("{:#}", chain_display(e.as_fail()));
     }
     println!();
 }
