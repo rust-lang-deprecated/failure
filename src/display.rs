@@ -20,12 +20,10 @@ impl<'a> fmt::Display for ChainDisplay<'a> {
                 writeln!(f)?;
             }
             was_backtrace = false;
-            if idx == 0 {
-                if f.alternate() {
-                    write!(f, "error: {:#}", fail)?;
-                } else {
-                    write!(f, "error: {}", fail)?;
-                }
+            if idx == 0 && f.alternate() {
+                write!(f, "error: {:#}", fail)?;
+            } else if idx == 0 {
+                write!(f, "error: {}", fail)?;
             } else if f.alternate() {
                 write!(f, "\n  caused by: {:#}", fail)?;
             } else {
