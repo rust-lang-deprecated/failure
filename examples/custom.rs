@@ -35,19 +35,19 @@ fn bad_function() -> Result<(), failure::Error> {
 }
 
 fn main() {
-    println!("### line ({{}}) chain_display ###");
+    println!("——— line ({{}}) chain_display ———");
     if let Err(ref e) = bad_function() {
         println!("{}", chain_display(e.as_fail()));
     }
     println!();
 
-    println!("### block ({{:#}}) chain_display ###");
+    println!("——— block ({{:#}}) chain_display ———");
     if let Err(ref e) = bad_function() {
         println!("{:#}", chain_display(e.as_fail()));
     }
     println!();
 
-    println!("### block ({{:#?}}) (Debug) chain_display ###");
+    println!("——— block ({{:#?}}) (Debug) chain_display ———");
     if let Err(ref e) = bad_function() {
         println!("{:#?}", chain_display(e.as_fail()));
     }
