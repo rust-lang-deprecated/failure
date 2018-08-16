@@ -23,6 +23,13 @@ fn main() {
     }
     println!();
 
+    println!("### default fmt::Debug ###");
+    if let Err(ref e) = bad_function() {
+        println!("{:?} (with {{:?}}) ", e);
+        println!("{:#?} (with {{:#?}})", e);
+    }
+    println!();
+
     println!("### line ({{}}) chain_display ###");
     if let Err(ref e) = bad_function() {
         println!("{}", chain_display(e));
@@ -32,6 +39,18 @@ fn main() {
     println!("### block ({{:#}}) chain_display ###");
     if let Err(ref e) = bad_function() {
         println!("{:#}", chain_display(e));
+    }
+    println!();
+
+    println!("### line ({{:?}}) fmt::Debug for chain_display ###");
+    if let Err(ref e) = bad_function() {
+        println!("{:?}", chain_display(e));
+    }
+    println!();
+
+    println!("### block ({{:#?}}) fmt::Debug for chain_display ###");
+    if let Err(ref e) = bad_function() {
+        println!("{:#?}", chain_display(e));
     }
     println!();
 }

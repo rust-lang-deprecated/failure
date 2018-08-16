@@ -46,4 +46,10 @@ fn main() {
         println!("{:#}", chain_display(e.as_fail()));
     }
     println!();
+
+    println!("### block ({{:#?}}) (Debug) chain_display ###");
+    if let Err(ref e) = bad_function() {
+        println!("{:#?}", chain_display(e.as_fail()));
+    }
+    println!();
 }
