@@ -53,3 +53,27 @@ fn enum_error() {
     let s = format!("{}", EnumError::UnitVariant);
     assert_eq!(&s[..], "An error has occurred.");
 }
+
+#[derive(Debug, Fail)]
+enum EnumWithNoAttr {
+    #[fail(display = "Error: {}", _0)]
+    TupleVariant(usize),
+    UnitVariant,
+}
+
+#[test]
+fn enum_with_no_attr() {
+    let s = format!("{}", EnumWithNoAttr::TupleVariant(4));
+    assert_eq!(&s[..], "Error: 4");
+    let s = format!("{}", EnumWithNoAttr::UnitVariant);
+    assert_eq!(&s[..], "UnitVariant");
+}
+
+#[derive(Debug, Fail)]
+struct StructWithNoAttr;
+
+#[test]
+fn struct_with_no_attr() {
+    let s = format!("{}", StructWithNoAttr {});
+    assert_eq!(&s[..], "StructWithNoAttr");
+}
