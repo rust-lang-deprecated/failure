@@ -73,8 +73,7 @@ fn display_body(s: &synstructure::Structure) -> Option<quote::__rt::TokenStream>
         let msg = match find_error_msg(&v.ast().attrs) {
             Some(msg) => msg,
             None => {
-                let variant_name = v.ast().ident.to_string();
-                return quote!( return write!(f, "{}", #variant_name));
+                return quote!(return write!(f, "{:?}", self));
             }
         };
         if msg.nested.is_empty() {
