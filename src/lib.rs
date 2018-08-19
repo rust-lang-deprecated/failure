@@ -75,6 +75,7 @@ with_std! {
     mod macros;
     mod error_message;
     pub use error_message::err_msg;
+    pub use error_message::err_msg_with;
 }
 
 /// The `Fail` trait.

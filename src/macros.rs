@@ -16,6 +16,25 @@ macro_rules! bail {
     };
 }
 
+/// Exits a function early with an `Error` and associated cause `Fail`.
+///
+/// The `bail_with!` macro provides an easy way to exit a function with an
+/// `Error` and associated cause `Fail`. `bail_with!(C, X)` is
+/// equivalent to writing:
+///
+/// ```rust,ignore
+/// return Err(err_msg_with!(C, X))
+/// ```
+#[macro_export]
+macro_rules! bail_with {
+    ($cause:expr, $msg:expr) => {
+        return Err($crate::err_msg_with($cause, $msg));
+    };
+    ($cause:expr, $fmt:expr, $($arg:tt)+) => {
+        return Err($crate::err_msg_with($cause, format!($fmt, $($arg)+)));
+    };
+}
+
 /// Exits a function early with an `Error` if the condition is not satisfied.
 ///
 /// Similar to `assert!`, `ensure!` takes a condition and exits the function
