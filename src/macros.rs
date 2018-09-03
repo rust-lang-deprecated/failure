@@ -25,12 +25,12 @@ macro_rules! bail {
 macro_rules! ensure {
     ($cond:expr, $e:expr) => {
         if !($cond) {
-            bail!($e);
+            $crate::bail!($e);
         }
     };
     ($cond:expr, $fmt:expr, $($arg:tt)+) => {
         if !($cond) {
-            bail!($fmt, $($arg)+);
+            $crate::bail!($fmt, $($arg)+);
         }
     };
 }
