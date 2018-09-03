@@ -21,16 +21,16 @@ macro_rules! bail {
 /// Similar to `assert!`, `ensure!` takes a condition and exits the function
 /// if the condition fails. Unlike `assert!`, `ensure!` returns an `Error`,
 /// it does not panic.
-#[macro_export]
+#[macro_export(local_inner_macros)]
 macro_rules! ensure {
     ($cond:expr, $e:expr) => {
         if !($cond) {
-            $crate::bail!($e);
+            bail!($e);
         }
     };
     ($cond:expr, $fmt:expr, $($arg:tt)+) => {
         if !($cond) {
-            $crate::bail!($fmt, $($arg)+);
+            bail!($fmt, $($arg)+);
         }
     };
 }
