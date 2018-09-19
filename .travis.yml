@@ -8,6 +8,6 @@ cache: cargo
 script:
   - cargo test
   - cargo test --features backtrace
-  - cargo test --no-default-features --features std2,derive
+  - cargo test --no-default-features --features "std2 derive"
   - cargo check --no-default-features
   - cargo check --no-default-features --features std2
