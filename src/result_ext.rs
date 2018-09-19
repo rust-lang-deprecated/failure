@@ -14,9 +14,9 @@ pub trait ResultExt<T, E> {
     /// #    tests::run_test();
     /// # }
     /// #
-    /// # #[cfg(not(all(feature = "std", feature = "derive")))] mod tests { pub fn run_test() { } }
-    /// #  
-    /// # #[cfg(all(feature = "std", feature = "derive"))] mod tests {
+    /// # #[cfg(not(all(feature = "std2", feature = "derive")))] mod tests { pub fn run_test() { } }
+    /// #
+    /// # #[cfg(all(feature = "std2", feature = "derive"))] mod tests {
     /// use std::error::Error;
     /// # use std::fmt;
     /// #
@@ -65,19 +65,19 @@ pub trait ResultExt<T, E> {
     /// # Examples
     ///
     /// ```
-    /// # #[cfg(all(feature = "std", feature = "derive"))]
+    /// # #[cfg(all(feature = "std2", feature = "derive"))]
     /// # #[macro_use] extern crate failure;
     /// #
-    /// # #[cfg(all(feature = "std", feature = "derive"))]
+    /// # #[cfg(all(feature = "std2", feature = "derive"))]
     /// # #[macro_use] extern crate failure_derive;
     /// #
     /// # fn main() {
     /// #    tests::run_test();
     /// # }
     /// #
-    /// # #[cfg(not(all(feature = "std", feature = "derive")))] mod tests { pub fn run_test() { } }
+    /// # #[cfg(not(all(feature = "std2", feature = "derive")))] mod tests { pub fn run_test() { } }
     /// #
-    /// # #[cfg(all(feature = "std", feature = "derive"))] mod tests {
+    /// # #[cfg(all(feature = "std2", feature = "derive"))] mod tests {
     /// #
     /// # use failure::{self, ResultExt};
     /// #
@@ -108,19 +108,19 @@ pub trait ResultExt<T, E> {
     /// # Examples
     ///
     /// ```
-    /// # #[cfg(all(feature = "std", feature = "derive"))]
+    /// # #[cfg(all(feature = "std2", feature = "derive"))]
     /// # #[macro_use] extern crate failure;
     /// #
-    /// # #[cfg(all(feature = "std", feature = "derive"))]
+    /// # #[cfg(all(feature = "std2", feature = "derive"))]
     /// # #[macro_use] extern crate failure_derive;
     /// #
     /// # fn main() {
     /// #    tests::run_test();
     /// # }
     /// #
-    /// # #[cfg(not(all(feature = "std", feature = "derive")))] mod tests { pub fn run_test() { } }
+    /// # #[cfg(not(all(feature = "std2", feature = "derive")))] mod tests { pub fn run_test() { } }
     /// #
-    /// # #[cfg(all(feature = "std", feature = "derive"))] mod tests {
+    /// # #[cfg(all(feature = "std2", feature = "derive"))] mod tests {
     /// #
     /// # use failure::{self, ResultExt};
     /// #

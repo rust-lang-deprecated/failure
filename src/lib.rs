@@ -20,13 +20,13 @@
 //! variable to a non-zero value (this also enables backtraces for panics).
 //! Use the `RUST_FAILURE_BACKTRACE` variable to enable or disable backtraces
 //! for `failure` specifically.
-#![cfg_attr(not(feature = "std"), no_std)]
+#![cfg_attr(not(feature = "std2"), no_std)]
 #![deny(missing_docs)]
 #![deny(warnings)]
 #![cfg_attr(feature = "small-error", feature(extern_types, allocator_api))]
 
-macro_rules! with_std { ($($i:item)*) => ($(#[cfg(feature = "std")]$i)*) }
-macro_rules! without_std { ($($i:item)*) => ($(#[cfg(not(feature = "std"))]$i)*) }
+macro_rules! with_std { ($($i:item)*) => ($(#[cfg(feature = "std2")]$i)*) }
+macro_rules! without_std { ($($i:item)*) => ($(#[cfg(not(feature = "std2"))]$i)*) }
 
 // Re-export libcore using an alias so that the macros can work without
 // requiring `extern crate core` downstream.
@@ -34,7 +34,7 @@ macro_rules! without_std { ($($i:item)*) => ($(#[cfg(not(feature = "std"))]$i)*)
 pub extern crate core as _core;
 
 mod backtrace;
-#[cfg(feature = "std")]
+#[cfg(feature = "std2")]
 mod box_std;
 mod compat;
 mod context;
@@ -251,10 +251,10 @@ impl Fail {
     }
 }
 
-#[cfg(feature = "std")]
+#[cfg(feature = "std2")]
 impl<E: StdError + Send + Sync + 'static> Fail for E {}
 
-#[cfg(feature = "std")]
+#[cfg(feature = "std2")]
 impl Fail for Box<Fail> {
     fn cause(&self) -> Option<&Fail> {
         (**self).cause()

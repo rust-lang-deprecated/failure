@@ -10,6 +10,7 @@ test_failure_in() {
   cd $1
   cargo_test
   cargo_test --no-default-features
+  cargo_test --features std2,derive
   cargo_test --features backtrace
   test_derive_in "$1/failure_derive"
   cd $DIR

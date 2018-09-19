@@ -5,14 +5,14 @@ use backtrace::Backtrace;
 use context::Context;
 use compat::Compat;
 
-#[cfg(feature = "std")]
+#[cfg(feature = "std2")]
 use box_std::BoxStd;
 
 #[cfg_attr(feature = "small-error", path = "./error_impl_small.rs")]
 mod error_impl;
 use self::error_impl::ErrorImpl;
 
-#[cfg(feature = "std")]
+#[cfg(feature = "std2")]
 use std::error::Error as StdError;
 
 
@@ -59,7 +59,7 @@ impl Error {
     ///     Ok(92)
     /// }
     /// ```
-    #[cfg(feature = "std")]
+    #[cfg(feature = "std2")]
     pub fn from_boxed_compat(err: Box<StdError + Sync + Send + 'static>) -> Error {
         Error::from(BoxStd(err))
     }

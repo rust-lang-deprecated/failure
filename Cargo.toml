@@ -23,5 +23,9 @@ members = [".", "failure_derive"]
 [features]
 default = ["std", "derive"]
 #small-error = ["std"]
-std = ["backtrace"]
+std = ["backtrace", "std2"]
+# temporary feature to enable 'std' without enabling 'backtrace' while still keeping backwards
+# compatibility ("std" has always depended on "backtrace" and it would be a breaking change to
+# change that)
+std2 = []
 derive = ["failure_derive"]
