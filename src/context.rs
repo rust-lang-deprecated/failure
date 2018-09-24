@@ -26,6 +26,16 @@ without_std! {
             &self.context
         }
 
+        /// Maps `Context<D>` to `Context<T>` by applying a function to the contained context.
+        pub fn map<F, T>(self, op: F) -> Context<T>
+            where F: FnOnce(D) -> T,
+                  T: Display + Send + Sync + 'static
+        {
+            Context {
+                context: op(self.context),
+            }
+        }
+
         pub(crate) fn with_err<E: Fail>(context: D, _: E) -> Context<D> {
             Context { context }
         }
@@ -72,6 +82,17 @@ with_std! {
         /// Returns a reference to the context provided with this error.
         pub fn get_context(&self) -> &D {
             &self.context
+        }
+
+        /// Maps `Context<D>` to `Context<T>` by applying a function to the contained context.
+        pub fn map<F, T>(self, op: F) -> Context<T>
+            where F: FnOnce(D) -> T,
+                  T: Display + Send + Sync + 'static
+        {
+            Context {
+                context: op(self.context),
+                failure: self.failure,
+            }
         }
 
         pub(crate) fn with_err<E: Into<Error>>(context: D, error: E) -> Context<D> {
