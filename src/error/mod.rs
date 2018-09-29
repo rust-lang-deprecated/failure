@@ -122,6 +122,9 @@ impl Error {
     /// failure is of the type `T`. For this reason it returns a `Result` - in
     /// the case that the underlying error is of a different type, the
     /// original `Error` is returned.
+    ///
+    /// Note that this method leaks on Rust versions < 1.28.0.
+    #[cfg_attr(not(has_global_alloc), deprecated(note = "this method leaks on Rust versions < 1.28"))]
     pub fn downcast<T: Fail>(self) -> Result<T, Error> {
         self.imp.downcast().map_err(|imp| Error { imp })
     }
@@ -224,5 +227,12 @@ mod test {
         assert_eq!(format!("{}", io_error), format!("{}", error));
         drop(error);
         assert!(true);
+    }
+
+    #[test]
+    fn test_downcast() {
+        let error: Error = io::Error::new(io::ErrorKind::NotFound, "test").into();
+        let real_io_error = error.downcast_ref::<io::Error>().unwrap();
+        assert_eq!(real_io_error.to_string(), "test");
     }
 }
