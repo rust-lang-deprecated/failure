@@ -7,7 +7,7 @@ use Fail;
 /// implementation. It is used in `failure_derive` in order to generate a
 /// custom cause.
 pub trait AsFail {
-    /// Converts a referece to Self into a dynamic trait object of `Fail`.
+    /// Converts a reference to `Self` into a dynamic trait object of `Fail`.
     fn as_fail(&self) -> &Fail;
 }
 
