@@ -1,4 +1,3 @@
-use core::mem;
 use core::ptr;
 
 use Fail;
@@ -49,8 +48,23 @@ impl ErrorImpl {
         });
         match ret {
             Some(ret) => {
-                // forget self (backtrace is dropped, failure is moved
-                mem::forget(self);
+                // deallocate the box without dropping the inner parts
+                #[cfg(has_global_alloc)] {
+                    use std::alloc::{dealloc, Layout};
+                    unsafe {
+                        let layout = Layout::for_value(&*self.inner);
+                        let ptr = Box::into_raw(self.inner);
+                        dealloc(ptr as *mut u8, layout);
+                    }
+                }
+
+                // slightly leaky versions of the above thing which makes the box
+                // itself leak.  There is no good way around this as far as I know.
+                #[cfg(not(has_global_alloc))] {
+                    use core::mem;
+                    mem::forget(self);
+                }
+
                 Ok(ret)
             }
             _ => Err(self)
