@@ -54,6 +54,12 @@ without_std! {
             write!(f, "{}", self.context)
         }
     }
+
+    #[test]
+    fn test_map() {
+        let ctx = Context::new("a string").map(|s| format!("{} with some more stuff", s));
+        assert_eq!(ctx.context, String::from("a string with some more stuff"));
+    }
 }
 
 with_std! {
@@ -151,6 +157,12 @@ with_std! {
                 Either::That(ref error)     => write!(f, "{:?}", error),
             }
         }
+    }
+
+    #[test]
+    fn test_map() {
+        let ctx = Context::new("a string").map(|s| format!("{} with some more stuff", s));
+        assert_eq!(ctx.context, String::from("a string with some more stuff"));
     }
 }
 
