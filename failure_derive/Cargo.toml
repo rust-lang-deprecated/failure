@@ -6,7 +6,7 @@ name = "failure_derive"
 repository = "https://github.com/withoutboats/failure_derive"
 homepage = "https://boats.gitlab.io/failure"
 documentation = "https://boats.gitlab.io/failure"
-version = "0.1.2"
+version = "0.1.3"
 build = "build.rs"
 
 [dependencies]

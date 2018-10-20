@@ -6,11 +6,11 @@ homepage = "https://boats.gitlab.io/failure"
 license = "MIT OR Apache-2.0"
 name = "failure"
 repository = "https://github.com/rust-lang-nursery/failure"
-version = "0.1.2"
+version = "0.1.3"
 
 [dependencies.failure_derive]
 optional = true
-version = "0.1.2"
+version = "0.1.3"
 path = "./failure_derive"
 
 [dependencies.backtrace]

@@ -1,3 +1,8 @@
+# Version 0.1.3
+
+- Added `Context::map`
+- Fixed a memory leak for older rust versions on error downcast
+
 # Version 0.1.2
 
 The original plan to release 1.0.0 was changed so that version 0.1.1 is released and a related [RFC to fix the error trait](https://github.com/rust-lang/rfcs/pull/2504) is submitted. See README for details.
