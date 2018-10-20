@@ -2,7 +2,7 @@
 authors = ["Without Boats <boats@mozilla.com>"]
 description = "Experimental error handling abstraction."
 documentation = "https://docs.rs/failure"
-homepage = "https://boats.gitlab.io/failure"
+homepage = "https://rust-lang-nursery.github.io/failure/"
 license = "MIT OR Apache-2.0"
 name = "failure"
 repository = "https://github.com/rust-lang-nursery/failure"
