@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/rust-lang-nursery/failure.svg?branch=master)](https://travis-ci.org/rust-lang-nursery/failure)
 [![Latest Version](https://img.shields.io/crates/v/failure.svg)](https://crates.io/crates/failure)
 [![docs](https://docs.rs/failure/badge.svg)](https://docs.rs/failure)
+[![book](https://img.shields.io/badge/intro-book-blue.svg)](https://boats.gitlab.io/failure/)
 
 `failure` is designed to make it easier to manage errors in Rust. It is
 intended to replace error management based on `std::error::Error` with a new
