@@ -43,6 +43,7 @@ mod box_std;
 mod compat;
 mod context;
 mod result_ext;
+mod display;
 
 use core::any::TypeId;
 use core::fmt::{Debug, Display};
@@ -52,6 +53,7 @@ pub use backtrace::Backtrace;
 pub use compat::Compat;
 pub use context::Context;
 pub use result_ext::ResultExt;
+pub use display::FailDisplay;
 
 #[cfg(feature = "failure_derive")]
 #[allow(unused_imports)]
@@ -247,6 +249,11 @@ impl Fail {
     /// fail use `iter_causes` instead.
     pub fn iter_chain(&self) -> Causes {
         Causes { fail: Some(self) }
+    }
+
+    /// Displays the failure.
+    pub fn display(&self) -> FailDisplay {
+        FailDisplay(self, None)
     }
 
     /// Deprecated alias to `find_root_cause`.
