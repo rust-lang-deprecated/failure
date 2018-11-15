@@ -6,11 +6,34 @@ extern crate synstructure;
 #[macro_use]
 extern crate quote;
 
-use proc_macro2::TokenStream;
+use proc_macro2::{TokenStream, Span};
+use syn::spanned::Spanned;
+
+#[derive(Debug)]
+struct Error(TokenStream);
+
+impl Error {
+    fn new(span: Span, message: &str) -> Error {
+        Error(quote_spanned! { span =>
+            compile_error!(#message);
+        })
+    }
+
+    fn into_tokens(self) -> TokenStream {
+        self.0
+    }
+}
 
 decl_derive!([Fail, attributes(fail, cause)] => fail_derive);
 
 fn fail_derive(s: synstructure::Structure) -> TokenStream {
+    match fail_derive_impl(s) {
+        Err(err) => err.into_tokens(),
+        Ok(tokens) => tokens,
+    }
+}
+
+fn fail_derive_impl(s: synstructure::Structure) -> Result<TokenStream, Error> {
     let make_dyn = if cfg!(has_dyn_trait) {
         quote! { &dyn }
     } else {
@@ -49,7 +72,7 @@ fn fail_derive(s: synstructure::Structure) -> TokenStream {
             }
         },
     );
-    let display = display_body(&s).map(|display_body| {
+    let display = display_body(&s)?.map(|display_body| {
         s.unbound_impl(
             quote!(::failure::_core::fmt::Display),
             quote! {
@@ -62,23 +85,31 @@ fn fail_derive(s: synstructure::Structure) -> TokenStream {
         )
     });
 
-    (quote! {
+    Ok(quote! {
         #fail
         #display
-    }).into()
+    })
 }
 
-fn display_body(s: &synstructure::Structure) -> Option<quote::__rt::TokenStream> {
+fn display_body(s: &synstructure::Structure) -> Result<Option<quote::__rt::TokenStream>, Error> {
     let mut msgs = s.variants().iter().map(|v| find_error_msg(&v.ast().attrs));
-    if msgs.all(|msg| msg.is_none()) {
-        return None;
+    if msgs.all(|msg| msg.map(|m| m.is_none()).unwrap_or(true)) {
+        return Ok(None);
     }
 
-    Some(s.each_variant(|v| {
+    let mut tokens = TokenStream::new();
+    for v in s.variants() {
         let msg =
-            find_error_msg(&v.ast().attrs).expect("All variants must have display attribute.");
+            find_error_msg(&v.ast().attrs)?
+              .ok_or_else(|| Error::new(
+                  v.ast().ident.span(),
+                  "All variants must have display attribute."
+              ))?;
         if msg.nested.is_empty() {
-            panic!("Expected at least one argument to fail attribute");
+            return Err(Error::new(
+                msg.span(),
+                "Expected at least one argument to fail attribute"
+            ));
         }
 
         let format_string = match msg.nested[0] {
@@ -86,13 +117,16 @@ fn display_body(s: &synstructure::Structure) -> Option<quote::__rt::TokenStream>
                 nv.lit.clone()
             }
             _ => {
-                panic!("Fail attribute must begin `display = \"\"` to control the Display message.")
+                return Err(Error::new(
+                    msg.span(),
+                    "Fail attribute must begin `display = \"\"` to control the Display message."
+                ));
             }
         };
         let args = msg.nested.iter().skip(1).map(|arg| match *arg {
             syn::NestedMeta::Literal(syn::Lit::Int(ref i)) => {
                 let bi = &v.bindings()[i.value() as usize];
-                quote!(#bi)
+                Ok(quote!(#bi))
             }
             syn::NestedMeta::Meta(syn::Meta::Word(ref id)) => {
                 let id_s = id.to_string();
@@ -101,59 +135,77 @@ fn display_body(s: &synstructure::Structure) -> Option<quote::__rt::TokenStream>
                         let bi = match v.bindings().get(idx) {
                             Some(bi) => bi,
                             None => {
-                                panic!(
-                                    "display attempted to access field `{}` in `{}::{}` which \
+                                return Err(Error::new(
+                                    arg.span(),
+                                    &format!(
+                                        "display attempted to access field `{}` in `{}::{}` which \
                                      does not exist (there are {} field{})",
-                                    idx,
-                                    s.ast().ident,
-                                    v.ast().ident,
-                                    v.bindings().len(),
-                                    if v.bindings().len() != 1 { "s" } else { "" }
-                                );
+                                        idx,
+                                        s.ast().ident,
+                                        v.ast().ident,
+                                        v.bindings().len(),
+                                        if v.bindings().len() != 1 { "s" } else { "" }
+                                    )
+                                ));
                             }
                         };
-                        return quote!(#bi);
+                        return Ok(quote!(#bi));
                     }
                 }
                 for bi in v.bindings() {
                     if bi.ast().ident.as_ref() == Some(id) {
-                        return quote!(#bi);
+                        return Ok(quote!(#bi));
                     }
                 }
-                panic!(
-                    "Couldn't find field `{}` in `{}::{}`",
-                    id,
-                    s.ast().ident,
-                    v.ast().ident
-                );
+                return Err(Error::new(
+                    arg.span(),
+                    &format!(
+                        "Couldn't find field `{}` in `{}::{}`",
+                        id,
+                        s.ast().ident,
+                        v.ast().ident
+                    )
+                ));
             }
-            _ => panic!("Invalid argument to fail attribute!"),
+            ref arg => {
+                return Err(Error::new(
+                    arg.span(),
+                    "Invalid argument to fail attribute!"
+                ));
+            },
         });
+        let args = args.collect::<Result<Vec<_>, _>>()?;
 
-        quote! {
-            return write!(f, #format_string #(, #args)*)
-        }
-    }))
+        let pat = v.pat();
+        tokens.extend(quote!(#pat => { return write!(f, #format_string #(, #args)*) }));
+    }
+    Ok(Some(tokens))
 }
 
-fn find_error_msg(attrs: &[syn::Attribute]) -> Option<syn::MetaList> {
+fn find_error_msg(attrs: &[syn::Attribute]) -> Result<Option<syn::MetaList>, Error> {
     let mut error_msg = None;
     for attr in attrs {
         if let Some(meta) = attr.interpret_meta() {
             if meta.name() == "fail" {
                 if error_msg.is_some() {
-                    panic!("Cannot have two display attributes")
+                    return Err(Error::new(
+                        meta.span(),
+                        "Cannot have two display attributes"
+                    ));
                 } else {
                     if let syn::Meta::List(list) = meta {
                         error_msg = Some(list);
                     } else {
-                        panic!("fail attribute must take a list in parentheses")
+                        return Err(Error::new(
+                            meta.span(),
+                            "fail attribute must take a list in parentheses"
+                        ));
                     }
                 }
             }
         }
     }
-    error_msg
+    Ok(error_msg)
 }
 
 fn is_backtrace(bi: &&synstructure::BindingInfo) -> bool {
