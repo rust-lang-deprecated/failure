@@ -23,10 +23,7 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![deny(missing_docs)]
 #![deny(warnings)]
-#![cfg_attr(
-    feature = "small-error",
-    feature(extern_types, allocator_api)
-)]
+#![cfg_attr(feature = "small-error", feature(extern_types, allocator_api))]
 
 macro_rules! with_std { ($($i:item)*) => ($(#[cfg(feature = "std")]$i)*) }
 macro_rules! without_std { ($($i:item)*) => ($(#[cfg(not(feature = "std"))]$i)*) }
@@ -166,10 +163,7 @@ pub trait Fail: Display + Debug + Send + Sync + 'static {
     }
 
     #[doc(hidden)]
-    #[deprecated(
-        since = "0.1.2",
-        note = "please use the 'iter_chain()' method instead"
-    )]
+    #[deprecated(since = "0.1.2", note = "please use the 'iter_chain()' method instead")]
     fn causes(&self) -> Causes
     where
         Self: Sized,
@@ -259,10 +253,7 @@ impl Fail {
     }
 
     /// Deprecated alias to `iter_chain`.
-    #[deprecated(
-        since = "0.1.2",
-        note = "please use the 'iter_chain()' method instead"
-    )]
+    #[deprecated(since = "0.1.2", note = "please use the 'iter_chain()' method instead")]
     pub fn causes(&self) -> Causes {
         Causes { fail: Some(self) }
     }

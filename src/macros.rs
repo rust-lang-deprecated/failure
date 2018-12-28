@@ -11,8 +11,8 @@ macro_rules! bail {
     ($e:expr) => {
         return Err($crate::err_msg($e));
     };
-    ($fmt:expr, $($arg:tt)+) => {
-        return Err($crate::err_msg(format!($fmt, $($arg)+)));
+    ($fmt:expr, $($arg:tt)*) => {
+        return Err($crate::err_msg(format!($fmt, $($arg)*)));
     };
 }
 
@@ -28,9 +28,9 @@ macro_rules! ensure {
             bail!($e);
         }
     };
-    ($cond:expr, $fmt:expr, $($arg:tt)+) => {
+    ($cond:expr, $fmt:expr, $($arg:tt)*) => {
         if !($cond) {
-            bail!($fmt, $($arg)+);
+            bail!($fmt, $($arg)*);
         }
     };
 }
