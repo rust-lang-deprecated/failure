@@ -65,7 +65,8 @@ fn fail_derive(s: synstructure::Structure) -> TokenStream {
     (quote! {
         #fail
         #display
-    }).into()
+    })
+    .into()
 }
 
 fn display_body(s: &synstructure::Structure) -> Option<quote::__rt::TokenStream> {
