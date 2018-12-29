@@ -140,4 +140,4 @@ case, you should not use this pattern.
 
 [use-error]: ./use-error.html
 [custom-fail]: ./custom-fail.html
-[context-api]: https://boats.gitlab.io/failure/doc/failure/struct.Context.html
+[context-api]: https://docs.rs/failure/latest/failure/struct.Context.html
