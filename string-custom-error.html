@@ -1,0 +1,318 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Strings and custom fail type - </title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="stylesheet" href="book.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <link rel="shortcut icon" href="favicon.png">
+
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+
+    </head>
+    <body class="light">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = 'light'; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme + ' js';
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li><a href="intro.html"><strong aria-hidden="true">1.</strong> failure</a></li><li><a href="howto.html"><strong aria-hidden="true">2.</strong> How to use failure</a></li><li><ol class="section"><li><a href="fail.html"><strong aria-hidden="true">2.1.</strong> The Fail trait</a></li><li><a href="derive-fail.html"><strong aria-hidden="true">2.2.</strong> Deriving Fail</a></li><li><a href="error.html"><strong aria-hidden="true">2.3.</strong> The Error type</a></li><li><a href="bail-and-ensure.html"><strong aria-hidden="true">2.4.</strong> bail! and ensure!</a></li></ol></li><li><a href="guidance.html"><strong aria-hidden="true">3.</strong> Patterns &amp; Guidance</a></li><li><ol class="section"><li><a href="error-msg.html"><strong aria-hidden="true">3.1.</strong> Strings as errors</a></li><li><a href="custom-fail.html"><strong aria-hidden="true">3.2.</strong> A Custom Fail type</a></li><li><a href="use-error.html"><strong aria-hidden="true">3.3.</strong> Using the Error type</a></li><li><a href="error-errorkind.html"><strong aria-hidden="true">3.4.</strong> An Error and ErrorKind pair</a></li><li><a href="string-custom-error.html" class="active"><strong aria-hidden="true">3.5.</strong> Strings and custom fail type</a></li></ol></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light <span class="default">(default)</span></button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                        </div>
+
+                        <h1 class="menu-title"></h1> 
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="#strings-and-custom-fail-type" id="strings-and-custom-fail-type"><h1>Strings and custom fail type</h1></a>
+<p>This pattern is an hybrid between the <a href="./error-errorkind.html"><em>An Error and ErrorKind pair</em></a> and
+<a href="./use-error.html"><em>Using the Error type</em></a>.</p>
+<p>Such an error type can be implemented in the same way that what was shown in
+the <a href="./error-errorkind.html"><em>An Error and ErrorKind pair</em></a> pattern, but here, the context is a
+simple string:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+extern crate core;
+extern crate failure;
+
+use core::fmt::{self, Display};
+use failure::{Backtrace, Context, Fail, ResultExt};
+
+#[derive(Debug)]
+pub struct MyError {
+    inner: Context&lt;String&gt;,
+}
+
+impl Fail for MyError {
+    fn cause(&amp;self) -&gt; Option&lt;&amp;Fail&gt; {
+        self.inner.cause()
+    }
+
+    fn backtrace(&amp;self) -&gt; Option&lt;&amp;Backtrace&gt; {
+        self.inner.backtrace()
+    }
+}
+
+impl Display for MyError {
+    fn fmt(&amp;self, f: &amp;mut fmt::Formatter) -&gt; fmt::Result {
+        Display::fmt(&amp;self.inner, f)
+    }
+}
+#}</code></pre></pre>
+<p>To make the type easier to use, a few impls can be added:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+// Allows writing `MyError::from(&quot;oops&quot;))?`
+impl From&lt;&amp;'static str&gt; for MyError {
+    fn from(msg: &amp;'static str) -&gt; MyError {
+        MyError {
+            inner: Context::new(msg),
+        }
+    }
+}
+
+// Allows adding more context via a String
+impl From&lt;Context&lt;String&gt;&gt; for MyError {
+    fn from(inner: Context&lt;String&gt;) -&gt; MyError {
+        MyError { inner }
+    }
+}
+
+// Allows adding more context via a &amp;str
+impl From&lt;Context&lt;&amp;'static str&gt;&gt; for MyError {
+    fn from(inner: Context&lt;&amp;'static str&gt;) -&gt; MyError {
+        MyError {
+            inner: inner.map(|s| s.to_string()),
+        }
+    }
+}
+#}</code></pre></pre>
+<p>Here is how it is used:</p>
+<pre><pre class="playpen"><code class="language-rust">fn main() {
+    println!(&quot;{:?}&quot;, err2());
+}
+
+// Unlike the &quot;Using the Error type&quot; pattern, functions return our own error
+// type here.
+fn err1() -&gt; Result&lt;(), MyError&gt; {
+    Ok(Err(MyError::from(&quot;err1&quot;))?)
+}
+
+fn err2() -&gt; Result&lt;(), MyError&gt; {
+    // Unlike the &quot;An Error and ErrorKind pair&quot; pattern, our context is a
+    // simple string. We can chain errors and provide detailed error messages,
+    // but we don't have to deal with the complexity of an error kind type
+    Ok(err1().context(&quot;err2&quot;)?)
+}
+</code></pre></pre>
+<a class="header" href="#variant-with-static-str" id="variant-with-static-str"><h2>Variant with <code>&amp;'static str</code></h2></a>
+<p>If you don't need to format strings, you can avoid an
+allocation by using a <code>Context&lt;&amp;'static str&gt;</code> instead of a
+<code>Context&lt;String&gt;</code>.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+extern crate core;
+extern crate failure;
+
+use core::fmt::{self, Display};
+use failure::{Backtrace, Context, Fail, ResultExt};
+
+#[derive(Debug)]
+pub struct MyError {
+    inner: Context&lt;&amp;'static str&gt;,
+}
+
+impl Fail for MyError {
+    fn cause(&amp;self) -&gt; Option&lt;&amp;Fail&gt; {
+        self.inner.cause()
+    }
+
+    fn backtrace(&amp;self) -&gt; Option&lt;&amp;Backtrace&gt; {
+        self.inner.backtrace()
+    }
+}
+
+impl Display for MyError {
+    fn fmt(&amp;self, f: &amp;mut fmt::Formatter) -&gt; fmt::Result {
+        Display::fmt(&amp;self.inner, f)
+    }
+}
+
+impl From&lt;&amp;'static str&gt; for MyError {
+    fn from(msg: &amp;'static str) -&gt; MyError {
+        MyError {
+            inner: Context::new(msg.into()),
+        }
+    }
+}
+
+impl From&lt;Context&lt;&amp;'static str&gt;&gt; for MyError {
+    fn from(inner: Context&lt;&amp;'static str&gt;) -&gt; MyError {
+        MyError {
+            inner,
+        }
+    }
+}
+#}</code></pre></pre>
+<a class="header" href="#when-might-you-use-this-pattern" id="when-might-you-use-this-pattern"><h2>When might you use this pattern?</h2></a>
+<p>Sometimes, you don't want to use the <a href="./use-error.html"><em>Using the Error type</em></a>
+pattern, because you want to expose a few different error types. But you don't
+want to use the <a href="./error-errorkind.html"><em>An Error and ErrorKind pair</em></a> pattern
+either, because there is no need to provide the context as an enum or because
+it would be too much work, if the error can occur in many different contexts.</p>
+<p>For instance, if you're writing a library that decodes/encodes a complex binary
+format, you might want to expose a <code>DecodeError</code> and an <code>EncodeError</code> error
+type, but provide the context as a simple string instead of an error kind, because:</p>
+<ul>
+<li>users may not care too much about the context in which a <code>DecodeError</code> or
+<code>EncodeError</code> was encountered, they just want a nice message to explain it</li>
+<li>your binary format is really complex, errors can occur in many different
+places, and you don't want to end up with a giant <code>ErrorKind</code> enum</li>
+</ul>
+<a class="header" href="#caveats-on-this-pattern" id="caveats-on-this-pattern"><h2>Caveats on this pattern</h2></a>
+<p>If using the <code>Context&lt;String&gt;</code> variant, an extra allocation is used for the string.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="error-errorkind.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="error-errorkind.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>

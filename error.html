@@ -1,0 +1,267 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>The Error type - </title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="stylesheet" href="book.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <link rel="shortcut icon" href="favicon.png">
+
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+
+    </head>
+    <body class="light">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = 'light'; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme + ' js';
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li><a href="intro.html"><strong aria-hidden="true">1.</strong> failure</a></li><li><a href="howto.html"><strong aria-hidden="true">2.</strong> How to use failure</a></li><li><ol class="section"><li><a href="fail.html"><strong aria-hidden="true">2.1.</strong> The Fail trait</a></li><li><a href="derive-fail.html"><strong aria-hidden="true">2.2.</strong> Deriving Fail</a></li><li><a href="error.html" class="active"><strong aria-hidden="true">2.3.</strong> The Error type</a></li><li><a href="bail-and-ensure.html"><strong aria-hidden="true">2.4.</strong> bail! and ensure!</a></li></ol></li><li><a href="guidance.html"><strong aria-hidden="true">3.</strong> Patterns &amp; Guidance</a></li><li><ol class="section"><li><a href="error-msg.html"><strong aria-hidden="true">3.1.</strong> Strings as errors</a></li><li><a href="custom-fail.html"><strong aria-hidden="true">3.2.</strong> A Custom Fail type</a></li><li><a href="use-error.html"><strong aria-hidden="true">3.3.</strong> Using the Error type</a></li><li><a href="error-errorkind.html"><strong aria-hidden="true">3.4.</strong> An Error and ErrorKind pair</a></li><li><a href="string-custom-error.html"><strong aria-hidden="true">3.5.</strong> Strings and custom fail type</a></li></ol></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light <span class="default">(default)</span></button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                        </div>
+
+                        <h1 class="menu-title"></h1> 
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="#the-error-type" id="the-error-type"><h1>The <code>Error</code> type</h1></a>
+<p>In addition to the trait <code>Fail</code>, failure provides a type called <code>Error</code>. Any
+type that implements <code>Fail</code> can be cast into <code>Error</code> using From and Into, which
+allows users to throw errors using <code>?</code> which have different types, if the
+function returns an <code>Error</code>.</p>
+<p>For example:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+// Something you can deserialize
+#[derive(Deserialize)]
+struct Object {
+    ...
+}
+
+impl Object {
+    // This throws both IO Errors and JSON Errors, but they both get converted
+    // into the Error type.
+    fn from_file(path: &amp;Path) -&gt; Result&lt;Object, Error&gt; {
+        let mut string = String::new();
+        File::open(path)?.read_to_string(&amp;mut string)?;
+        let object = json::from_str(&amp;string)?;
+        Ok(object)
+    }
+}
+#}</code></pre></pre>
+<a class="header" href="#causes-and-backtraces" id="causes-and-backtraces"><h2>Causes and Backtraces</h2></a>
+<p>The Error type has all of the methods from the Fail trait, with a few notable
+differences. Most importantly, the cause and backtrace methods on Error do not
+return Options - an Error is <em>guaranteed</em> to have a cause and a backtrace.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+// Both methods are guaranteed to return an &amp;Fail and an &amp;Backtrace
+println!(&quot;{}, {}&quot;, error.cause(), error.backtrace())
+#}</code></pre></pre>
+<p>An <code>Error</code>'s cause is always the failure that was cast into this <code>Error</code>.
+That failure may have further underlying causes. Unlike Fail, this means that
+the cause of an Error will have the same Display representation as the Error
+itself.</p>
+<p>As to the error's guaranteed backtrace, when the conversion into the Error type
+happens, if the underlying failure does not provide a backtrace, a new
+backtrace is constructed pointing to that conversion point (rather than the
+origin of the error). This construction only happens if there is no underlying
+backtrace; if it does have a backtrace no new backtrace is constructed.</p>
+<a class="header" href="#downcasting" id="downcasting"><h2>Downcasting</h2></a>
+<p>The Error type also supports downcasting into any concrete Fail type. It can be
+downcast by reference or by value - when downcasting by value, the return type
+is <code>Result&lt;T, Error&gt;</code>, allowing you to get the error back out of it.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+match error.downcast::&lt;io::Error&gt;() {
+    Ok(io_error)    =&gt; { ... }
+    Err(error)      =&gt; { ... }
+}
+#}</code></pre></pre>
+<a class="header" href="#implementation-details" id="implementation-details"><h2>Implementation details</h2></a>
+<p><code>Error</code> is essentially a trait object, but with some fanciness it may generate
+and store the backtrace if the underlying failure did not have one. In
+particular, we use a custom dynamically sized type to store the backtrace
+information inline with the trait object data.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+struct Error {
+    // Inner&lt;Fail&gt; is a dynamically sized type
+    inner: Box&lt;Inner&lt;Fail&gt;&gt;,
+}
+
+struct Inner&lt;F: Fail&gt; {
+    backtrace: Backtrace,
+    failure: F,
+}
+#}</code></pre></pre>
+<p>By storing the backtrace in the heap this way, we avoid increasing the size of
+the Error type beyond that of two non-nullable pointers. This keeps the size of
+the <code>Result</code> type from getting too large, avoiding having a negative impact on
+the &quot;happy path&quot; of returning Ok. For example, a <code>Result&lt;(), Error&gt;</code> should be
+represented as a pair of nullable pointers, with the null case representing
+<code>Ok</code>. Similar optimizations can be applied to values up to at least a pointer
+in size.</p>
+<p>To emphasize: Error is intended for use cases where the error case is
+considered relatively uncommon. This optimization makes the overhead of an
+error less than it otherwise would be for the Ok branch. In cases where errors
+are going to be returned extremely frequently, returning this Error type is
+probably not appropriate, but you should benchmark in those cases.</p>
+<p>(As a rule of thumb: if you're not sure if you can afford to have a trait
+object, you probably <em>can</em> afford it. Heap allocations are not nearly as cheap
+as stack allocations, but they're cheap enough that you can almost always
+afford them.)</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="derive-fail.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="bail-and-ensure.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="derive-fail.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="bail-and-ensure.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>

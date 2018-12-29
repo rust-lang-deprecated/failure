@@ -1,0 +1,309 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>The Fail trait - </title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="stylesheet" href="book.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <link rel="shortcut icon" href="favicon.png">
+
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+
+    </head>
+    <body class="light">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = 'light'; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme + ' js';
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li><a href="intro.html"><strong aria-hidden="true">1.</strong> failure</a></li><li><a href="howto.html"><strong aria-hidden="true">2.</strong> How to use failure</a></li><li><ol class="section"><li><a href="fail.html" class="active"><strong aria-hidden="true">2.1.</strong> The Fail trait</a></li><li><a href="derive-fail.html"><strong aria-hidden="true">2.2.</strong> Deriving Fail</a></li><li><a href="error.html"><strong aria-hidden="true">2.3.</strong> The Error type</a></li><li><a href="bail-and-ensure.html"><strong aria-hidden="true">2.4.</strong> bail! and ensure!</a></li></ol></li><li><a href="guidance.html"><strong aria-hidden="true">3.</strong> Patterns &amp; Guidance</a></li><li><ol class="section"><li><a href="error-msg.html"><strong aria-hidden="true">3.1.</strong> Strings as errors</a></li><li><a href="custom-fail.html"><strong aria-hidden="true">3.2.</strong> A Custom Fail type</a></li><li><a href="use-error.html"><strong aria-hidden="true">3.3.</strong> Using the Error type</a></li><li><a href="error-errorkind.html"><strong aria-hidden="true">3.4.</strong> An Error and ErrorKind pair</a></li><li><a href="string-custom-error.html"><strong aria-hidden="true">3.5.</strong> Strings and custom fail type</a></li></ol></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light <span class="default">(default)</span></button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                        </div>
+
+                        <h1 class="menu-title"></h1> 
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="#the-fail-trait" id="the-fail-trait"><h1>The <code>Fail</code> trait</h1></a>
+<p>The <code>Fail</code> trait is a replacement for <a href="https://doc.rust-lang.org/std/error/trait.Error.html"><code>std::error::Error</code></a>. It has
+been designed to support a number of operations:</p>
+<ul>
+<li>Because it is bound by both <code>Debug</code> and <code>Display</code>, any failure can be
+printed in two ways.</li>
+<li>It has both a <code>backtrace</code> and a <code>cause</code> method, allowing users to get
+information about how the error occurred.</li>
+<li>It supports wrapping failures in additional contextual information.</li>
+<li>Because it is bound by <code>Send</code> and <code>Sync</code>, failures can be moved and shared
+between threads easily.</li>
+<li>Because it is bound by <code>'static</code>, the abstract <code>Fail</code> trait object can be
+downcast into concrete types.</li>
+</ul>
+<p>Every new error type in your code should implement <code>Fail</code>, so it can be
+integrated into the entire system built around this trait. You can manually
+implement <code>Fail</code> yourself, or you can use the derive for <code>Fail</code> defined
+in a separate crate and documented <a href="./derive-fail.html">here</a>.</p>
+<p>Implementors of this trait are called 'failures'.</p>
+<a class="header" href="#cause" id="cause"><h2>Cause</h2></a>
+<p>Often, an error type contains (or could contain) another underlying error type
+which represents the &quot;cause&quot; of this error - for example, if your custom error
+contains an <code>io::Error</code>, that is the cause of your error.</p>
+<p>The cause method on the <code>Fail</code> trait allows all errors to expose their underlying
+cause - if they have one - in a consistent way. Users can loop over the chain
+of causes, for example, getting the entire series of causes for an error:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+// Assume err is a type that implements `Fail`
+let mut fail: &amp;Fail = err;
+
+while let Some(cause) = fail.cause() {
+    println!(&quot;{}&quot;, cause);
+
+    // Make `fail` the reference to the cause of the previous fail, making the
+    // loop &quot;dig deeper&quot; into the cause chain.
+    fail = cause;
+}
+#}</code></pre></pre>
+<p>Because <code>&amp;Fail</code> supports downcasting, you can also inspect causes in more
+detail if you are expecting a certain failure:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+while let Some(cause) = fail.cause() {
+
+    if let Some(err) = cause.downcast_ref::&lt;io::Error&gt;() {
+        // treat io::Error specially
+    } else {
+        // fallback case
+    }
+
+    fail = cause;
+}
+#}</code></pre></pre>
+<p>For convenience an iterator is also provided:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+// Assume err is a type that implements `Fail`
+let mut fail: &amp;Fail = err;
+
+for cause in fail.iter_causes() {
+    println!(&quot;{}&quot;, cause);
+}
+#}</code></pre></pre>
+<a class="header" href="#backtraces" id="backtraces"><h2>Backtraces</h2></a>
+<p>Errors can also generate a backtrace when they are constructed, helping you
+determine the place the error was generated and the function chain that called into
+that. Like causes, this is entirely optional - the authors of each failure
+have to decide if generating a backtrace is appropriate in their use case.</p>
+<p>The backtrace method allows all errors to expose their backtrace if they have
+one. This enables a consistent method for getting the backtrace from an error:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+// We don't even know the type of the cause, but we can still get its
+// backtrace.
+if let Some(bt) = err.cause().and_then(|cause| cause.backtrace()) {
+    println!(&quot;{}&quot;, bt)
+}
+#}</code></pre></pre>
+<p>The <code>Backtrace</code> type exposed by <code>failure</code> is different from the <code>Backtrace</code> exposed
+by the <a href="http://alexcrichton.com/backtrace-rs">backtrace crate</a>, in that it has several optimizations:</p>
+<ul>
+<li>It has a <code>no_std</code> compatible form which will never be generated (because
+backtraces require heap allocation), and should be entirely compiled out.</li>
+<li>It will not be generated unless the <code>RUST_BACKTRACE</code> environment variable has
+been set at runtime.</li>
+<li>Symbol resolution is delayed until the backtrace is actually printed, because
+this is the most expensive part of generating a backtrace.</li>
+</ul>
+<a class="header" href="#context" id="context"><h2>Context</h2></a>
+<p>Often, the libraries you are using will present error messages that don't
+provide very helpful information about what exactly has gone wrong. For
+example, if an <code>io::Error</code> says that an entity was &quot;Not Found,&quot; that doesn't
+communicate much about what specific file was missing - if it even was a file
+(as opposed to a directory for example).</p>
+<p>You can inject additional context to be carried with this error value,
+providing semantic information about the nature of the error appropriate to the
+level of abstraction that the code you are writing operates at. The <code>context</code>
+method on <code>Fail</code> takes any displayable value (such as a string) to act as
+context for this error.</p>
+<p>Using the <code>ResultExt</code> trait, you can also get <code>context</code> as a convenient method on
+<code>Result</code> directly. For example, suppose that your code attempted to read from a
+Cargo.toml. You can wrap the <code>io::Error</code>s that occur with additional context
+about what operation has failed:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+use failure::ResultExt;
+
+let mut file = File::open(cargo_toml_path).context(&quot;Missing Cargo.toml&quot;)?;
+file.read_to_end(&amp;buffer).context(&quot;Could not read Cargo.toml&quot;)?;
+#}</code></pre></pre>
+<p>The <code>Context</code> object also has a constructor that does not take an underlying
+error, allowing you to create ad hoc Context errors alongside those created by
+applying the <code>context</code> method to an underlying error.</p>
+<a class="header" href="#backwards-compatibility" id="backwards-compatibility"><h2>Backwards compatibility</h2></a>
+<p>We've taken several steps to make transitioning from <code>std::error</code> to <code>failure</code> as
+painless as possible.</p>
+<p>First, there is a blanket implementation of <code>Fail</code> for all types that implement
+<code>std::error::Error</code>, as long as they are <code>Send + Sync + 'static</code>. If you are
+dealing with a library that hasn't shifted to <code>Fail</code>, it is automatically
+compatible with <code>failure</code> already.</p>
+<p>Second, <code>Fail</code> contains a method called <code>compat</code>, which produces a type that
+implements <code>std::error::Error</code>. If you have a type that implements <code>Fail</code>, but
+not the older <code>Error</code> trait, you can call <code>compat</code> to get a type that does
+implement that trait (for example, if you need to return a <code>Box&lt;Error&gt;</code>).</p>
+<p>The biggest hole in our backwards compatibility story is that you cannot
+implement <code>std::error::Error</code> and also override the backtrace and cause methods
+on <code>Fail</code>. We intend to enable this with specialization when it becomes stable.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="howto.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="derive-fail.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="howto.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="derive-fail.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>

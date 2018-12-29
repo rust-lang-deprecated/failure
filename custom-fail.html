@@ -1,0 +1,242 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>A Custom Fail type - </title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="stylesheet" href="book.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <link rel="shortcut icon" href="favicon.png">
+
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+
+    </head>
+    <body class="light">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = 'light'; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme + ' js';
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li><a href="intro.html"><strong aria-hidden="true">1.</strong> failure</a></li><li><a href="howto.html"><strong aria-hidden="true">2.</strong> How to use failure</a></li><li><ol class="section"><li><a href="fail.html"><strong aria-hidden="true">2.1.</strong> The Fail trait</a></li><li><a href="derive-fail.html"><strong aria-hidden="true">2.2.</strong> Deriving Fail</a></li><li><a href="error.html"><strong aria-hidden="true">2.3.</strong> The Error type</a></li><li><a href="bail-and-ensure.html"><strong aria-hidden="true">2.4.</strong> bail! and ensure!</a></li></ol></li><li><a href="guidance.html"><strong aria-hidden="true">3.</strong> Patterns &amp; Guidance</a></li><li><ol class="section"><li><a href="error-msg.html"><strong aria-hidden="true">3.1.</strong> Strings as errors</a></li><li><a href="custom-fail.html" class="active"><strong aria-hidden="true">3.2.</strong> A Custom Fail type</a></li><li><a href="use-error.html"><strong aria-hidden="true">3.3.</strong> Using the Error type</a></li><li><a href="error-errorkind.html"><strong aria-hidden="true">3.4.</strong> An Error and ErrorKind pair</a></li><li><a href="string-custom-error.html"><strong aria-hidden="true">3.5.</strong> Strings and custom fail type</a></li></ol></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light <span class="default">(default)</span></button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                        </div>
+
+                        <h1 class="menu-title"></h1> 
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="#a-custom-fail-type" id="a-custom-fail-type"><h1>A Custom Fail type</h1></a>
+<p>This pattern is a way to define a new kind of failure. Defining a new kind of
+failure can be an effective way of representing an error for which you control
+all of the possible failure cases. It has several advantages:</p>
+<ol>
+<li>You can enumerate exactly all of the possible failures that can occur in
+this context.</li>
+<li>You have total control over the representation of the failure type.</li>
+<li>Callers can destructure your error without any sort of downcasting.</li>
+</ol>
+<p>To implement this pattern, you should define your own type that implements
+<code>Fail</code>. You can use the <a href="./derive-fail.html">custom derive</a> to make this easier. For
+example:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+#[derive(Fail, Debug)]
+#[fail(display = &quot;Input was invalid UTF-8&quot;)]
+pub struct Utf8Error;
+#}</code></pre></pre>
+<p>This type can become as large and complicated as is appropriate to your use
+case. It can be an enum with a different variant for each possible error, and
+it can carry data with more precise information about the error. For example:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+#[derive(Fail, Debug)]
+#[fail(display = &quot;Input was invalid UTF-8 at index {}&quot;, index)]
+pub struct Utf8Error {
+    index: usize,
+}
+#}</code></pre></pre>
+<a class="header" href="#when-might-you-use-this-pattern" id="when-might-you-use-this-pattern"><h2>When might you use this pattern?</h2></a>
+<p>If you need to raise an error that doesn't come from one of your dependencies,
+this is a great pattern to use.</p>
+<p>You can also use this pattern in conjunction with <a href="./use-error.html">using <code>Error</code></a> or
+defining an <a href="./error-errorkind.html">Error and ErrorKind pair</a>. Those functions which
+are &quot;pure logic&quot; and have a very constrained set of errors (such as parsing
+simple formats) might each return a different custom Fail type, and then the
+function which merges them all together, does IO, and so on, would return a
+more complex type like <code>Error</code> or your custom Error/ErrorKind.</p>
+<a class="header" href="#caveats-on-this-pattern" id="caveats-on-this-pattern"><h2>Caveats on this pattern</h2></a>
+<p>When you have a dependency which returns a different error type, often you will
+be inclined to add it as a variant on your own error type. When you do that,
+you should tag the underlying error as the <code>#[fail(cause)]</code> of your error:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+#[derive(Fail, Debug)]
+pub enum MyError {
+    #[fail(display = &quot;Input was invalid UTF-8 at index {}&quot;, _0)]
+    Utf8Error(usize),
+    #[fail(display = &quot;{}&quot;, _0)]
+    Io(#[fail(cause)] io::Error),
+}
+#}</code></pre></pre>
+<p>Up to a limit, this design can work. However, it has some problems:</p>
+<ul>
+<li>It can be hard to be forward compatible with new dependencies that raise
+their own kinds of errors in the future.</li>
+<li>It defines a 1-1 relationship between a variant of the error and an
+underlying error.</li>
+</ul>
+<p>Depending on your use case, as your function grows in complexity, it can be
+better to transition to <a href="./use-error.html">using Error</a> or <a href="./error-errorkind.html">defining an Error &amp;
+ErrorKind pair</a>.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="error-msg.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="use-error.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="error-msg.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="use-error.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>

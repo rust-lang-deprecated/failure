@@ -1,0 +1,1132 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title></title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="stylesheet" href="book.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <link rel="shortcut icon" href="favicon.png">
+
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+
+    </head>
+    <body class="light">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = 'light'; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme + ' js';
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li><a href="intro.html"><strong aria-hidden="true">1.</strong> failure</a></li><li><a href="howto.html"><strong aria-hidden="true">2.</strong> How to use failure</a></li><li><ol class="section"><li><a href="fail.html"><strong aria-hidden="true">2.1.</strong> The Fail trait</a></li><li><a href="derive-fail.html"><strong aria-hidden="true">2.2.</strong> Deriving Fail</a></li><li><a href="error.html"><strong aria-hidden="true">2.3.</strong> The Error type</a></li><li><a href="bail-and-ensure.html"><strong aria-hidden="true">2.4.</strong> bail! and ensure!</a></li></ol></li><li><a href="guidance.html"><strong aria-hidden="true">3.</strong> Patterns &amp; Guidance</a></li><li><ol class="section"><li><a href="error-msg.html"><strong aria-hidden="true">3.1.</strong> Strings as errors</a></li><li><a href="custom-fail.html"><strong aria-hidden="true">3.2.</strong> A Custom Fail type</a></li><li><a href="use-error.html"><strong aria-hidden="true">3.3.</strong> Using the Error type</a></li><li><a href="error-errorkind.html"><strong aria-hidden="true">3.4.</strong> An Error and ErrorKind pair</a></li><li><a href="string-custom-error.html"><strong aria-hidden="true">3.5.</strong> Strings and custom fail type</a></li></ol></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light <span class="default">(default)</span></button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                        </div>
+
+                        <h1 class="menu-title"></h1> 
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="#failure" id="failure"><h1>failure</h1></a>
+<p>This is the documentation for the failure crate, which provides a system for
+creating and managing errors in Rust. Additional documentation is found here:</p>
+<ul>
+<li><a href="https://docs.rs/failure">API documentation</a></li>
+<li><a href="https://github.com/rust-lang-nursery/failure">failure source code</a></li>
+</ul>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+extern crate serde;
+extern crate toml;
+
+#[macro_use] extern crate failure;
+#[macro_use] extern crate serde_derive;
+
+use std::collections::HashMap;
+use std::path::PathBuf;
+use std::str::FromStr;
+
+use failure::Error;
+
+// This is a new error type that you've created. It represents the ways a
+// toolchain could be invalid.
+//
+// The custom derive for Fail derives an impl of both Fail and Display.
+// We don't do any other magic like creating new types.
+#[derive(Debug, Fail)]
+enum ToolchainError {
+    #[fail(display = &quot;invalid toolchain name: {}&quot;, name)]
+    InvalidToolchainName {
+        name: String,
+    },
+    #[fail(display = &quot;unknown toolchain version: {}&quot;, version)]
+    UnknownToolchainVersion {
+        version: String,
+    }
+}
+
+pub struct ToolchainId {
+    // ... etc
+}
+
+impl FromStr for ToolchainId {
+    type Err = ToolchainError;
+
+    fn from_str(s: &amp;str) -&gt; Result&lt;ToolchainId, ToolchainError&gt; {
+        // ... etc
+    }
+}
+
+pub type Toolchains = HashMap&lt;ToolchainId, PathBuf&gt;;
+
+// This opens a toml file containing associations between ToolchainIds and
+// Paths (the roots of those toolchains).
+//
+// This could encounter an io Error, a toml parsing error, or a ToolchainError,
+// all of them will be thrown into the special Error type
+pub fn read_toolchains(path: PathBuf) -&gt; Result&lt;Toolchains, Error&gt;
+{
+    use std::fs::File;
+    use std::io::Read;
+
+    let mut string = String::new();
+    File::open(path)?.read_to_string(&amp;mut string)?;
+
+    let toml: HashMap&lt;String, PathBuf&gt; = toml::from_str(&amp;string)?;
+
+    let toolchains = toml.iter().map(|(key, path)| {
+        let toolchain_id = key.parse()?;
+        Ok((toolchain_id, path))
+    }).collect::&lt;Result&lt;Toolchains, ToolchainError&gt;&gt;()?;
+
+    Ok(toolchains)
+}
+#}</code></pre></pre>
+<a class="header" href="#how-to-use-failure" id="how-to-use-failure"><h1>How to use failure</h1></a>
+<p>This section of the documentation is about how the APIs exposed in failure can
+be used. It is organized around the major APIs of failure:</p>
+<ul>
+<li><strong><a href="./fail.html">The Fail trait</a>:</strong> The primary abstraction provided by failure.</li>
+<li><strong><a href="./derive-fail.html">Deriving Fail</a>:</strong> A custom derive for the Fail trait.</li>
+<li><strong><a href="./error.html">The Error type</a>:</strong> A convenient wrapper around any Fail type.</li>
+</ul>
+<a class="header" href="#the-fail-trait" id="the-fail-trait"><h1>The <code>Fail</code> trait</h1></a>
+<p>The <code>Fail</code> trait is a replacement for <a href="https://doc.rust-lang.org/std/error/trait.Error.html"><code>std::error::Error</code></a>. It has
+been designed to support a number of operations:</p>
+<ul>
+<li>Because it is bound by both <code>Debug</code> and <code>Display</code>, any failure can be
+printed in two ways.</li>
+<li>It has both a <code>backtrace</code> and a <code>cause</code> method, allowing users to get
+information about how the error occurred.</li>
+<li>It supports wrapping failures in additional contextual information.</li>
+<li>Because it is bound by <code>Send</code> and <code>Sync</code>, failures can be moved and shared
+between threads easily.</li>
+<li>Because it is bound by <code>'static</code>, the abstract <code>Fail</code> trait object can be
+downcast into concrete types.</li>
+</ul>
+<p>Every new error type in your code should implement <code>Fail</code>, so it can be
+integrated into the entire system built around this trait. You can manually
+implement <code>Fail</code> yourself, or you can use the derive for <code>Fail</code> defined
+in a separate crate and documented <a href="./derive-fail.html">here</a>.</p>
+<p>Implementors of this trait are called 'failures'.</p>
+<a class="header" href="#cause" id="cause"><h2>Cause</h2></a>
+<p>Often, an error type contains (or could contain) another underlying error type
+which represents the &quot;cause&quot; of this error - for example, if your custom error
+contains an <code>io::Error</code>, that is the cause of your error.</p>
+<p>The cause method on the <code>Fail</code> trait allows all errors to expose their underlying
+cause - if they have one - in a consistent way. Users can loop over the chain
+of causes, for example, getting the entire series of causes for an error:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+// Assume err is a type that implements `Fail`
+let mut fail: &amp;Fail = err;
+
+while let Some(cause) = fail.cause() {
+    println!(&quot;{}&quot;, cause);
+
+    // Make `fail` the reference to the cause of the previous fail, making the
+    // loop &quot;dig deeper&quot; into the cause chain.
+    fail = cause;
+}
+#}</code></pre></pre>
+<p>Because <code>&amp;Fail</code> supports downcasting, you can also inspect causes in more
+detail if you are expecting a certain failure:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+while let Some(cause) = fail.cause() {
+
+    if let Some(err) = cause.downcast_ref::&lt;io::Error&gt;() {
+        // treat io::Error specially
+    } else {
+        // fallback case
+    }
+
+    fail = cause;
+}
+#}</code></pre></pre>
+<p>For convenience an iterator is also provided:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+// Assume err is a type that implements `Fail`
+let mut fail: &amp;Fail = err;
+
+for cause in fail.iter_causes() {
+    println!(&quot;{}&quot;, cause);
+}
+#}</code></pre></pre>
+<a class="header" href="#backtraces" id="backtraces"><h2>Backtraces</h2></a>
+<p>Errors can also generate a backtrace when they are constructed, helping you
+determine the place the error was generated and the function chain that called into
+that. Like causes, this is entirely optional - the authors of each failure
+have to decide if generating a backtrace is appropriate in their use case.</p>
+<p>The backtrace method allows all errors to expose their backtrace if they have
+one. This enables a consistent method for getting the backtrace from an error:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+// We don't even know the type of the cause, but we can still get its
+// backtrace.
+if let Some(bt) = err.cause().and_then(|cause| cause.backtrace()) {
+    println!(&quot;{}&quot;, bt)
+}
+#}</code></pre></pre>
+<p>The <code>Backtrace</code> type exposed by <code>failure</code> is different from the <code>Backtrace</code> exposed
+by the <a href="http://alexcrichton.com/backtrace-rs">backtrace crate</a>, in that it has several optimizations:</p>
+<ul>
+<li>It has a <code>no_std</code> compatible form which will never be generated (because
+backtraces require heap allocation), and should be entirely compiled out.</li>
+<li>It will not be generated unless the <code>RUST_BACKTRACE</code> environment variable has
+been set at runtime.</li>
+<li>Symbol resolution is delayed until the backtrace is actually printed, because
+this is the most expensive part of generating a backtrace.</li>
+</ul>
+<a class="header" href="#context" id="context"><h2>Context</h2></a>
+<p>Often, the libraries you are using will present error messages that don't
+provide very helpful information about what exactly has gone wrong. For
+example, if an <code>io::Error</code> says that an entity was &quot;Not Found,&quot; that doesn't
+communicate much about what specific file was missing - if it even was a file
+(as opposed to a directory for example).</p>
+<p>You can inject additional context to be carried with this error value,
+providing semantic information about the nature of the error appropriate to the
+level of abstraction that the code you are writing operates at. The <code>context</code>
+method on <code>Fail</code> takes any displayable value (such as a string) to act as
+context for this error.</p>
+<p>Using the <code>ResultExt</code> trait, you can also get <code>context</code> as a convenient method on
+<code>Result</code> directly. For example, suppose that your code attempted to read from a
+Cargo.toml. You can wrap the <code>io::Error</code>s that occur with additional context
+about what operation has failed:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+use failure::ResultExt;
+
+let mut file = File::open(cargo_toml_path).context(&quot;Missing Cargo.toml&quot;)?;
+file.read_to_end(&amp;buffer).context(&quot;Could not read Cargo.toml&quot;)?;
+#}</code></pre></pre>
+<p>The <code>Context</code> object also has a constructor that does not take an underlying
+error, allowing you to create ad hoc Context errors alongside those created by
+applying the <code>context</code> method to an underlying error.</p>
+<a class="header" href="#backwards-compatibility" id="backwards-compatibility"><h2>Backwards compatibility</h2></a>
+<p>We've taken several steps to make transitioning from <code>std::error</code> to <code>failure</code> as
+painless as possible.</p>
+<p>First, there is a blanket implementation of <code>Fail</code> for all types that implement
+<code>std::error::Error</code>, as long as they are <code>Send + Sync + 'static</code>. If you are
+dealing with a library that hasn't shifted to <code>Fail</code>, it is automatically
+compatible with <code>failure</code> already.</p>
+<p>Second, <code>Fail</code> contains a method called <code>compat</code>, which produces a type that
+implements <code>std::error::Error</code>. If you have a type that implements <code>Fail</code>, but
+not the older <code>Error</code> trait, you can call <code>compat</code> to get a type that does
+implement that trait (for example, if you need to return a <code>Box&lt;Error&gt;</code>).</p>
+<p>The biggest hole in our backwards compatibility story is that you cannot
+implement <code>std::error::Error</code> and also override the backtrace and cause methods
+on <code>Fail</code>. We intend to enable this with specialization when it becomes stable.</p>
+<a class="header" href="#deriving-fail" id="deriving-fail"><h1>Deriving <code>Fail</code></h1></a>
+<p>Though you can implement <code>Fail</code> yourself, we also provide a derive macro to
+generate the impl for you. To get access to this macro, you must tag the extern
+crate declaration with <code>#[macro_use]</code>, as in:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+#[macro_use] extern crate failure;
+#}</code></pre></pre>
+<p>In its smallest form, deriving Fail looks like this:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+#[macro_use] extern crate failure;
+
+use std::fmt;
+
+#[derive(Fail, Debug)]
+struct MyError;
+
+impl fmt::Display for MyError {
+    fn fmt(&amp;self, f: &amp;mut fmt::Formatter) -&gt; fmt::Result {
+        write!(f, &quot;An error occurred.&quot;)
+    }
+}
+#}</code></pre></pre>
+<p>All failures need to implement <code>Display</code>, so we have added an impl of
+Display. However, implementing <code>Display</code> is much more boilerplate than
+implementing <code>Fail</code> - this is why we support deriving <code>Display</code> for you.</p>
+<a class="header" href="#deriving-display" id="deriving-display"><h2>Deriving <code>Display</code></h2></a>
+<p>You can derive an implementation of <code>Display</code> with a special attribute:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+#[macro_use] extern crate failure;
+
+#[derive(Fail, Debug)]
+#[fail(display = &quot;An error occurred.&quot;)]
+struct MyError;
+#}</code></pre></pre>
+<p>This attribute will cause the <code>Fail</code> derive to also generate an impl of
+<code>Display</code>, so that you don't have to implement one yourself.</p>
+<a class="header" href="#string-interpolation" id="string-interpolation"><h3>String interpolation</h3></a>
+<p>String literals are not enough for error messages in many cases. Often, you
+want to include parts of the error value interpolated into the message. You can
+do this with failure using the same string interpolation syntax as Rust's
+formatting and printing macros:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+#[macro_use] extern crate failure;
+
+#[derive(Fail, Debug)]
+#[fail(display = &quot;An error occurred with error code {}. ({})&quot;, code, message)]
+struct MyError {
+    code: i32,
+    message: String,
+}
+#}</code></pre></pre>
+<p>Note that unlike code that would appear in a method, this does not use
+something like <code>self.code</code> or <code>self.message</code>; it just uses the field names
+directly. This is because of a limitation in Rust's current attribute syntax.
+As a result, you can only interpolate fields through the derivation; you cannot
+perform method calls or use other arbitrary expressions.</p>
+<a class="header" href="#tuple-structs" id="tuple-structs"><h3>Tuple structs</h3></a>
+<p>With regular structs, you can use the name of the field in string
+interpolation. When deriving Fail for a tuple struct, you might expect to use
+the numeric index to refer to fields <code>0</code>, <code>1</code>, et cetera. However, a compiler
+limitation prevents this from parsing today.</p>
+<p>For the time being, tuple field accesses in the display attribute need to be
+prefixed with an underscore:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+#[macro_use] extern crate failure;
+
+#[derive(Fail, Debug)]
+#[fail(display = &quot;An error occurred with error code {}.&quot;, _0)]
+struct MyError(i32);
+
+
+#[derive(Fail, Debug)]
+#[fail(display = &quot;An error occurred with error code {} ({}).&quot;, _0, _1)]
+struct MyOtherError(i32, String);
+#}</code></pre></pre>
+<a class="header" href="#enums" id="enums"><h3>Enums</h3></a>
+<p>Implementing Display is also supported for enums by applying the attribute to
+each variant of the enum, rather than to the enum as a whole. The Display impl
+will match over the enum to generate the correct error message. For example:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+#[macro_use] extern crate failure;
+
+#[derive(Fail, Debug)]
+enum MyError {
+    #[fail(display = &quot;{} is not a valid version.&quot;, _0)]
+    InvalidVersion(u32),
+    #[fail(display = &quot;IO error: {}&quot;, error)]
+    IoError { error: io::Error },
+    #[fail(display = &quot;An unknown error has occurred.&quot;)]
+    UnknownError,
+}
+#}</code></pre></pre>
+<a class="header" href="#overriding-backtrace" id="overriding-backtrace"><h2>Overriding <code>backtrace</code></h2></a>
+<p>The backtrace method will be automatically overridden if the type contains a
+field with the type <code>Backtrace</code>. This works for both structs and enums.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+#[macro_use] extern crate failure;
+
+use failure::Backtrace;
+
+/// MyError::backtrace will return a reference to the backtrace field
+#[derive(Fail, Debug)]
+#[fail(display = &quot;An error occurred.&quot;)]
+struct MyError {
+    backtrace: Backtrace,
+}
+
+/// MyEnumError::backtrace will return a reference to the backtrace only if it
+/// is Variant2, otherwise it will return None.
+#[derive(Fail, Debug)]
+enum MyEnumError {
+    #[fail(display = &quot;An error occurred.&quot;)]
+    Variant1,
+    #[fail(display = &quot;A different error occurred.&quot;)]
+    Variant2(Backtrace),
+}
+#}</code></pre></pre>
+<p>This happens automatically; no other annotations are necessary. It only works
+if the type is named Backtrace, and not if you have created an alias for the
+Backtrace type.</p>
+<a class="header" href="#overriding-cause" id="overriding-cause"><h2>Overriding <code>cause</code></h2></a>
+<p>In contrast to <code>backtrace</code>, the cause cannot be determined by type name alone
+because it could be any type which implements <code>Fail</code>. For this reason, if your
+error has an underlying cause field, you need to annotate that field with
+the <code>#[fail(cause)]</code> attribute.</p>
+<p>This can be used in fields of enums as well as structs.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+#[macro_use] extern crate failure;
+
+use std::io;
+
+/// MyError::cause will return a reference to the io_error field
+#[derive(Fail, Debug)]
+#[fail(display = &quot;An error occurred.&quot;)]
+struct MyError {
+    #[fail(cause)] io_error: io::Error,
+}
+
+/// MyEnumError::cause will return a reference only if it is Variant2,
+/// otherwise it will return None.
+#[derive(Fail, Debug)]
+enum MyEnumError {
+    #[fail(display = &quot;An error occurred.&quot;)]
+    Variant1,
+    #[fail(display = &quot;A different error occurred.&quot;)]
+    Variant2(#[fail(cause)] io::Error),
+}
+#}</code></pre></pre>
+<a class="header" href="#the-error-type" id="the-error-type"><h1>The <code>Error</code> type</h1></a>
+<p>In addition to the trait <code>Fail</code>, failure provides a type called <code>Error</code>. Any
+type that implements <code>Fail</code> can be cast into <code>Error</code> using From and Into, which
+allows users to throw errors using <code>?</code> which have different types, if the
+function returns an <code>Error</code>.</p>
+<p>For example:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+// Something you can deserialize
+#[derive(Deserialize)]
+struct Object {
+    ...
+}
+
+impl Object {
+    // This throws both IO Errors and JSON Errors, but they both get converted
+    // into the Error type.
+    fn from_file(path: &amp;Path) -&gt; Result&lt;Object, Error&gt; {
+        let mut string = String::new();
+        File::open(path)?.read_to_string(&amp;mut string)?;
+        let object = json::from_str(&amp;string)?;
+        Ok(object)
+    }
+}
+#}</code></pre></pre>
+<a class="header" href="#causes-and-backtraces" id="causes-and-backtraces"><h2>Causes and Backtraces</h2></a>
+<p>The Error type has all of the methods from the Fail trait, with a few notable
+differences. Most importantly, the cause and backtrace methods on Error do not
+return Options - an Error is <em>guaranteed</em> to have a cause and a backtrace.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+// Both methods are guaranteed to return an &amp;Fail and an &amp;Backtrace
+println!(&quot;{}, {}&quot;, error.cause(), error.backtrace())
+#}</code></pre></pre>
+<p>An <code>Error</code>'s cause is always the failure that was cast into this <code>Error</code>.
+That failure may have further underlying causes. Unlike Fail, this means that
+the cause of an Error will have the same Display representation as the Error
+itself.</p>
+<p>As to the error's guaranteed backtrace, when the conversion into the Error type
+happens, if the underlying failure does not provide a backtrace, a new
+backtrace is constructed pointing to that conversion point (rather than the
+origin of the error). This construction only happens if there is no underlying
+backtrace; if it does have a backtrace no new backtrace is constructed.</p>
+<a class="header" href="#downcasting" id="downcasting"><h2>Downcasting</h2></a>
+<p>The Error type also supports downcasting into any concrete Fail type. It can be
+downcast by reference or by value - when downcasting by value, the return type
+is <code>Result&lt;T, Error&gt;</code>, allowing you to get the error back out of it.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+match error.downcast::&lt;io::Error&gt;() {
+    Ok(io_error)    =&gt; { ... }
+    Err(error)      =&gt; { ... }
+}
+#}</code></pre></pre>
+<a class="header" href="#implementation-details" id="implementation-details"><h2>Implementation details</h2></a>
+<p><code>Error</code> is essentially a trait object, but with some fanciness it may generate
+and store the backtrace if the underlying failure did not have one. In
+particular, we use a custom dynamically sized type to store the backtrace
+information inline with the trait object data.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+struct Error {
+    // Inner&lt;Fail&gt; is a dynamically sized type
+    inner: Box&lt;Inner&lt;Fail&gt;&gt;,
+}
+
+struct Inner&lt;F: Fail&gt; {
+    backtrace: Backtrace,
+    failure: F,
+}
+#}</code></pre></pre>
+<p>By storing the backtrace in the heap this way, we avoid increasing the size of
+the Error type beyond that of two non-nullable pointers. This keeps the size of
+the <code>Result</code> type from getting too large, avoiding having a negative impact on
+the &quot;happy path&quot; of returning Ok. For example, a <code>Result&lt;(), Error&gt;</code> should be
+represented as a pair of nullable pointers, with the null case representing
+<code>Ok</code>. Similar optimizations can be applied to values up to at least a pointer
+in size.</p>
+<p>To emphasize: Error is intended for use cases where the error case is
+considered relatively uncommon. This optimization makes the overhead of an
+error less than it otherwise would be for the Ok branch. In cases where errors
+are going to be returned extremely frequently, returning this Error type is
+probably not appropriate, but you should benchmark in those cases.</p>
+<p>(As a rule of thumb: if you're not sure if you can afford to have a trait
+object, you probably <em>can</em> afford it. Heap allocations are not nearly as cheap
+as stack allocations, but they're cheap enough that you can almost always
+afford them.)</p>
+<a class="header" href="#bail-and-ensure" id="bail-and-ensure"><h1><code>bail!</code> and <code>ensure!</code></h1></a>
+<p>If you were a fan of the <code>bail!</code> and ensure! macros from error-chain, good news. failure has a version of these macros as well.</p>
+<p>The <code>bail!</code> macro returns an error immediately, based on a format string. The <code>ensure!</code> macro additionally takes a conditional, and returns the error only if that conditional is false. You can think of <code>bail!</code> and <code>ensure!</code> as being analogous to <code>panic!</code> and <code>assert!</code>, but throwing errors instead of panicking.</p>
+<p><code>bail!</code> and <code>ensure!</code> macros are useful when you are prototyping and you want to write your custom errors later. It is also the simplest example of using the failure crate.</p>
+<a class="header" href="#example" id="example"><h2>Example</h2></a>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+#[macro_use] extern crate failure;
+
+fn safe_cast_to_unsigned(n:i32) -&gt; Result&lt;u32, error::Failure&gt;
+{
+    ensure!(n&gt;=0, &quot;number cannot be smaller than 0!&quot;);
+    (u32) n
+}
+#}</code></pre></pre>
+<a class="header" href="#patterns--guidance" id="patterns--guidance"><h1>Patterns &amp; Guidance</h1></a>
+<p>failure is not a &quot;one size fits all&quot; approach to error management. There are
+multiple patterns that emerge from the API this library provides, and users
+need to determine which pattern makes sense for them. This section documents
+some patterns and how users might use them.</p>
+<p>In brief, these are the patterns documented here:</p>
+<ul>
+<li><strong><a href="./error-msg.html">Strings as errors</a>:</strong> Using strings as your error
+type. Good for prototyping.</li>
+<li><strong><a href="./custom-fail.html">A Custom Fail type</a>:</strong> Defining a custom type to be
+your error type. Good for APIs where you control all or more of the
+possible failures.</li>
+<li><strong><a href="./use-error.html">Using the Error type</a>:</strong> Using the Error type to pull
+together multiple failures of different types. Good for applications and
+APIs that know the error won't be inspected much more.</li>
+<li><strong><a href="./error-errorkind.html">An Error and ErrorKind pair</a>:</strong> Using both a
+custom error type and an ErrorKind enum to create a very robust error
+type. Good for public APIs in large crates.</li>
+</ul>
+<p>(Though each of these items identifies a use case which this pattern would be
+good for, in truth each of them can be applied in various contexts. Its up to
+you to decide what makes the most sense for your particular use case.)</p>
+<a class="header" href="#strings-as-errors" id="strings-as-errors"><h1>Strings as errors</h1></a>
+<p>This pattern is a way to create new errors without doing much set up. It is
+definitely the sloppiest way to throw errors. It can be great to use this
+during prototyping, but maybe not in the final product.</p>
+<p>String types do not implement <code>Fail</code>, which is why there are two adapters to
+create failures from a string:</p>
+<ul>
+<li><a href="https://docs.rs/failure/latest/failure/fn.err_msg.html"><code>failure::err_msg</code></a> - a function that takes a displayable
+type and creates a failure from it. This can take a String or a string
+literal.</li>
+<li><a href="https://docs.rs/failure/latest/failure/macro.format_err.html"><code>format_err!</code></a> - a macro with string interpolation, similar
+to <code>format!</code> or <code>println!</code>.</li>
+</ul>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+fn check_range(x: usize, range: Range&lt;usize&gt;) -&gt; Result&lt;usize, Error&gt; {
+    if x &lt; range.start {
+        return Err(format_err!(&quot;{} is below {}&quot;, x, range.start));
+    }
+    if x &gt;= range.end {
+        return Err(format_err!(&quot;{} is above {}&quot;, x, range.end));
+    }
+    Ok(x)
+}
+#}</code></pre></pre>
+<p>If you're going to use strings as errors, we recommend <a href="./use-error.html">using
+<code>Error</code></a> as your error type, rather than <code>ErrorMessage</code>; this way,
+if some of your strings are <code>String</code> and some are <code>&amp;'static str</code>, you don't
+need worry about merging them into a single string type.</p>
+<a class="header" href="#when-might-you-use-this-pattern" id="when-might-you-use-this-pattern"><h2>When might you use this pattern?</h2></a>
+<p>This pattern is the easiest to set up and get going with, so it can be great
+when prototyping or spiking out an early design. It can also be great when you
+know that an error variant is extremely uncommon, and that there is really no
+way to handle it other than to log the error and move on.</p>
+<a class="header" href="#caveats-on-this-pattern" id="caveats-on-this-pattern"><h2>Caveats on this pattern</h2></a>
+<p>If you are writing a library you plan to publish to crates.io, this is probably
+not a good way to handle errors, because it doesn't give your clients very much
+control. For public, open source libraries, we'd recommend using <a href="./custom-fail.html">custom
+failures</a> in the cases where you would use a string as an error.</p>
+<p>This pattern can also be very brittle. If you ever want to branch over which
+error was returned, you would have to match on the exact contents of the
+string. If you ever change the string contents, that will silently break that
+match.</p>
+<p>For these reasons, we strongly recommend against using this pattern except for
+prototyping and when you know the error is just going to get logged or reported
+to the users.</p>
+<a class="header" href="#a-custom-fail-type" id="a-custom-fail-type"><h1>A Custom Fail type</h1></a>
+<p>This pattern is a way to define a new kind of failure. Defining a new kind of
+failure can be an effective way of representing an error for which you control
+all of the possible failure cases. It has several advantages:</p>
+<ol>
+<li>You can enumerate exactly all of the possible failures that can occur in
+this context.</li>
+<li>You have total control over the representation of the failure type.</li>
+<li>Callers can destructure your error without any sort of downcasting.</li>
+</ol>
+<p>To implement this pattern, you should define your own type that implements
+<code>Fail</code>. You can use the <a href="./derive-fail.html">custom derive</a> to make this easier. For
+example:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+#[derive(Fail, Debug)]
+#[fail(display = &quot;Input was invalid UTF-8&quot;)]
+pub struct Utf8Error;
+#}</code></pre></pre>
+<p>This type can become as large and complicated as is appropriate to your use
+case. It can be an enum with a different variant for each possible error, and
+it can carry data with more precise information about the error. For example:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+#[derive(Fail, Debug)]
+#[fail(display = &quot;Input was invalid UTF-8 at index {}&quot;, index)]
+pub struct Utf8Error {
+    index: usize,
+}
+#}</code></pre></pre>
+<a class="header" href="#when-might-you-use-this-pattern-1" id="when-might-you-use-this-pattern-1"><h2>When might you use this pattern?</h2></a>
+<p>If you need to raise an error that doesn't come from one of your dependencies,
+this is a great pattern to use.</p>
+<p>You can also use this pattern in conjunction with <a href="./use-error.html">using <code>Error</code></a> or
+defining an <a href="./error-errorkind.html">Error and ErrorKind pair</a>. Those functions which
+are &quot;pure logic&quot; and have a very constrained set of errors (such as parsing
+simple formats) might each return a different custom Fail type, and then the
+function which merges them all together, does IO, and so on, would return a
+more complex type like <code>Error</code> or your custom Error/ErrorKind.</p>
+<a class="header" href="#caveats-on-this-pattern-1" id="caveats-on-this-pattern-1"><h2>Caveats on this pattern</h2></a>
+<p>When you have a dependency which returns a different error type, often you will
+be inclined to add it as a variant on your own error type. When you do that,
+you should tag the underlying error as the <code>#[fail(cause)]</code> of your error:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+#[derive(Fail, Debug)]
+pub enum MyError {
+    #[fail(display = &quot;Input was invalid UTF-8 at index {}&quot;, _0)]
+    Utf8Error(usize),
+    #[fail(display = &quot;{}&quot;, _0)]
+    Io(#[fail(cause)] io::Error),
+}
+#}</code></pre></pre>
+<p>Up to a limit, this design can work. However, it has some problems:</p>
+<ul>
+<li>It can be hard to be forward compatible with new dependencies that raise
+their own kinds of errors in the future.</li>
+<li>It defines a 1-1 relationship between a variant of the error and an
+underlying error.</li>
+</ul>
+<p>Depending on your use case, as your function grows in complexity, it can be
+better to transition to <a href="./use-error.html">using Error</a> or <a href="./error-errorkind.html">defining an Error &amp;
+ErrorKind pair</a>.</p>
+<a class="header" href="#use-the-error-type" id="use-the-error-type"><h1>Use the <code>Error</code> type</h1></a>
+<p>This pattern is a way to manage errors when you have multiple kinds of failure
+that could occur during a single function. It has several distinct advantages:</p>
+<ol>
+<li>You can start using it without defining any of your own failure types.</li>
+<li>All types that implement <code>Fail</code> can be thrown into the <code>Error</code> type using
+the <code>?</code> operator.</li>
+<li>As you start adding new dependencies with their own failure types, you can
+start throwing them without making a breaking change.</li>
+</ol>
+<p>To use this pattern, all you need to do is return <code>Result&lt;_, Error&gt;</code> from your
+functions:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+use std::io;
+use std::io::BufRead;
+
+use failure::Error;
+use failure::err_msg;
+
+fn my_function() -&gt; Result&lt;(), Error&gt; {
+    let stdin = io::stdin();
+
+    for line in stdin.lock().lines() {
+        let line = line?;
+
+        if line.chars().all(|c| c.is_whitespace()) {
+            break
+        }
+
+        if !line.starts_with(&quot;$&quot;) {
+            return Err(format_err!(&quot;Input did not begin with `$`&quot;));
+        }
+
+        println!(&quot;{}&quot;, &amp;line[1..]);
+    }
+
+    Ok(())
+}
+#}</code></pre></pre>
+<a class="header" href="#when-might-you-use-this-pattern-2" id="when-might-you-use-this-pattern-2"><h2>When might you use this pattern?</h2></a>
+<p>This pattern is very effective when you know you will usually not need to
+destructure the error this function returns. For example:</p>
+<ul>
+<li>When prototyping.</li>
+<li>When you know you are going to log this error, or display it to the user,
+either all of the time or nearly all of the time.</li>
+<li>When it would be impractical for this API to report more custom context for
+the error (e.g. because it is a trait that doesn't want to add a new Error
+associated type).</li>
+</ul>
+<a class="header" href="#caveats-on-this-pattern-2" id="caveats-on-this-pattern-2"><h2>Caveats on this pattern</h2></a>
+<p>There are two primary downsides to this pattern:</p>
+<ul>
+<li>The <code>Error</code> type allocates. There are cases where this would be too
+expensive. In those cases you should use a <a href="./custom-fail.html">custom failure</a>.</li>
+<li>You cannot recover more information about this error without downcasting. If
+your API needs to express more contextual information about the error, use
+the <a href="./error-errorkind.html">Error and ErrorKind</a> pattern.</li>
+</ul>
+<a class="header" href="#an-error-and-errorkind-pair" id="an-error-and-errorkind-pair"><h1>An Error and ErrorKind pair</h1></a>
+<p>This pattern is the most robust way to manage errors - and also the most high
+maintenance. It combines some of the advantages of the <a href="./use-error.html">using Error</a>
+pattern and the <a href="./custom-fail.html">custom failure</a> patterns, while avoiding some of
+the disadvantages each of those patterns has:</p>
+<ol>
+<li>Like <code>Error</code>, this is forward compatible with new underlying kinds of
+errors from your dependencies.</li>
+<li>Like custom failures, this pattern allows you to specify additional information about the error that your dependencies don't give you.</li>
+<li>Like <code>Error</code>, it can be easier to convert underlying errors from dependency
+into this type than for custom failures.</li>
+<li>Like custom failures, users can gain some information about the error
+without downcasting.</li>
+</ol>
+<p>The pattern is to create two new failure types: an <code>Error</code> and an <code>ErrorKind</code>,
+and to leverage <a href="https://docs.rs/failure/latest/failure/struct.Context.html">the <code>Context</code> type</a> provided by failure.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+#[derive(Debug)]
+struct MyError {
+    inner: Context&lt;MyErrorKind&gt;,
+}
+
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Fail)]
+enum MyErrorKind {
+    // A plain enum with no data in any of its variants
+    //
+    // For example:
+    #[fail(display = &quot;A contextual error message.&quot;)]
+    OneVariant,
+    // ...
+}
+#}</code></pre></pre>
+<p>Unfortunately, it is not easy to correctly derive <code>Fail</code> for <code>MyError</code> so that
+it delegates things to its inner <code>Context</code>. You should write those impls
+yourself:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+impl Fail for MyError {
+    fn cause(&amp;self) -&gt; Option&lt;&amp;Fail&gt; {
+        self.inner.cause()
+    }
+
+    fn backtrace(&amp;self) -&gt; Option&lt;&amp;Backtrace&gt; {
+        self.inner.backtrace()
+    }
+}
+
+impl Display for MyError {
+    fn fmt(&amp;self, f: &amp;mut fmt::Formatter) -&gt; fmt::Result {
+        Display::fmt(&amp;self.inner, f)
+    }
+}
+#}</code></pre></pre>
+<p>You should also provide some conversions and accessors, to go between a
+Context, your ErrorKind, and your Error:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+impl MyError {
+    pub fn kind(&amp;self) -&gt; MyErrorKind {
+        *self.inner.get_context()
+    }
+}
+
+impl From&lt;MyErrorKind&gt; for MyError {
+    fn from(kind: MyErrorKind) -&gt; MyError {
+        MyError { inner: Context::new(kind) }
+    }
+}
+
+impl From&lt;Context&lt;MyErrorKind&gt;&gt; for MyError {
+    fn from(inner: Context&lt;MyErrorKind&gt;) -&gt; MyError {
+        MyError { inner: inner }
+    }
+}
+#}</code></pre></pre>
+<p>With this code set up, you can use the context method from failure to apply
+your ErrorKind to <code>Result</code>s in underlying libraries:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+use failure::ResultExt;
+perform_some_io().context(ErrorKind::NetworkFailure)?;
+#}</code></pre></pre>
+<p>You can also directly throw <code>ErrorKind</code> without an underlying error when
+appropriate:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+Err(ErrorKind::DomainSpecificError)?
+#}</code></pre></pre>
+<a class="header" href="#what-should-your-errorkind-contain" id="what-should-your-errorkind-contain"><h3>What should your ErrorKind contain?</h3></a>
+<p>Your error kind probably should not carry data - and if it does, it should only
+carry stateless data types that provide additional information about what the
+<code>ErrorKind</code> means. This way, your <code>ErrorKind</code> can be <code>Eq</code>, making it
+easy to use as a way of comparing errors.</p>
+<p>Your ErrorKind is a way of providing information about what errors mean
+appropriate to the level of abstraction that your library operates at. As some
+examples:</p>
+<ul>
+<li>If your library expects to read from the user's <code>Cargo.toml</code>, you might have
+a <code>InvalidCargoToml</code> variant, to capture what <code>io::Error</code> and <code>toml::Error</code>
+mean in the context of your library.</li>
+<li>If your library does both file system activity and network activity, you
+might have <code>Filesystem</code> and <code>Network</code> variants, to divide up the <code>io::Error</code>s
+between which system in particular failed.</li>
+</ul>
+<p>Exactly what semantic information is appropriate depends entirely on what this
+bit of code is intended to do.</p>
+<a class="header" href="#when-might-you-use-this-pattern-3" id="when-might-you-use-this-pattern-3"><h2>When might you use this pattern?</h2></a>
+<p>The most likely use cases for this pattern are mid-layer which perform a
+function that requires many dependencies, and that are intended to be used in
+production. Libraries with few dependencies do not need to manage many
+underlying error types and can probably suffice with a simpler <a href="./custom-fail.html">custom
+failure</a>. Applications that know they are almost always just going
+to log these errors can get away with <a href="./use-error.html">using the Error type</a> rather
+than managing extra context information.</p>
+<p>That said, when you need to provide the most expressive information about an
+error possible, this can be a good approach.</p>
+<a class="header" href="#caveats-on-this-pattern-3" id="caveats-on-this-pattern-3"><h2>Caveats on this pattern</h2></a>
+<p>This pattern is the most involved pattern documented in this book. It involves
+a lot of boilerplate to set up (which may be automated away eventually), and it
+requires you to apply a contextual message to every underlying error that is
+thrown inside your code. It can be a lot of work to maintain this pattern.</p>
+<p>Additionally, like the Error type, the Context type may use an allocation and a
+dynamic dispatch internally. If you know this is too expensive for your use
+case, you should not use this pattern.</p>
+<a class="header" href="#strings-and-custom-fail-type" id="strings-and-custom-fail-type"><h1>Strings and custom fail type</h1></a>
+<p>This pattern is an hybrid between the <a href="./error-errorkind.html"><em>An Error and ErrorKind pair</em></a> and
+<a href="./use-error.html"><em>Using the Error type</em></a>.</p>
+<p>Such an error type can be implemented in the same way that what was shown in
+the <a href="./error-errorkind.html"><em>An Error and ErrorKind pair</em></a> pattern, but here, the context is a
+simple string:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+extern crate core;
+extern crate failure;
+
+use core::fmt::{self, Display};
+use failure::{Backtrace, Context, Fail, ResultExt};
+
+#[derive(Debug)]
+pub struct MyError {
+    inner: Context&lt;String&gt;,
+}
+
+impl Fail for MyError {
+    fn cause(&amp;self) -&gt; Option&lt;&amp;Fail&gt; {
+        self.inner.cause()
+    }
+
+    fn backtrace(&amp;self) -&gt; Option&lt;&amp;Backtrace&gt; {
+        self.inner.backtrace()
+    }
+}
+
+impl Display for MyError {
+    fn fmt(&amp;self, f: &amp;mut fmt::Formatter) -&gt; fmt::Result {
+        Display::fmt(&amp;self.inner, f)
+    }
+}
+#}</code></pre></pre>
+<p>To make the type easier to use, a few impls can be added:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+// Allows writing `MyError::from(&quot;oops&quot;))?`
+impl From&lt;&amp;'static str&gt; for MyError {
+    fn from(msg: &amp;'static str) -&gt; MyError {
+        MyError {
+            inner: Context::new(msg),
+        }
+    }
+}
+
+// Allows adding more context via a String
+impl From&lt;Context&lt;String&gt;&gt; for MyError {
+    fn from(inner: Context&lt;String&gt;) -&gt; MyError {
+        MyError { inner }
+    }
+}
+
+// Allows adding more context via a &amp;str
+impl From&lt;Context&lt;&amp;'static str&gt;&gt; for MyError {
+    fn from(inner: Context&lt;&amp;'static str&gt;) -&gt; MyError {
+        MyError {
+            inner: inner.map(|s| s.to_string()),
+        }
+    }
+}
+#}</code></pre></pre>
+<p>Here is how it is used:</p>
+<pre><pre class="playpen"><code class="language-rust">fn main() {
+    println!(&quot;{:?}&quot;, err2());
+}
+
+// Unlike the &quot;Using the Error type&quot; pattern, functions return our own error
+// type here.
+fn err1() -&gt; Result&lt;(), MyError&gt; {
+    Ok(Err(MyError::from(&quot;err1&quot;))?)
+}
+
+fn err2() -&gt; Result&lt;(), MyError&gt; {
+    // Unlike the &quot;An Error and ErrorKind pair&quot; pattern, our context is a
+    // simple string. We can chain errors and provide detailed error messages,
+    // but we don't have to deal with the complexity of an error kind type
+    Ok(err1().context(&quot;err2&quot;)?)
+}
+</code></pre></pre>
+<a class="header" href="#variant-with-static-str" id="variant-with-static-str"><h2>Variant with <code>&amp;'static str</code></h2></a>
+<p>If you don't need to format strings, you can avoid an
+allocation by using a <code>Context&lt;&amp;'static str&gt;</code> instead of a
+<code>Context&lt;String&gt;</code>.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+extern crate core;
+extern crate failure;
+
+use core::fmt::{self, Display};
+use failure::{Backtrace, Context, Fail, ResultExt};
+
+#[derive(Debug)]
+pub struct MyError {
+    inner: Context&lt;&amp;'static str&gt;,
+}
+
+impl Fail for MyError {
+    fn cause(&amp;self) -&gt; Option&lt;&amp;Fail&gt; {
+        self.inner.cause()
+    }
+
+    fn backtrace(&amp;self) -&gt; Option&lt;&amp;Backtrace&gt; {
+        self.inner.backtrace()
+    }
+}
+
+impl Display for MyError {
+    fn fmt(&amp;self, f: &amp;mut fmt::Formatter) -&gt; fmt::Result {
+        Display::fmt(&amp;self.inner, f)
+    }
+}
+
+impl From&lt;&amp;'static str&gt; for MyError {
+    fn from(msg: &amp;'static str) -&gt; MyError {
+        MyError {
+            inner: Context::new(msg.into()),
+        }
+    }
+}
+
+impl From&lt;Context&lt;&amp;'static str&gt;&gt; for MyError {
+    fn from(inner: Context&lt;&amp;'static str&gt;) -&gt; MyError {
+        MyError {
+            inner,
+        }
+    }
+}
+#}</code></pre></pre>
+<a class="header" href="#when-might-you-use-this-pattern-4" id="when-might-you-use-this-pattern-4"><h2>When might you use this pattern?</h2></a>
+<p>Sometimes, you don't want to use the <a href="./use-error.html"><em>Using the Error type</em></a>
+pattern, because you want to expose a few different error types. But you don't
+want to use the <a href="./error-errorkind.html"><em>An Error and ErrorKind pair</em></a> pattern
+either, because there is no need to provide the context as an enum or because
+it would be too much work, if the error can occur in many different contexts.</p>
+<p>For instance, if you're writing a library that decodes/encodes a complex binary
+format, you might want to expose a <code>DecodeError</code> and an <code>EncodeError</code> error
+type, but provide the context as a simple string instead of an error kind, because:</p>
+<ul>
+<li>users may not care too much about the context in which a <code>DecodeError</code> or
+<code>EncodeError</code> was encountered, they just want a nice message to explain it</li>
+<li>your binary format is really complex, errors can occur in many different
+places, and you don't want to end up with a giant <code>ErrorKind</code> enum</li>
+</ul>
+<a class="header" href="#caveats-on-this-pattern-4" id="caveats-on-this-pattern-4"><h2>Caveats on this pattern</h2></a>
+<p>If using the <code>Context&lt;String&gt;</code> variant, an extra allocation is used for the string.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+        
+        <script type="text/javascript">
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+        
+        
+
+    </body>
+</html>
