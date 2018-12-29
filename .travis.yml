@@ -6,6 +6,7 @@ rust:
     - nightly
 cache: cargo
 script:
+  - if [ "$TRAVIS_RUST_VERSION" == "1.18.0" ]; then cp Cargo.lock.ci Cargo.lock; fi
   - cargo test
   - cargo test --features backtrace
   - cargo check --no-default-features
