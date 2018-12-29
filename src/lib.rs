@@ -106,6 +106,14 @@ with_std! {
 /// `std::error::Error`, and are also `Send`, `Sync`, and `'static`, implement
 /// `Fail` by a blanket impl.
 pub trait Fail: Display + Debug + Send + Sync + 'static {
+    /// Returns the "name" of the error.
+    /// 
+    /// This is typically the type name.  Not all errors will implement
+    /// this.
+    fn name(&self) -> Option<&str> {
+        None
+    }
+
     /// Returns a reference to the underlying cause of this failure, if it
     /// is an error that wraps other errors.
     ///
