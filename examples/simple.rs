@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate failure;
 
-use failure::Fail;
+use failure::chain_display;
 
 #[derive(Debug, Fail)]
 #[fail(display = "my error")]
@@ -16,7 +16,41 @@ fn bad_function() -> Result<(), WrappingError> {
 }
 
 fn main() {
-    for cause in Fail::iter_causes(&bad_function().unwrap_err()) {
-        println!("{}", cause);
+    println!("——— default fail(display = \"...\") ———");
+    if let Err(ref e) = bad_function() {
+        println!("{}", e);
+        println!("{:#} (with {{:#}})", e);
     }
+    println!();
+
+    println!("——— default fmt::Debug ———");
+    if let Err(ref e) = bad_function() {
+        println!("{:?} (with {{:?}}) ", e);
+        println!("{:#?} (with {{:#?}})", e);
+    }
+    println!();
+
+    println!("——— line ({{}}) chain_display ———");
+    if let Err(ref e) = bad_function() {
+        println!("{}", chain_display(e));
+    }
+    println!();
+
+    println!("——— block ({{:#}}) chain_display ———");
+    if let Err(ref e) = bad_function() {
+        println!("{:#}", chain_display(e));
+    }
+    println!();
+
+    println!("——— line ({{:?}}) fmt::Debug for chain_display ———");
+    if let Err(ref e) = bad_function() {
+        println!("{:?}", chain_display(e));
+    }
+    println!();
+
+    println!("——— block ({{:#?}}) fmt::Debug for chain_display ———");
+    if let Err(ref e) = bad_function() {
+        println!("{:#?}", chain_display(e));
+    }
+    println!();
 }

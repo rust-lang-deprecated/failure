@@ -111,6 +111,11 @@ with_backtrace! {
             Backtrace { internal: InternalBacktrace::new() }
         }
 
+        /// Checks if the backtrace is empty.
+        pub fn is_empty(&self) -> bool {
+            self.internal.is_none()
+        }
+
         pub(crate) fn none() -> Backtrace {
             Backtrace { internal: InternalBacktrace::none() }
         }
