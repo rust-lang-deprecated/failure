@@ -1,3 +1,11 @@
+# Version 0.1.4
+
+- Improved error reporting of the derive feature
+- Resolved a potential internal ambiguity when using the backtrace feature
+  that prevented backtrace from improving an upstream API.
+- Changed the bounds on std error compat conversions through the From trait
+  to take Sync and Send into account.
+
 # Version 0.1.3
 
 - Added `Context::map`
