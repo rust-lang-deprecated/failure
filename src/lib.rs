@@ -109,7 +109,8 @@ pub trait Fail: Display + Debug + Send + Sync + 'static {
     /// Returns the "name" of the error.
     /// 
     /// This is typically the type name.  Not all errors will implement
-    /// this.
+    /// this.  It's expected to be most useful in situations where errors
+    /// need to be reported to external systems such as crash reporters.
     fn name(&self) -> Option<&str> {
         None
     }
