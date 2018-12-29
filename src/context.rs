@@ -108,6 +108,10 @@ with_std! {
     }
 
     impl<D: Display + Send + Sync + 'static> Fail for Context<D> {
+        fn name(&self) -> Option<&str> {
+            self.failure.as_cause().and_then(|x| x.name())
+        }
+
         fn cause(&self) -> Option<&Fail> {
             self.failure.as_cause()
         }

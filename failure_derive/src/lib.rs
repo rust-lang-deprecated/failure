@@ -7,6 +7,7 @@ extern crate synstructure;
 extern crate quote;
 
 use proc_macro2::{TokenStream, Span};
+use syn::LitStr;
 use syn::spanned::Spanned;
 
 #[derive(Debug)]
@@ -40,6 +41,8 @@ fn fail_derive_impl(s: synstructure::Structure) -> Result<TokenStream, Error> {
         quote! { & }
     };
 
+    let ty_name = LitStr::new(&s.ast().ident.to_string(), Span::call_site());
+
     let cause_body = s.each_variant(|v| {
         if let Some(cause) = v.bindings().iter().find(is_cause) {
             quote!(return Some(::failure::AsFail::as_fail(#cause)))
@@ -59,6 +62,10 @@ fn fail_derive_impl(s: synstructure::Structure) -> Result<TokenStream, Error> {
     let fail = s.unbound_impl(
         quote!(::failure::Fail),
         quote! {
+            fn name(&self) -> Option<&str> {
+                Some(concat!(module_path!(), "::", #ty_name))
+            }
+
             #[allow(unreachable_code)]
             fn cause(&self) -> ::failure::_core::option::Option<#make_dyn(::failure::Fail)> {
                 match *self { #cause_body }

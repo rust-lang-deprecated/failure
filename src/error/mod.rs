@@ -70,6 +70,11 @@ impl Error {
         self.imp.failure()
     }
 
+    /// Returns the name of the underlying fail.
+    pub fn name(&self) -> Option<&str> {
+        self.as_fail().name()
+    }
+
     /// Returns a reference to the underlying cause of this `Error`. Unlike the
     /// method on `Fail`, this does not return an `Option`. The `Error` type
     /// always has an underlying failure.
