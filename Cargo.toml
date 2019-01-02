@@ -6,7 +6,7 @@ homepage = "https://rust-lang-nursery.github.io/failure/"
 license = "MIT OR Apache-2.0"
 name = "failure"
 repository = "https://github.com/rust-lang-nursery/failure"
-version = "0.1.4"
+version = "0.1.5"
 
 [dependencies.failure_derive]
 optional = true

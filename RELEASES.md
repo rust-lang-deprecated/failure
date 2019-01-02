@@ -1,3 +1,7 @@
+# Version 0.1.5
+
+- Resolve a regression with error conversions (#290)
+
 # Version 0.1.4
 
 - Improved error reporting of the derive feature
