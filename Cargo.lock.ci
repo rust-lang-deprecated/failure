@@ -31,17 +31,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "failure"
-version = "0.1.4"
+version = "0.1.5"
 dependencies = [
  "backtrace 0.3.9 (registry+https://github.com/rust-lang/crates.io-index)",
- "failure_derive 0.1.4",
+ "failure_derive 0.1.5",
 ]
 
 [[package]]
 name = "failure_derive"
-version = "0.1.4"
+version = "0.1.5"
 dependencies = [
- "failure 0.1.4",
+ "failure 0.1.5",
  "proc-macro2 0.4.24 (registry+https://github.com/rust-lang/crates.io-index)",
  "quote 0.6.10 (registry+https://github.com/rust-lang/crates.io-index)",
  "syn 0.15.23 (registry+https://github.com/rust-lang/crates.io-index)",
