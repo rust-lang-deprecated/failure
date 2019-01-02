@@ -1,6 +1,7 @@
 # Version 0.1.5
 
 - Resolve a regression with error conversions (#290)
+- Added `name()` to `Fail` and `Error`
 
 # Version 0.1.4
 
