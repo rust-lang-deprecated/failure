@@ -1,6 +1,6 @@
 use core::fmt::{self, Debug, Display};
 
-use Fail;
+use crate::Fail;
 
 without_std! {
     /// An error with context around it.
@@ -63,7 +63,7 @@ without_std! {
 }
 
 with_std! {
-    use {Error, Backtrace};
+    use crate::{Error, backtrace::Backtrace};
 
     /// An error with context around it.
     ///

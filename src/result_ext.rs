@@ -1,6 +1,6 @@
 use core::fmt::Display;
 
-use {Compat, Context, Fail};
+use crate::{Compat, Context, Fail};
 
 /// Extension methods for `Result`.
 pub trait ResultExt<T, E> {
@@ -22,7 +22,7 @@ pub trait ResultExt<T, E> {
     /// #
     /// # extern crate failure;
     /// #
-    /// # use tests::failure::ResultExt;
+    /// # use crate::tests::failure::ResultExt;
     /// #
     /// # #[derive(Debug)]
     /// struct CustomError;
@@ -177,7 +177,7 @@ where
 }
 
 with_std! {
-    use Error;
+    use crate::Error;
 
     impl<T> ResultExt<T, Error> for Result<T, Error> {
         fn compat(self) -> Result<T, Compat<Error>> {

@@ -44,11 +44,11 @@ mod result_ext;
 use core::any::TypeId;
 use core::fmt::{Debug, Display};
 
-pub use as_fail::AsFail;
-pub use backtrace::Backtrace;
-pub use compat::Compat;
-pub use context::Context;
-pub use result_ext::ResultExt;
+pub use crate::as_fail::AsFail;
+pub use crate::backtrace::Backtrace;
+pub use crate::compat::Compat;
+pub use crate::context::Context;
+pub use crate::result_ext::ResultExt;
 
 #[cfg(feature = "failure_derive")]
 #[allow(unused_imports)]
@@ -63,20 +63,20 @@ with_std! {
     extern crate core;
 
     mod sync_failure;
-    pub use sync_failure::SyncFailure;
+    pub use crate::sync_failure::SyncFailure;
 
     mod error;
 
     use std::error::Error as StdError;
 
-    pub use error::Error;
+    pub use crate::error::Error;
 
     /// A common result with an `Error`.
     pub type Fallible<T> = Result<T, Error>;
 
     mod macros;
     mod error_message;
-    pub use error_message::err_msg;
+    pub use crate::error_message::err_msg;
 }
 
 /// The `Fail` trait.

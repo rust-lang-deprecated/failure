@@ -1,7 +1,7 @@
 use core::fmt::{self, Display, Debug};
 
-use Fail;
-use Error;
+use crate::Fail;
+use crate::Error;
 
 /// Constructs a `Fail` type from a string.
 ///

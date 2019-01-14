@@ -1,4 +1,4 @@
-use Fail;
+use crate::Fail;
 use std::error::Error;
 use std::fmt::{self, Debug, Display};
 use std::sync::Mutex;

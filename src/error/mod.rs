@@ -1,12 +1,12 @@
 use core::fmt::{self, Display, Debug};
 
-use {Causes, Fail};
-use backtrace::Backtrace;
-use context::Context;
-use compat::Compat;
+use crate::{Causes, Fail};
+use crate::Backtrace;
+use crate::context::Context;
+use crate::compat::Compat;
 
 #[cfg(feature = "std")]
-use box_std::BoxStd;
+use crate::box_std::BoxStd;
 
 #[cfg_attr(feature = "small-error", path = "./error_impl_small.rs")]
 mod error_impl;
@@ -174,7 +174,7 @@ impl Error {
     /// Deprecated alias to `find_root_cause`.
     #[deprecated(since = "0.1.2", note = "please use the 'find_root_cause()' method instead")]
     pub fn root_cause(&self) -> &Fail {
-        ::find_root_cause(self.as_fail())
+        crate::find_root_cause(self.as_fail())
     }
 
     /// Deprecated alias to `iter_causes`.
@@ -221,10 +221,12 @@ mod test {
 
     #[test]
     fn methods_seem_to_work() {
+        use crate::backtrace::Backtrace;
+
         let io_error: io::Error = io::Error::new(io::ErrorKind::NotFound, "test");
         let error: Error = io::Error::new(io::ErrorKind::NotFound, "test").into();
         assert!(error.downcast_ref::<io::Error>().is_some());
-        let _: ::Backtrace = *error.backtrace();
+        let _: Backtrace = *error.backtrace();
         assert_eq!(format!("{:?}", io_error), format!("{:?}", error));
         assert_eq!(format!("{}", io_error), format!("{}", error));
         drop(error);

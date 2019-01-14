@@ -3,7 +3,7 @@ use std::heap::{Heap, Alloc, Layout};
 use core::mem;
 use core::ptr;
 
-use Fail;
+use crate::Fail;
 use backtrace::Backtrace;
 
 pub(crate) struct ErrorImpl {

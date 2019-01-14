@@ -11,11 +11,11 @@ use syn::LitStr;
 use syn::spanned::Spanned;
 
 #[derive(Debug)]
-struct Error(TokenStream);
+struct DeriveError(TokenStream);
 
-impl Error {
-    fn new(span: Span, message: &str) -> Error {
-        Error(quote_spanned! { span =>
+impl DeriveError {
+    fn new(span: Span, message: &str) -> DeriveError {
+        DeriveError(quote_spanned! { span =>
             compile_error!(#message);
         })
     }
@@ -34,7 +34,7 @@ fn fail_derive(s: synstructure::Structure) -> TokenStream {
     }
 }
 
-fn fail_derive_impl(s: synstructure::Structure) -> Result<TokenStream, Error> {
+fn fail_derive_impl(s: synstructure::Structure) -> Result<TokenStream, DeriveError> {
     let make_dyn = if cfg!(has_dyn_trait) {
         quote! { &dyn }
     } else {
@@ -98,7 +98,7 @@ fn fail_derive_impl(s: synstructure::Structure) -> Result<TokenStream, Error> {
     })
 }
 
-fn display_body(s: &synstructure::Structure) -> Result<Option<quote::__rt::TokenStream>, Error> {
+fn display_body(s: &synstructure::Structure) -> Result<Option<quote::__rt::TokenStream>, DeriveError> {
     let mut msgs = s.variants().iter().map(|v| find_error_msg(&v.ast().attrs));
     if msgs.all(|msg| msg.map(|m| m.is_none()).unwrap_or(true)) {
         return Ok(None);
@@ -108,12 +108,12 @@ fn display_body(s: &synstructure::Structure) -> Result<Option<quote::__rt::Token
     for v in s.variants() {
         let msg =
             find_error_msg(&v.ast().attrs)?
-              .ok_or_else(|| Error::new(
+              .ok_or_else(|| DeriveError::new(
                   v.ast().ident.span(),
                   "All variants must have display attribute."
               ))?;
         if msg.nested.is_empty() {
-            return Err(Error::new(
+            return Err(DeriveError::new(
                 msg.span(),
                 "Expected at least one argument to fail attribute"
             ));
@@ -124,7 +124,7 @@ fn display_body(s: &synstructure::Structure) -> Result<Option<quote::__rt::Token
                 nv.lit.clone()
             }
             _ => {
-                return Err(Error::new(
+                return Err(DeriveError::new(
                     msg.span(),
                     "Fail attribute must begin `display = \"\"` to control the Display message."
                 ));
@@ -142,7 +142,7 @@ fn display_body(s: &synstructure::Structure) -> Result<Option<quote::__rt::Token
                         let bi = match v.bindings().get(idx) {
                             Some(bi) => bi,
                             None => {
-                                return Err(Error::new(
+                                return Err(DeriveError::new(
                                     arg.span(),
                                     &format!(
                                         "display attempted to access field `{}` in `{}::{}` which \
@@ -164,7 +164,7 @@ fn display_body(s: &synstructure::Structure) -> Result<Option<quote::__rt::Token
                         return Ok(quote!(#bi));
                     }
                 }
-                return Err(Error::new(
+                return Err(DeriveError::new(
                     arg.span(),
                     &format!(
                         "Couldn't find field `{}` in `{}::{}`",
@@ -175,7 +175,7 @@ fn display_body(s: &synstructure::Structure) -> Result<Option<quote::__rt::Token
                 ));
             }
             ref arg => {
-                return Err(Error::new(
+                return Err(DeriveError::new(
                     arg.span(),
                     "Invalid argument to fail attribute!"
                 ));
@@ -189,13 +189,13 @@ fn display_body(s: &synstructure::Structure) -> Result<Option<quote::__rt::Token
     Ok(Some(tokens))
 }
 
-fn find_error_msg(attrs: &[syn::Attribute]) -> Result<Option<syn::MetaList>, Error> {
+fn find_error_msg(attrs: &[syn::Attribute]) -> Result<Option<syn::MetaList>, DeriveError> {
     let mut error_msg = None;
     for attr in attrs {
         if let Some(meta) = attr.interpret_meta() {
             if meta.name() == "fail" {
                 if error_msg.is_some() {
-                    return Err(Error::new(
+                    return Err(DeriveError::new(
                         meta.span(),
                         "Cannot have two display attributes"
                     ));
@@ -203,7 +203,7 @@ fn find_error_msg(attrs: &[syn::Attribute]) -> Result<Option<syn::MetaList>, Err
                     if let syn::Meta::List(list) = meta {
                         error_msg = Some(list);
                     } else {
-                        return Err(Error::new(
+                        return Err(DeriveError::new(
                             meta.span(),
                             "fail attribute must take a list in parentheses"
                         ));

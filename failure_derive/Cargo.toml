@@ -6,8 +6,9 @@ name = "failure_derive"
 repository = "https://github.com/withoutboats/failure_derive"
 homepage = "https://rust-lang-nursery.github.io/failure/"
 documentation = "https://docs.rs/failure"
-version = "0.1.5"
+version = "0.2.0"
 build = "build.rs"
+edition = "2018"
 
 [dependencies]
 quote = "0.6.3"
@@ -16,7 +17,7 @@ synstructure = "0.10.0"
 proc-macro2 = "0.4.8"
 
 [dev-dependencies.failure]
-version = "0.1.0"
+version = "0.2.0"
 path = ".."
 
 [lib]

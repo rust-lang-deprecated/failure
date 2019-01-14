@@ -31,7 +31,7 @@ with_std! {
     use std::fmt::Debug;
     use std::error::Error as StdError;
 
-    use Error;
+    use crate::Error;
 
     impl<E: Display + Debug> StdError for Compat<E> {
         fn description(&self) -> &'static str {
