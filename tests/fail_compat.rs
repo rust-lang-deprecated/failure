@@ -3,7 +3,7 @@ extern crate failure;
 
 use failure::Fail;
 
-fn return_failure() -> Result<(), failure::Error> {
+fn return_failure() -> Result<(), failure::DefaultError> {
     #[derive(Error, Debug)]
     #[error(display = "my error")]
     struct MyError;

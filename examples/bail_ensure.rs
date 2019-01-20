@@ -1,14 +1,14 @@
 #[macro_use]
 extern crate failure;
 
-use failure::Error;
+use failure::DefaultError;
 
-fn bailer() -> Result<(), Error> {
+fn bailer() -> Result<(), DefaultError> {
     // bail!("ruh roh");
     bail!("ruh {}", "roh");
 }
 
-fn ensures() -> Result<(), Error> {
+fn ensures() -> Result<(), DefaultError> {
     ensure!(true, "true is false");
     ensure!(false, "false is false");
     Ok(())

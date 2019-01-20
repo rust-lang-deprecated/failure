@@ -69,10 +69,10 @@ with_std! {
 
     use std::error::Error as StdError;
 
-    pub use crate::error::Error;
+    pub use crate::error::DefaultError;
 
     /// A common result with an `Error`.
-    pub type Fallible<T> = Result<T, Error>;
+    pub type Fallible<T> = Result<T, DefaultError>;
 
     mod macros;
     mod error_message;

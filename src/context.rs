@@ -63,7 +63,7 @@ without_std! {
 }
 
 with_std! {
-    use crate::{Error, backtrace::Backtrace};
+    use crate::{DefaultError, backtrace::Backtrace};
 
     /// An error with context around it.
     ///
@@ -75,7 +75,7 @@ with_std! {
     /// `Debug` impl also prints the underlying error.
     pub struct Context<D: Display + Send + Sync + 'static> {
         context: D,
-        failure: Either<Backtrace, Error>,
+        failure: Either<Backtrace, DefaultError>,
     }
 
     impl<D: Display + Send + Sync + 'static> Context<D> {
@@ -101,7 +101,7 @@ with_std! {
             }
         }
 
-        pub(crate) fn with_err<E: Into<Error>>(context: D, error: E) -> Context<D> {
+        pub(crate) fn with_err<E: Into<DefaultError>>(context: D, error: E) -> Context<D> {
             let failure = Either::That(error.into());
             Context { context, failure }
         }
@@ -138,7 +138,7 @@ with_std! {
         That(B),
     }
 
-    impl Either<Backtrace, Error> {
+    impl Either<Backtrace, DefaultError> {
         fn backtrace(&self) -> &Backtrace {
             match *self {
                 Either::This(ref backtrace) => backtrace,
@@ -154,7 +154,7 @@ with_std! {
         }
     }
 
-    impl Debug for Either<Backtrace, Error> {
+    impl Debug for Either<Backtrace, DefaultError> {
         fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
             match *self {
                 Either::This(ref backtrace) => write!(f, "{:?}", backtrace),

@@ -31,7 +31,7 @@ with_std! {
     use std::fmt::Debug;
     use std::error::Error as StdError;
 
-    use crate::Error;
+    use crate::DefaultError;
 
     impl<E: Display + Debug> StdError for Compat<E> {
         fn description(&self) -> &'static str {
@@ -39,14 +39,14 @@ with_std! {
         }
     }
 
-    impl From<Error> for Box<StdError> {
-        fn from(error: Error) -> Box<StdError> {
+    impl From<DefaultError> for Box<StdError> {
+        fn from(error: DefaultError) -> Box<StdError> {
             Box::new(Compat { error })
         }
     }
 
-    impl From<Error> for Box<StdError + Send + Sync> {
-        fn from(error: Error) -> Box<StdError + Send + Sync> {
+    impl From<DefaultError> for Box<StdError + Send + Sync> {
+        fn from(error: DefaultError) -> Box<StdError + Send + Sync> {
             Box::new(Compat { error })
         }
     }

@@ -45,7 +45,7 @@ pub trait ResultExt<T, E> {
     /// #
     /// # pub fn run_test() {
     ///
-    /// let x = (|| -> Result<(), failure::Error> {
+    /// let x = (|| -> Result<(), failure::DefaultError> {
     ///     Err(CustomError).compat()?
     /// })().with_context(|e| {
     ///     format!("An error occured: {}", e)
@@ -87,7 +87,7 @@ pub trait ResultExt<T, E> {
     /// #
     /// # pub fn run_test() {
     ///  
-    /// let x = (|| -> Result<(), failure::Error> {
+    /// let x = (|| -> Result<(), failure::DefaultError> {
     ///     Err(CustomError)?
     /// })().context(format!("An error occured")).unwrap_err();
     ///
@@ -130,7 +130,7 @@ pub trait ResultExt<T, E> {
     /// #
     /// # pub fn run_test() {
     ///
-    /// let x = (|| -> Result<(), failure::Error> {
+    /// let x = (|| -> Result<(), failure::DefaultError> {
     ///     Err(CustomError)?
     /// })().with_context(|e| {
     ///     format!("An error occured: {}", e)
@@ -177,10 +177,10 @@ where
 }
 
 with_std! {
-    use crate::Error;
+    use crate::DefaultError;
 
-    impl<T> ResultExt<T, Error> for Result<T, Error> {
-        fn compat(self) -> Result<T, Compat<Error>> {
+    impl<T> ResultExt<T, DefaultError> for Result<T, DefaultError> {
+        fn compat(self) -> Result<T, Compat<DefaultError>> {
             self.map_err(|err| err.compat())
         }
 
@@ -191,7 +191,7 @@ with_std! {
         }
 
         fn with_context<F, D>(self, f: F) -> Result<T, Context<D>> where
-            F: FnOnce(&Error) -> D,
+            F: FnOnce(&DefaultError) -> D,
             D: Display + Send + Sync + 'static
         {
             self.map_err(|failure| {

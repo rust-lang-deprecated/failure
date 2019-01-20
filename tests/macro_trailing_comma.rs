@@ -13,7 +13,7 @@ extern crate failure;
 // can treat it as a Result-returning function.
 macro_rules! wrap_early_return {
     ($expr:expr) => {{
-        fn func() -> Result<(), failure::Error> {
+        fn func() -> Result<(), failure::DefaultError> {
             let _ = $expr;
 
             #[allow(unreachable_code)]

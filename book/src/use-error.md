@@ -16,7 +16,7 @@ functions:
 use std::io;
 use std::io::BufRead;
 
-use failure::Error;
+use failure::DefaultError;
 use failure::err_msg;
 
 fn my_function() -> Result<(), Error> {

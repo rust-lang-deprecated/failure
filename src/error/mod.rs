@@ -16,7 +16,7 @@ use self::error_impl::ErrorImpl;
 use std::error::Error as StdError;
 
 
-/// The `Error` type, which can contain any failure.
+/// The `DefaultError` type, which can contain any failure.
 ///
 /// Functions which accumulate many kinds of errors should return this type.
 /// All failures can be converted into it, so functions which catch those
@@ -26,19 +26,19 @@ use std::error::Error as StdError;
 /// In addition to implementing `Debug` and `Display`, this type carries `Backtrace`
 /// information, and can be downcast into the failure that underlies it for
 /// more detailed inspection.
-pub struct Error {
+pub struct DefaultError {
     imp: ErrorImpl,
 }
 
-impl<F: Fail> From<F> for Error {
-    fn from(failure: F) -> Error {
-        Error {
+impl<F: Fail> From<F> for DefaultError {
+    fn from(failure: F) -> DefaultError {
+        DefaultError {
             imp: ErrorImpl::from(failure)
         }
     }
 }
 
-impl Error {
+impl DefaultError {
     /// Creates an `Error` from `Box<std::error::Error>`.
     ///
     /// This method is useful for comparability with code,
@@ -48,7 +48,7 @@ impl Error {
     ///
     /// ```
     /// use std::error::Error as StdError;
-    /// use failure::Error;
+    /// use failure::DefaultError as Error;
     ///
     /// fn app_fn() -> Result<i32, Error> {
     ///     let x = library_fn().map_err(Error::from_boxed_compat)?;
@@ -60,8 +60,8 @@ impl Error {
     /// }
     /// ```
     #[cfg(feature = "std")]
-    pub fn from_boxed_compat(err: Box<StdError + Sync + Send + 'static>) -> Error {
-        Error::from(BoxStd(err))
+    pub fn from_boxed_compat(err: Box<StdError + Sync + Send + 'static>) -> DefaultError {
+        DefaultError::from(BoxStd(err))
     }
 
     /// Return a reference to the underlying failure that this `Error`
@@ -75,11 +75,11 @@ impl Error {
         self.as_fail().name()
     }
 
-    /// Returns a reference to the underlying cause of this `Error`. Unlike the
+    /// Returns a reference to the underlying cause of this `DefaultError`. Unlike the
     /// method on `Fail`, this does not return an `Option`. The `Error` type
     /// always has an underlying failure.
     ///
-    /// This method has been deprecated in favor of the [Error::as_fail] method,
+    /// This method has been deprecated in favor of the [DefaultError::as_fail] method,
     /// which does the same thing.
     #[deprecated(since = "0.1.2", note = "please use 'as_fail()' method instead")]
     pub fn cause(&self) -> &Fail {
@@ -95,7 +95,7 @@ impl Error {
         self.imp.failure().backtrace().unwrap_or(&self.imp.backtrace())
     }
 
-    /// Provides context for this `Error`.
+    /// Provides context for this `DefaultError`.
     ///
     /// This can provide additional information about this error, appropriate
     /// to the semantics of the current layer. That is, if you have a
@@ -112,12 +112,12 @@ impl Error {
         Context::with_err(context, self)
     }
 
-    /// Wraps `Error` in a compatibility type.
+    /// Wraps `DefaultError` in a compatibility type.
     ///
     /// This type implements the `Error` trait from `std::error`. If you need
     /// to pass failure's `Error` to an interface that takes any `Error`, you
     /// can use this method to get a compatible type.
-    pub fn compat(self) -> Compat<Error> {
+    pub fn compat(self) -> Compat<DefaultError> {
         Compat { error: self }
     }
 
@@ -127,8 +127,8 @@ impl Error {
     /// failure is of the type `T`. For this reason it returns a `Result` - in
     /// the case that the underlying error is of a different type, the
     /// original `Error` is returned.
-    pub fn downcast<T: Fail>(self) -> Result<T, Error> {
-        self.imp.downcast().map_err(|imp| Error { imp })
+    pub fn downcast<T: Fail>(self) -> Result<T, DefaultError> {
+        self.imp.downcast().map_err(|imp| DefaultError { imp })
     }
 
     /// Returns the "root cause" of this error - the last value in the
@@ -184,13 +184,13 @@ impl Error {
     }
 }
 
-impl Display for Error {
+impl Display for DefaultError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         Display::fmt(&self.imp.failure(), f)
     }
 }
 
-impl Debug for Error {
+impl Debug for DefaultError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let backtrace = self.imp.backtrace();
         if backtrace.is_none() {
@@ -201,7 +201,7 @@ impl Debug for Error {
     }
 }
 
-impl AsRef<Fail> for Error {
+impl AsRef<Fail> for DefaultError {
     fn as_ref(&self) -> &Fail {
         self.as_fail()
     }
@@ -210,7 +210,7 @@ impl AsRef<Fail> for Error {
 #[cfg(test)]
 mod test {
     use std::io;
-    use super::Error;
+    use super::DefaultError as Error;
 
     fn assert_just_data<T: Send + Sync + 'static>() { }
 
