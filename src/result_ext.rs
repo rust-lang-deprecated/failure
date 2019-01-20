@@ -81,8 +81,8 @@ pub trait ResultExt<T, E> {
     /// #
     /// # use failure::{self, ResultExt};
     /// #
-    /// #[derive(Fail, Debug)]
-    /// #[fail(display = "")]
+    /// #[derive(Error, Debug)]
+    /// #[error(display = "")]
     /// struct CustomError;
     /// #
     /// # pub fn run_test() {
@@ -124,8 +124,8 @@ pub trait ResultExt<T, E> {
     /// #
     /// # use failure::{self, ResultExt};
     /// #
-    /// #[derive(Fail, Debug)]
-    /// #[fail(display = "My custom error message")]
+    /// #[derive(Error, Debug)]
+    /// #[error(display = "My custom error message")]
     /// struct CustomError;
     /// #
     /// # pub fn run_test() {

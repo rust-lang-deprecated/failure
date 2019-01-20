@@ -5,8 +5,8 @@ use failure::Fail;
 
 #[test]
 fn test_name() {
-    #[derive(Fail, Debug)]
-    #[fail(display = "my error")]
+    #[derive(Error, Debug)]
+    #[error(display = "my error")]
     struct MyError;
 
     let err = MyError;

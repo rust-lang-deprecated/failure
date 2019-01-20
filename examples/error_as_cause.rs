@@ -4,7 +4,7 @@
 // use failure::{err_msg, Error, Fail};
 
 // #[derive(Debug, Fail)]
-// #[fail(display = "my wrapping error")]
+// #[error(display = "my wrapping error")]
 // struct WrappingError(#[fail(cause)] Error);
 
 // fn bad_function() -> Result<(), WrappingError> {

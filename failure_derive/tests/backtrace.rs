@@ -4,8 +4,8 @@ extern crate failure_derive;
 
 use failure::{Backtrace, Fail};
 
-#[derive(Fail, Debug)]
-#[fail(display = "Error code: {}", code)]
+#[derive(Error, Debug)]
+#[error(display = "Error code: {}", code)]
 struct BacktraceError {
     backtrace: Backtrace,
     code: u32,
@@ -22,8 +22,8 @@ fn backtrace_error() {
     assert!(err.backtrace().is_some());
 }
 
-#[derive(Fail, Debug)]
-#[fail(display = "An error has occurred.")]
+#[derive(Error, Debug)]
+#[error(display = "An error has occurred.")]
 struct BacktraceTupleError(Backtrace);
 
 #[test]
@@ -34,13 +34,13 @@ fn backtrace_tuple_error() {
     assert!(err.backtrace().is_some());
 }
 
-#[derive(Fail, Debug)]
+#[derive(Error, Debug)]
 enum BacktraceEnumError {
-    #[fail(display = "Error code: {}", code)]
+    #[error(display = "Error code: {}", code)]
     StructVariant { code: i32, backtrace: Backtrace },
-    #[fail(display = "Error: {}", _0)]
+    #[error(display = "Error: {}", _0)]
     TupleVariant(&'static str, Backtrace),
-    #[fail(display = "An error has occurred.")]
+    #[error(display = "An error has occurred.")]
     UnitVariant,
 }
 

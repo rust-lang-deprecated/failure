@@ -49,11 +49,11 @@ use failure::Error;
 // We don't do any other magic like creating new types.
 #[derive(Debug, Fail)]
 enum ToolchainError {
-    #[fail(display = "invalid toolchain name: {}", name)]
+    #[error(display = "invalid toolchain name: {}", name)]
     InvalidToolchainName {
         name: String,
     },
-    #[fail(display = "unknown toolchain version: {}", version)]
+    #[error(display = "unknown toolchain version: {}", version)]
     UnknownToolchainVersion {
         version: String,
     }

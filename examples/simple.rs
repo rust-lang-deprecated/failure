@@ -3,13 +3,13 @@ extern crate failure;
 
 use failure::Fail;
 
-#[derive(Debug, Fail)]
-#[fail(display = "my error")]
+#[derive(Error, Debug)]
+#[error(display = "my error")]
 struct MyError;
 
-#[derive(Debug, Fail)]
-#[fail(display = "my wrapping error")]
-struct WrappingError(#[fail(cause)] MyError);
+#[derive(Error, Debug)]
+#[error(display = "my wrapping error")]
+struct WrappingError(#[error(cause)] MyError);
 
 fn bad_function() -> Result<(), WrappingError> {
     Err(WrappingError(MyError))

@@ -25,7 +25,7 @@ impl DeriveError {
     }
 }
 
-decl_derive!([Fail, attributes(fail, cause)] => fail_derive);
+decl_derive!([Error, attributes(error, cause)] => fail_derive);
 
 fn fail_derive(s: synstructure::Structure) -> TokenStream {
     match fail_derive_impl(s) {
@@ -193,7 +193,7 @@ fn find_error_msg(attrs: &[syn::Attribute]) -> Result<Option<syn::MetaList>, Der
     let mut error_msg = None;
     for attr in attrs {
         if let Some(meta) = attr.interpret_meta() {
-            if meta.name() == "fail" {
+            if meta.name() == "error" {
                 if error_msg.is_some() {
                     return Err(DeriveError::new(
                         meta.span(),
@@ -239,7 +239,7 @@ fn is_cause(bi: &&synstructure::BindingInfo) -> bool {
                 }
                 found_cause = true;
             }
-            if meta.name() == "fail" {
+            if meta.name() == "error" {
                 if let syn::Meta::List(ref list) = meta {
                     if let Some(ref pair) = list.nested.first() {
                         if let &&syn::NestedMeta::Meta(syn::Meta::Word(ref word)) = pair.value() {

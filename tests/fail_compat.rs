@@ -4,8 +4,8 @@ extern crate failure;
 use failure::Fail;
 
 fn return_failure() -> Result<(), failure::Error> {
-    #[derive(Fail, Debug)]
-    #[fail(display = "my error")]
+    #[derive(Error, Debug)]
+    #[error(display = "my error")]
     struct MyError;
 
     let err = MyError;
