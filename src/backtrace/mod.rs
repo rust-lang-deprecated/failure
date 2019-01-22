@@ -52,6 +52,16 @@ without_backtrace! {
         pub(crate) fn is_none(&self) -> bool {
             true
         }
+
+        /// Returns true if displaying this backtrace would be an empty string.
+        ///
+        /// > (We have detected that this crate was documented with no_std
+        /// > compatibility turned on. The version of this crate that has been
+        /// > documented here will never generate a backtrace and this method
+        /// > will always return true.)
+        pub fn is_empty(&self) -> bool {
+            true
+        }
     }
 
     impl Default for Backtrace {
@@ -116,6 +126,11 @@ with_backtrace! {
         }
 
         pub(crate) fn is_none(&self) -> bool {
+            self.internal.is_none()
+        }
+
+        /// Returns true if displaying this backtrace would be an empty string.
+        pub fn is_empty(&self) -> bool {
             self.internal.is_none()
         }
     }
