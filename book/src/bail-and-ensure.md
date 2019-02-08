@@ -13,6 +13,6 @@ The `bail!` macro returns an error immediately, based on a format string. The `e
 fn safe_cast_to_unsigned(n:i32) -> Result<u32, error::Failure>
 {
     ensure!(n>=0, "number cannot be smaller than 0!");
-    (u32) n
+    n as u32
 }
 ```
