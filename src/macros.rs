@@ -23,6 +23,11 @@ macro_rules! bail {
 /// it does not panic.
 #[macro_export(local_inner_macros)]
 macro_rules! ensure {
+    ($cond:expr) => {
+        if !($cond) {
+            bail!("{}", _failure__stringify!($cond));
+        }
+    };
     ($cond:expr, $e:expr) => {
         if !($cond) {
             bail!($e);
@@ -33,6 +38,14 @@ macro_rules! ensure {
             bail!($fmt, $($arg)*);
         }
     };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! _failure__stringify {
+    ($($inner:tt)*) => {
+        stringify! { $($inner)* }
+    }
 }
 
 /// Constructs an `Error` using the standard string interpolation syntax.
