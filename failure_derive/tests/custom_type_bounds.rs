@@ -6,7 +6,7 @@ use std::fmt::Debug;
 use failure::Fail;
 
 #[derive(Debug, Fail)]
-#[fail(display = "An error has occurred.")]
+#[error(display = "An error has occurred.")]
 pub struct UnboundedGenericTupleError<T: 'static + Debug + Send + Sync>(T);
 
 #[test]
@@ -16,7 +16,7 @@ fn unbounded_generic_tuple_error() {
 }
 
 #[derive(Debug, Fail)]
-#[fail(display = "An error has occurred: {}", _0)]
+#[error(display = "An error has occurred: {}", _0)]
 pub struct FailBoundsGenericTupleError<T: Fail>(T);
 
 #[test]
@@ -31,7 +31,7 @@ pub trait NoDisplay: 'static + Debug + Send + Sync {}
 impl NoDisplay for &'static str {}
 
 #[derive(Debug, Fail)]
-#[fail(display = "An error has occurred: {:?}", _0)]
+#[error(display = "An error has occurred: {:?}", _0)]
 pub struct CustomBoundsGenericTupleError<T: NoDisplay>(T);
 
 #[test]

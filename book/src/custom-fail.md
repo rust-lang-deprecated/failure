@@ -14,8 +14,8 @@ To implement this pattern, you should define your own type that implements
 example:
 
 ```rust
-#[derive(Fail, Debug)]
-#[fail(display = "Input was invalid UTF-8")]
+#[derive(Error, Debug)]
+#[error(display = "Input was invalid UTF-8")]
 pub struct Utf8Error;
 ```
 
@@ -24,8 +24,8 @@ case. It can be an enum with a different variant for each possible error, and
 it can carry data with more precise information about the error. For example:
 
 ```rust
-#[derive(Fail, Debug)]
-#[fail(display = "Input was invalid UTF-8 at index {}", index)]
+#[derive(Error, Debug)]
+#[error(display = "Input was invalid UTF-8 at index {}", index)]
 pub struct Utf8Error {
     index: usize,
 }
@@ -50,11 +50,11 @@ be inclined to add it as a variant on your own error type. When you do that,
 you should tag the underlying error as the `#[fail(cause)]` of your error:
 
 ```rust
-#[derive(Fail, Debug)]
+#[derive(Error, Debug)]
 pub enum MyError {
-    #[fail(display = "Input was invalid UTF-8 at index {}", _0)]
+    #[error(display = "Input was invalid UTF-8 at index {}", _0)]
     Utf8Error(usize),
-    #[fail(display = "{}", _0)]
+    #[error(display = "{}", _0)]
     Io(#[fail(cause)] io::Error),
 }
 ```

@@ -6,11 +6,12 @@ homepage = "https://rust-lang-nursery.github.io/failure/"
 license = "MIT OR Apache-2.0"
 name = "failure"
 repository = "https://github.com/rust-lang-nursery/failure"
-version = "0.1.5"
+version = "0.2.0"
+edition = "2018"
 
 [dependencies.failure_derive]
 optional = true
-version = "0.1.5"
+version = "0.2.0"
 path = "./failure_derive"
 
 [dependencies.backtrace]

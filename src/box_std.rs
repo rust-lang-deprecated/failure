@@ -1,6 +1,6 @@
 use std::error::Error;
 use std::fmt;
-use Fail;
+use crate::Fail;
 
 pub struct BoxStd(pub Box<Error + Send + Sync + 'static>);
 

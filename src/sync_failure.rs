@@ -1,4 +1,4 @@
-use Fail;
+use crate::Fail;
 use std::error::Error;
 use std::fmt::{self, Debug, Display};
 use std::sync::Mutex;
@@ -27,7 +27,7 @@ impl<E: Error + Send + 'static> SyncFailure<E> {
     ///
     /// # use std::error::Error as StdError;
     /// # use std::fmt::{self, Display};
-    /// use failure::{Error, SyncFailure};
+    /// use failure::{DefaultError, SyncFailure};
     /// use std::cell::RefCell;
     ///
     /// #[derive(Debug)]
@@ -56,7 +56,7 @@ impl<E: Error + Send + 'static> SyncFailure<E> {
     ///     # Ok(())
     /// }
     ///
-    /// fn my_function() -> Result<(), Error> {
+    /// fn my_function() -> Result<(), DefaultError> {
     ///     // without the map_err here, we end up with a compile error
     ///     // complaining that NonSyncError doesn't implement Sync.
     ///     returns_error().map_err(SyncFailure::new)?;

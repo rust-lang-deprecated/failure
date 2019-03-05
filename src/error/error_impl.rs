@@ -1,7 +1,7 @@
 use core::any::TypeId;
 
-use Fail;
-use backtrace::Backtrace;
+use crate::Fail;
+use crate::backtrace::Backtrace;
 
 pub(crate) struct ErrorImpl {
     inner: Box<Inner<Fail>>,

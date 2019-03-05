@@ -27,7 +27,7 @@ enum MyErrorKind {
     // A plain enum with no data in any of its variants
     //
     // For example:
-    #[fail(display = "A contextual error message.")]
+    #[error(display = "A contextual error message.")]
     OneVariant,
     // ...
 }

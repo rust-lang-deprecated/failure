@@ -7,8 +7,8 @@ use std::io;
 
 use failure::{Backtrace, Fail};
 
-#[derive(Fail, Debug)]
-#[fail(display = "An error has occurred: {}", inner)]
+#[derive(Error, Debug)]
+#[error(display = "An error has occurred: {}", inner)]
 struct WrapError {
     #[fail(cause)]
     inner: io::Error,
@@ -24,8 +24,8 @@ fn wrap_error() {
         .is_some());
 }
 
-#[derive(Fail, Debug)]
-#[fail(display = "An error has occurred: {}", _0)]
+#[derive(Error, Debug)]
+#[error(display = "An error has occurred: {}", _0)]
 struct WrapTupleError(#[fail(cause)] io::Error);
 
 #[test]
@@ -38,8 +38,8 @@ fn wrap_tuple_error() {
         .is_some());
 }
 
-#[derive(Fail, Debug)]
-#[fail(display = "An error has occurred: {}", inner)]
+#[derive(Error, Debug)]
+#[error(display = "An error has occurred: {}", inner)]
 struct WrapBacktraceError {
     #[fail(cause)]
     inner: io::Error,
@@ -62,11 +62,11 @@ fn wrap_backtrace_error() {
     assert_eq!(err.backtrace().is_empty(), err.backtrace().to_string().trim().is_empty());
 }
 
-#[derive(Fail, Debug)]
+#[derive(Error, Debug)]
 enum WrapEnumError {
-    #[fail(display = "An error has occurred: {}", _0)]
+    #[error(display = "An error has occurred: {}", _0)]
     Io(#[fail(cause)] io::Error),
-    #[fail(display = "An error has occurred: {}", inner)]
+    #[error(display = "An error has occurred: {}", inner)]
     Fmt {
         #[fail(cause)]
         inner: fmt::Error,

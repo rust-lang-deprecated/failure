@@ -15,7 +15,7 @@ In its smallest form, deriving Fail looks like this:
 
 use std::fmt;
 
-#[derive(Fail, Debug)]
+#[derive(Error, Debug)]
 struct MyError;
 
 impl fmt::Display for MyError {
@@ -36,8 +36,8 @@ You can derive an implementation of `Display` with a special attribute:
 ```rust
 #[macro_use] extern crate failure;
 
-#[derive(Fail, Debug)]
-#[fail(display = "An error occurred.")]
+#[derive(Error, Debug)]
+#[error(display = "An error occurred.")]
 struct MyError;
 ```
 
@@ -54,8 +54,8 @@ formatting and printing macros:
 ```rust
 #[macro_use] extern crate failure;
 
-#[derive(Fail, Debug)]
-#[fail(display = "An error occurred with error code {}. ({})", code, message)]
+#[derive(Error, Debug)]
+#[error(display = "An error occurred with error code {}. ({})", code, message)]
 struct MyError {
     code: i32,
     message: String,
@@ -81,13 +81,13 @@ prefixed with an underscore:
 ```rust
 #[macro_use] extern crate failure;
 
-#[derive(Fail, Debug)]
-#[fail(display = "An error occurred with error code {}.", _0)]
+#[derive(Error, Debug)]
+#[error(display = "An error occurred with error code {}.", _0)]
 struct MyError(i32);
 
 
-#[derive(Fail, Debug)]
-#[fail(display = "An error occurred with error code {} ({}).", _0, _1)]
+#[derive(Error, Debug)]
+#[error(display = "An error occurred with error code {} ({}).", _0, _1)]
 struct MyOtherError(i32, String);
 ```
 
@@ -100,13 +100,13 @@ will match over the enum to generate the correct error message. For example:
 ```rust
 #[macro_use] extern crate failure;
 
-#[derive(Fail, Debug)]
+#[derive(Error, Debug)]
 enum MyError {
-    #[fail(display = "{} is not a valid version.", _0)]
+    #[error(display = "{} is not a valid version.", _0)]
     InvalidVersion(u32),
-    #[fail(display = "IO error: {}", error)]
+    #[error(display = "IO error: {}", error)]
     IoError { error: io::Error },
-    #[fail(display = "An unknown error has occurred.")]
+    #[error(display = "An unknown error has occurred.")]
     UnknownError,
 }
 ```
@@ -122,19 +122,19 @@ field with the type `Backtrace`. This works for both structs and enums.
 use failure::Backtrace;
 
 /// MyError::backtrace will return a reference to the backtrace field
-#[derive(Fail, Debug)]
-#[fail(display = "An error occurred.")]
+#[derive(Error, Debug)]
+#[error(display = "An error occurred.")]
 struct MyError {
     backtrace: Backtrace,
 }
 
 /// MyEnumError::backtrace will return a reference to the backtrace only if it
 /// is Variant2, otherwise it will return None.
-#[derive(Fail, Debug)]
+#[derive(Error, Debug)]
 enum MyEnumError {
-    #[fail(display = "An error occurred.")]
+    #[error(display = "An error occurred.")]
     Variant1,
-    #[fail(display = "A different error occurred.")]
+    #[error(display = "A different error occurred.")]
     Variant2(Backtrace),
 }
 ```
@@ -159,19 +159,19 @@ This can be used in fields of enums as well as structs.
 use std::io;
 
 /// MyError::cause will return a reference to the io_error field
-#[derive(Fail, Debug)]
-#[fail(display = "An error occurred.")]
+#[derive(Error, Debug)]
+#[error(display = "An error occurred.")]
 struct MyError {
     #[fail(cause)] io_error: io::Error,
 }
 
 /// MyEnumError::cause will return a reference only if it is Variant2,
 /// otherwise it will return None.
-#[derive(Fail, Debug)]
+#[derive(Error, Debug)]
 enum MyEnumError {
-    #[fail(display = "An error occurred.")]
+    #[error(display = "An error occurred.")]
     Variant1,
-    #[fail(display = "A different error occurred.")]
+    #[error(display = "A different error occurred.")]
     Variant2(#[fail(cause)] io::Error),
 }
 ```

@@ -40,7 +40,7 @@ use std::collections::HashMap;
 use std::path::PathBuf;
 use std::str::FromStr;
 
-use failure::Error;
+use failure::DefaultError;
 
 // This is a new error type that you've created. It represents the ways a
 // toolchain could be invalid.
@@ -49,11 +49,11 @@ use failure::Error;
 // We don't do any other magic like creating new types.
 #[derive(Debug, Fail)]
 enum ToolchainError {
-    #[fail(display = "invalid toolchain name: {}", name)]
+    #[error(display = "invalid toolchain name: {}", name)]
     InvalidToolchainName {
         name: String,
     },
-    #[fail(display = "unknown toolchain version: {}", version)]
+    #[error(display = "unknown toolchain version: {}", version)]
     UnknownToolchainVersion {
         version: String,
     }
