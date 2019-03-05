@@ -44,6 +44,19 @@ fn ensure() {
 }
 
 #[test]
+fn single_arg_ensure() {
+    assert_eq!(
+        wrap_early_return!(ensure!(false)),
+        Err("false".to_string()));
+    assert_eq!(
+        wrap_early_return!(ensure!(true == false)),
+        Err("true == false".to_string()));
+    assert_eq!(
+        wrap_early_return!(ensure!(4 == 5)),
+        Err("4 == 5".to_string()));
+}
+
+#[test]
 fn format_err() {
     assert_eq!(
         format_err!("test").to_string(),
