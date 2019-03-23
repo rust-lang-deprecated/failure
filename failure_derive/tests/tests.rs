@@ -52,7 +52,6 @@ enum EnumError {
     #[fail(name = "TUPLE")]
     TupleVariant(&'static str),
     #[fail(display = "An error has occurred.")]
-    #[fail(name = "UNIT")]
     UnitVariant,
 }
 
@@ -71,5 +70,5 @@ fn enum_error() {
     let unit = EnumError::UnitVariant;
     let s = format!("{}", unit);
     assert_eq!(&s[..], "An error has occurred.");
-    assert_eq!(unit.name().unwrap(), "UNIT");
+    assert!(unit.name().is_none());
 }

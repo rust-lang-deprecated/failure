@@ -9,6 +9,7 @@ struct MyError;
 
 #[derive(Debug, Fail)]
 #[fail(display = "my wrapping error")]
+#[fail(name = "WRAPPING_ERROR")]
 struct WrappingError(#[fail(cause)] MyError);
 
 fn bad_function() -> Result<(), WrappingError> {
@@ -17,6 +18,6 @@ fn bad_function() -> Result<(), WrappingError> {
 
 fn main() {
     for cause in Fail::iter_chain(&bad_function().unwrap_err()) {
-        println!("{}: {}", cause.name().unwrap_or("Error"), cause);
+        println!("{}: {}", cause.name().unwrap(), cause);
     }
 }

@@ -175,3 +175,39 @@ enum MyEnumError {
     Variant2(#[fail(cause)] io::Error),
 }
 ```
+
+## Overriding `name`
+
+By default, `name()` method of derived implementation of `Fail` returns absolute type name:
+```rust
+#[derive(Fail, Debug)]
+struct MyError;
+
+assert_eq!(MyError.name(), Some("crate_name::MyError"));
+```
+
+To specify your own value for error's name use the `#[fail(name = ...)]` attribute:
+```rust
+#[macro_use] extern crate failure;
+
+use std::io;
+
+/// MyError::name will return Some("MY_ERROR") now.
+#[derive(Fail, Debug)]
+#[fail(name = "MY_ERROR")]
+struct MyError {
+    io_error: io::Error,
+}
+
+/// MyEnumError::name will return Some("MY_VARIANT_1") for Variant1
+/// and Some("MY_VARIANT_2") for Variant2,
+/// but None for Variant 3.
+#[derive(Fail, Debug)]
+enum MyEnumError {
+    #[fail(name = "MY_VARIANT_1")]
+    Variant1,
+    #[fail(name = "MY_VARIANT_2")]
+    Variant2(#[fail(cause)] io::Error),
+    Variant3,
+}
+```
