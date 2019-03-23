@@ -1,3 +1,7 @@
+# Version 0.1.6
+
+- Add `#[fail(name = ...)]` for overriding derived error's name.
+
 # Version 0.1.5
 
 - Resolve a regression with error conversions (#290)
