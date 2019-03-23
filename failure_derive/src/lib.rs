@@ -108,19 +108,17 @@ fn name_body(s: &synstructure::Structure) -> Result<quote::__rt::TokenStream, Er
 
     let mut match_body = TokenStream::new();
     for v in s.variants() {
-        let msg = find_msg_of("name", &v.ast().attrs)?.ok_or_else(|| {
-            Error::new(
-                v.ast().ident.span(),
-                "All variants must have name attribute.",
-            )
-        })?;
-
-        let name_value = match msg.nested[0] {
-            syn::NestedMeta::Meta(syn::Meta::NameValue(ref nv)) => nv.lit.clone(),
-            _ => unreachable!(),
-        };
-        let pat = v.pat();
-        match_body.extend(quote!(#pat => { return Some(#name_value) }));
+        if let Some(msg) = find_msg_of("name", &v.ast().attrs)? {
+            let name_value = match msg.nested[0] {
+                syn::NestedMeta::Meta(syn::Meta::NameValue(ref nv)) => nv.lit.clone(),
+                _ => unreachable!(),
+            };
+            let pat = v.pat();
+            match_body.extend(quote!(#pat => { return Some(#name_value) }));
+        } else {
+            let pat = v.pat();
+            match_body.extend(quote!(#pat => { return None }));
+        }
     }
     Ok(quote!(match *self { #match_body }))
 }
