@@ -41,10 +41,7 @@ fn fail_derive_impl(s: synstructure::Structure) -> Result<TokenStream, Error> {
         quote! { & }
     };
 
-    let ty_name = LitStr::new(&s.ast().ident.to_string(), Span::call_site());
-
-    //let name_body =
-    //    s.each_variant(|v| quote!(return Some(concat!(module_path!(), "::", #ty_name))));
+    let name_body = name_body(&s)?;
     let cause_body = s.each_variant(|v| {
         if let Some(cause) = v.bindings().iter().find(is_cause) {
             quote!(return Some(::failure::AsFail::as_fail(#cause)))
@@ -64,7 +61,7 @@ fn fail_derive_impl(s: synstructure::Structure) -> Result<TokenStream, Error> {
         quote!(::failure::Fail),
         quote! {
             fn name(&self) -> Option<&str> {
-                Some(concat!(module_path!(), "::", #ty_name))
+                #name_body
             }
 
             #[allow(unreachable_code)]
@@ -99,8 +96,40 @@ fn fail_derive_impl(s: synstructure::Structure) -> Result<TokenStream, Error> {
     })
 }
 
+fn name_body(s: &synstructure::Structure) -> Result<quote::__rt::TokenStream, Error> {
+    let mut msgs = s
+        .variants()
+        .iter()
+        .map(|v| find_msg_of("name", &v.ast().attrs));
+    if msgs.all(|msg| msg.map(|m| m.is_none()).unwrap_or(true)) {
+        let ty_name = LitStr::new(&s.ast().ident.to_string(), Span::call_site());
+        return Ok(quote!(return Some(concat!(module_path!(), "::", #ty_name))));
+    }
+
+    let mut match_body = TokenStream::new();
+    for v in s.variants() {
+        let msg = find_msg_of("name", &v.ast().attrs)?.ok_or_else(|| {
+            Error::new(
+                v.ast().ident.span(),
+                "All variants must have name attribute.",
+            )
+        })?;
+
+        let name_value = match msg.nested[0] {
+            syn::NestedMeta::Meta(syn::Meta::NameValue(ref nv)) => nv.lit.clone(),
+            _ => unreachable!(),
+        };
+        let pat = v.pat();
+        match_body.extend(quote!(#pat => { return Some(#name_value) }));
+    }
+    Ok(quote!(match *self { #match_body }))
+}
+
 fn display_body(s: &synstructure::Structure) -> Result<Option<quote::__rt::TokenStream>, Error> {
-    let mut msgs = s.variants().iter().map(|v| find_msg_of("display", &v.ast().attrs));
+    let mut msgs = s
+        .variants()
+        .iter()
+        .map(|v| find_msg_of("display", &v.ast().attrs));
     if msgs.all(|msg| msg.map(|m| m.is_none()).unwrap_or(true)) {
         return Ok(None);
     }
