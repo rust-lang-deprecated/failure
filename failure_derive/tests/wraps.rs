@@ -59,7 +59,10 @@ fn wrap_backtrace_error() {
         .is_some());
     assert!(err.backtrace().is_some());
     assert!(err.backtrace().is_empty());
-    assert_eq!(err.backtrace().is_empty(), err.backtrace().to_string().trim().is_empty());
+    assert_eq!(
+        err.backtrace().is_empty(),
+        err.backtrace().to_string().trim().is_empty()
+    );
 }
 
 #[derive(Fail, Debug)]
@@ -94,5 +97,8 @@ fn wrap_enum_error() {
         .is_some());
     assert!(err.backtrace().is_some());
     assert!(err.backtrace().is_empty());
-    assert_eq!(err.backtrace().is_empty(), err.backtrace().to_string().trim().is_empty());
+    assert_eq!(
+        err.backtrace().is_empty(),
+        err.backtrace().to_string().trim().is_empty()
+    );
 }

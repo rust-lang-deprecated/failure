@@ -6,9 +6,9 @@ extern crate synstructure;
 #[macro_use]
 extern crate quote;
 
-use proc_macro2::{TokenStream, Span};
-use syn::LitStr;
+use proc_macro2::{Span, TokenStream};
 use syn::spanned::Spanned;
+use syn::LitStr;
 
 #[derive(Debug)]
 struct Error(TokenStream);
@@ -106,16 +106,16 @@ fn display_body(s: &synstructure::Structure) -> Result<Option<quote::__rt::Token
 
     let mut tokens = TokenStream::new();
     for v in s.variants() {
-        let msg =
-            find_error_msg(&v.ast().attrs)?
-              .ok_or_else(|| Error::new(
-                  v.ast().ident.span(),
-                  "All variants must have display attribute."
-              ))?;
+        let msg = find_error_msg(&v.ast().attrs)?.ok_or_else(|| {
+            Error::new(
+                v.ast().ident.span(),
+                "All variants must have display attribute.",
+            )
+        })?;
         if msg.nested.is_empty() {
             return Err(Error::new(
                 msg.span(),
-                "Expected at least one argument to fail attribute"
+                "Expected at least one argument to fail attribute",
             ));
         }
 
@@ -126,7 +126,7 @@ fn display_body(s: &synstructure::Structure) -> Result<Option<quote::__rt::Token
             _ => {
                 return Err(Error::new(
                     msg.span(),
-                    "Fail attribute must begin `display = \"\"` to control the Display message."
+                    "Fail attribute must begin `display = \"\"` to control the Display message.",
                 ));
             }
         };
@@ -146,13 +146,13 @@ fn display_body(s: &synstructure::Structure) -> Result<Option<quote::__rt::Token
                                     arg.span(),
                                     &format!(
                                         "display attempted to access field `{}` in `{}::{}` which \
-                                     does not exist (there are {} field{})",
+                                         does not exist (there are {} field{})",
                                         idx,
                                         s.ast().ident,
                                         v.ast().ident,
                                         v.bindings().len(),
                                         if v.bindings().len() != 1 { "s" } else { "" }
-                                    )
+                                    ),
                                 ));
                             }
                         };
@@ -171,15 +171,15 @@ fn display_body(s: &synstructure::Structure) -> Result<Option<quote::__rt::Token
                         id,
                         s.ast().ident,
                         v.ast().ident
-                    )
+                    ),
                 ));
             }
             ref arg => {
                 return Err(Error::new(
                     arg.span(),
-                    "Invalid argument to fail attribute!"
+                    "Invalid argument to fail attribute!",
                 ));
-            },
+            }
         });
         let args = args.collect::<Result<Vec<_>, _>>()?;
 
@@ -197,7 +197,7 @@ fn find_error_msg(attrs: &[syn::Attribute]) -> Result<Option<syn::MetaList>, Err
                 if error_msg.is_some() {
                     return Err(Error::new(
                         meta.span(),
-                        "Cannot have two display attributes"
+                        "Cannot have two display attributes",
                     ));
                 } else {
                     if let syn::Meta::List(list) = meta {
@@ -205,7 +205,7 @@ fn find_error_msg(attrs: &[syn::Attribute]) -> Result<Option<syn::MetaList>, Err
                     } else {
                         return Err(Error::new(
                             meta.span(),
-                            "fail attribute must take a list in parentheses"
+                            "fail attribute must take a list in parentheses",
                         ));
                     }
                 }
