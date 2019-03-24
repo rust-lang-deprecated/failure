@@ -27,41 +27,47 @@ macro_rules! wrap_early_return {
 fn bail() {
     assert_eq!(
         wrap_early_return!(bail!("test")),
-        wrap_early_return!(bail!("test",)));
+        wrap_early_return!(bail!("test",))
+    );
     assert_eq!(
         wrap_early_return!(bail!("test {}", 4)),
-        wrap_early_return!(bail!("test {}", 4,)));
+        wrap_early_return!(bail!("test {}", 4,))
+    );
 }
 
 #[test]
 fn ensure() {
     assert_eq!(
         wrap_early_return!(ensure!(false, "test")),
-        wrap_early_return!(ensure!(false, "test",)));
+        wrap_early_return!(ensure!(false, "test",))
+    );
     assert_eq!(
         wrap_early_return!(ensure!(false, "test {}", 4)),
-        wrap_early_return!(ensure!(false, "test {}", 4,)));
+        wrap_early_return!(ensure!(false, "test {}", 4,))
+    );
 }
 
 #[test]
 fn single_arg_ensure() {
-    assert_eq!(
-        wrap_early_return!(ensure!(false)),
-        Err("false".to_string()));
+    assert_eq!(wrap_early_return!(ensure!(false)), Err("false".to_string()));
     assert_eq!(
         wrap_early_return!(ensure!(true == false)),
-        Err("true == false".to_string()));
+        Err("true == false".to_string())
+    );
     assert_eq!(
         wrap_early_return!(ensure!(4 == 5)),
-        Err("4 == 5".to_string()));
+        Err("4 == 5".to_string())
+    );
 }
 
 #[test]
 fn format_err() {
     assert_eq!(
         format_err!("test").to_string(),
-        format_err!("test",).to_string());
+        format_err!("test",).to_string()
+    );
     assert_eq!(
         format_err!("test {}", 4).to_string(),
-        format_err!("test {}", 4,).to_string());
+        format_err!("test {}", 4,).to_string()
+    );
 }
