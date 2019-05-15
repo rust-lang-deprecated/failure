@@ -16,12 +16,14 @@ path = "./failure_derive"
 [dependencies.backtrace]
 optional = true
 version = "0.3.3"
+default-features = false
+features=["std"]
 
 [workspace]
 members = [".", "failure_derive"]
 
 [features]
-default = ["std", "derive"]
+default = ["std", "derive", "backtrace/default"]
 #small-error = ["std"]
 std = ["backtrace"]
 derive = ["failure_derive"]
