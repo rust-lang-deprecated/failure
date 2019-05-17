@@ -16,8 +16,8 @@ functions:
 use std::io;
 use std::io::BufRead;
 
+use failure::format_err;
 use failure::Error;
-use failure::err_msg;
 
 fn my_function() -> Result<(), Error> {
     let stdin = io::stdin();
