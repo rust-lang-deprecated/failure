@@ -10,3 +10,6 @@ script:
   - cargo test
   - cargo test --features backtrace
   - cargo check --no-default-features
+matrix:
+  allow_failures:
+  - rust: nightly # because sometimes nightly does weird things and breaks the build
