@@ -23,7 +23,12 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![deny(missing_docs)]
 #![deny(warnings)]
-#![allow(bare_trait_objects)] // Allowed so we have compatibility with Rust < 1.27
+
+// So we can have bare_trait_objects lint on Rust versions without it
+#![allow(unknown_lints)]
+// Allowed so we have compatibility with Rust < 1.27
+#![allow(bare_trait_objects)]
+
 #![cfg_attr(feature = "small-error", feature(extern_types, allocator_api))]
 
 macro_rules! with_std { ($($i:item)*) => ($(#[cfg(feature = "std")]$i)*) }
