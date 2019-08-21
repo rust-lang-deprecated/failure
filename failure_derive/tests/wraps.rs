@@ -58,8 +58,8 @@ fn wrap_backtrace_error() {
         .and_then(|err| err.downcast_ref::<io::Error>())
         .is_some());
     assert!(err.backtrace().is_some());
-    assert!(err.backtrace().is_empty());
-    assert_eq!(err.backtrace().is_empty(), err.backtrace().to_string().trim().is_empty());
+    assert!(err.backtrace().unwrap().is_empty());
+    assert!(err.backtrace().unwrap().to_string().trim().is_empty());
 }
 
 #[derive(Fail, Debug)]
@@ -93,6 +93,6 @@ fn wrap_enum_error() {
         .and_then(|err| err.downcast_ref::<fmt::Error>())
         .is_some());
     assert!(err.backtrace().is_some());
-    assert!(err.backtrace().is_empty());
-    assert_eq!(err.backtrace().is_empty(), err.backtrace().to_string().trim().is_empty());
+    assert!(err.backtrace().unwrap().is_empty());
+    assert!(err.backtrace().unwrap().to_string().trim().is_empty());
 }

@@ -25,6 +25,12 @@ impl Error {
     }
 }
 
+impl From<syn::Error> for Error {
+    fn from(e: syn::Error) -> Error {
+        Error(e.to_compile_error())
+    }
+}
+
 decl_derive!([Fail, attributes(fail, cause)] => fail_derive);
 
 fn fail_derive(s: synstructure::Structure) -> TokenStream {
@@ -120,7 +126,7 @@ fn display_body(s: &synstructure::Structure) -> Result<Option<quote::__rt::Token
         }
 
         let format_string = match msg.nested[0] {
-            syn::NestedMeta::Meta(syn::Meta::NameValue(ref nv)) if nv.ident == "display" => {
+            syn::NestedMeta::Meta(syn::Meta::NameValue(ref nv)) if nv.path.is_ident("display") => {
                 nv.lit.clone()
             }
             _ => {
@@ -131,12 +137,12 @@ fn display_body(s: &synstructure::Structure) -> Result<Option<quote::__rt::Token
             }
         };
         let args = msg.nested.iter().skip(1).map(|arg| match *arg {
-            syn::NestedMeta::Literal(syn::Lit::Int(ref i)) => {
-                let bi = &v.bindings()[i.value() as usize];
+            syn::NestedMeta::Lit(syn::Lit::Int(ref i)) => {
+                let bi = &v.bindings()[i.base10_parse::<usize>()?];
                 Ok(quote!(#bi))
             }
-            syn::NestedMeta::Meta(syn::Meta::Word(ref id)) => {
-                let id_s = id.to_string();
+            syn::NestedMeta::Meta(syn::Meta::Path(ref path)) => {
+                let id_s = path.get_ident().map(syn::Ident::to_string).unwrap_or("".to_string());
                 if id_s.starts_with("_") {
                     if let Ok(idx) = id_s[1..].parse::<usize>() {
                         let bi = match v.bindings().get(idx) {
@@ -160,15 +166,16 @@ fn display_body(s: &synstructure::Structure) -> Result<Option<quote::__rt::Token
                     }
                 }
                 for bi in v.bindings() {
-                    if bi.ast().ident.as_ref() == Some(id) {
+                    let id = bi.ast().ident.as_ref();
+                    if id.is_some() && path.is_ident(id.unwrap()) {
                         return Ok(quote!(#bi));
                     }
                 }
                 return Err(Error::new(
                     arg.span(),
                     &format!(
-                        "Couldn't find field `{}` in `{}::{}`",
-                        id,
+                        "Couldn't find field `{:?}` in `{}::{}`",
+                        path,
                         s.ast().ident,
                         v.ast().ident
                     )
@@ -192,8 +199,8 @@ fn display_body(s: &synstructure::Structure) -> Result<Option<quote::__rt::Token
 fn find_error_msg(attrs: &[syn::Attribute]) -> Result<Option<syn::MetaList>, Error> {
     let mut error_msg = None;
     for attr in attrs {
-        if let Some(meta) = attr.interpret_meta() {
-            if meta.name() == "fail" {
+        if let Ok(meta) = attr.parse_meta() {
+            if meta.path().is_ident("fail") {
                 if error_msg.is_some() {
                     return Err(Error::new(
                         meta.span(),
@@ -223,7 +230,7 @@ fn is_backtrace(bi: &&synstructure::BindingInfo) -> bool {
                 segments: ref path, ..
             },
         }) => path.last().map_or(false, |s| {
-            s.value().ident == "Backtrace" && s.value().arguments.is_empty()
+            s.ident == "Backtrace" && s.arguments.is_empty()
         }),
         _ => false,
     }
@@ -232,18 +239,18 @@ fn is_backtrace(bi: &&synstructure::BindingInfo) -> bool {
 fn is_cause(bi: &&synstructure::BindingInfo) -> bool {
     let mut found_cause = false;
     for attr in &bi.ast().attrs {
-        if let Some(meta) = attr.interpret_meta() {
-            if meta.name() == "cause" {
+        if let Ok(meta) = attr.parse_meta() {
+            if meta.path().is_ident("cause") {
                 if found_cause {
                     panic!("Cannot have two `cause` attributes");
                 }
                 found_cause = true;
             }
-            if meta.name() == "fail" {
+            if meta.path().is_ident("fail") {
                 if let syn::Meta::List(ref list) = meta {
                     if let Some(ref pair) = list.nested.first() {
-                        if let &&syn::NestedMeta::Meta(syn::Meta::Word(ref word)) = pair.value() {
-                            if word == "cause" {
+                        if let &&syn::NestedMeta::Meta(syn::Meta::Path(ref path)) = pair {
+                            if path.is_ident("cause") {
                                 if found_cause {
                                     panic!("Cannot have two `cause` attributes");
                                 }
