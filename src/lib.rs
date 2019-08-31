@@ -126,7 +126,7 @@ pub trait Fail: Display + Debug + Send + Sync + 'static {
     /// `Some` when it can return a **different** failure. Users may loop
     /// over the cause chain, and returning `self` would result in an infinite
     /// loop.
-    fn cause(&self) -> Option<&Fail> {
+    fn cause(&self) -> Option<&dyn Fail> {
         None
     }
 
@@ -186,7 +186,7 @@ pub trait Fail: Display + Debug + Send + Sync + 'static {
         since = "0.1.2",
         note = "please use the 'find_root_cause()' method instead"
     )]
-    fn root_cause(&self) -> &Fail
+    fn root_cause(&self) -> &dyn Fail
     where
         Self: Sized,
     {
@@ -199,13 +199,13 @@ pub trait Fail: Display + Debug + Send + Sync + 'static {
     }
 }
 
-impl Fail {
+impl dyn Fail {
     /// Attempts to downcast this failure to a concrete type by reference.
     ///
     /// If the underlying error is not of type `T`, this will return `None`.
     pub fn downcast_ref<T: Fail>(&self) -> Option<&T> {
         if self.__private_get_type_id__() == TypeId::of::<T>() {
-            unsafe { Some(&*(self as *const Fail as *const T)) }
+            unsafe { Some(&*(self as *const dyn Fail as *const T)) }
         } else {
             None
         }
@@ -217,7 +217,7 @@ impl Fail {
     /// If the underlying error is not of type `T`, this will return `None`.
     pub fn downcast_mut<T: Fail>(&mut self) -> Option<&mut T> {
         if self.__private_get_type_id__() == TypeId::of::<T>() {
-            unsafe { Some(&mut *(self as *mut Fail as *mut T)) }
+            unsafe { Some(&mut *(self as *mut dyn Fail as *mut T)) }
         } else {
             None
         }
@@ -231,7 +231,7 @@ impl Fail {
     ///
     /// This is equivalent to iterating over `iter_causes()` and taking
     /// the last item.
-    pub fn find_root_cause(&self) -> &Fail {
+    pub fn find_root_cause(&self) -> &dyn Fail {
         find_root_cause(self)
     }
 
@@ -258,7 +258,7 @@ impl Fail {
         since = "0.1.2",
         note = "please use the 'find_root_cause()' method instead"
     )]
-    pub fn root_cause(&self) -> &Fail {
+    pub fn root_cause(&self) -> &dyn Fail {
         find_root_cause(self)
     }
 
@@ -273,8 +273,8 @@ impl Fail {
 impl<E: StdError + Send + Sync + 'static> Fail for E {}
 
 #[cfg(feature = "std")]
-impl Fail for Box<Fail> {
-    fn cause(&self) -> Option<&Fail> {
+impl Fail for Box<dyn Fail> {
+    fn cause(&self) -> Option<&dyn Fail> {
         (**self).cause()
     }
 
@@ -285,12 +285,12 @@ impl Fail for Box<Fail> {
 
 /// A iterator over the causes of a `Fail`
 pub struct Causes<'f> {
-    fail: Option<&'f Fail>,
+    fail: Option<&'f dyn Fail>,
 }
 
 impl<'f> Iterator for Causes<'f> {
-    type Item = &'f Fail;
-    fn next(&mut self) -> Option<&'f Fail> {
+    type Item = &'f dyn Fail;
+    fn next(&mut self) -> Option<&'f dyn Fail> {
         self.fail.map(|fail| {
             self.fail = fail.cause();
             fail
@@ -298,7 +298,7 @@ impl<'f> Iterator for Causes<'f> {
     }
 }
 
-fn find_root_cause(mut fail: &Fail) -> &Fail {
+fn find_root_cause(mut fail: &dyn Fail) -> &dyn Fail {
     while let Some(cause) = fail.cause() {
         fail = cause;
     }

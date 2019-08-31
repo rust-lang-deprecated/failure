@@ -12,12 +12,12 @@ fn return_failure() -> Result<(), failure::Error> {
     Err(err.into())
 }
 
-fn return_error() -> Result<(), Box<std::error::Error>> {
+fn return_error() -> Result<(), Box<dyn std::error::Error>> {
     return_failure()?;
     Ok(())
 }
 
-fn return_error_send_sync() -> Result<(), Box<std::error::Error + Send + Sync>> {
+fn return_error_send_sync() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     return_failure()?;
     Ok(())
 }
