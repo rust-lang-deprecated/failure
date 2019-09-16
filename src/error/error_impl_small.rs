@@ -10,6 +10,7 @@ pub(crate) struct ErrorImpl {
     inner: &'static mut Inner,
 }
 
+#[repr(C)]
 // Dynamically sized inner value
 struct Inner {
     backtrace: Backtrace,
@@ -25,18 +26,21 @@ extern {
     type FailData;
 }
 
+#[repr(C)]
 #[allow(dead_code)]
 struct InnerRaw<F> {
     header: InnerHeader,
     failure: F,
 }
 
+#[repr(C)]
 #[allow(dead_code)]
 struct InnerHeader {
     backtrace: Backtrace,
     vtable: *const VTable,
 }
 
+#[repr(C)]
 struct TraitObject {
     #[allow(dead_code)]
     data: *const FailData,
