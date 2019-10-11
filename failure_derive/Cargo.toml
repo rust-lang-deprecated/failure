@@ -6,14 +6,14 @@ name = "failure_derive"
 repository = "https://github.com/withoutboats/failure_derive"
 homepage = "https://rust-lang-nursery.github.io/failure/"
 documentation = "https://docs.rs/failure"
-version = "0.1.5"
+version = "0.1.6"
 build = "build.rs"
 
 [dependencies]
-quote = "0.6.3"
-syn = "0.15.0"
-synstructure = "0.10.0"
-proc-macro2 = "0.4.8"
+quote = "1"
+syn = "1.0.3"
+synstructure = "0.12.0"
+proc-macro2 = "1"
 
 [dev-dependencies.failure]
 version = "0.1.0"

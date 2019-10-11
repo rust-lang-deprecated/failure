@@ -112,7 +112,7 @@ with_std! {
             self.failure.as_cause().and_then(|x| x.name())
         }
 
-        fn cause(&self) -> Option<&Fail> {
+        fn cause(&self) -> Option<&dyn Fail> {
             self.failure.as_cause()
         }
 
@@ -146,7 +146,7 @@ with_std! {
             }
         }
 
-        fn as_cause(&self) -> Option<&Fail> {
+        fn as_cause(&self) -> Option<&dyn Fail> {
             match *self {
                 Either::This(_)         => None,
                 Either::That(ref error) => Some(error.as_fail())
