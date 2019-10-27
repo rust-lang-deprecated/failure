@@ -17,11 +17,15 @@ path = "./failure_derive"
 optional = true
 version = "0.3.3"
 
+[dependencies.core-error]
+version = "0.0.1-rc2"
+
 [workspace]
 members = [".", "failure_derive"]
 
 [features]
 default = ["std", "derive"]
 #small-error = ["std"]
-std = ["backtrace"]
+std = ["backtrace", "alloc", "core-error/std"]
+alloc = ["core-error/alloc"]
 derive = ["failure_derive"]

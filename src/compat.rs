@@ -1,4 +1,5 @@
-use core::fmt::{self, Display};
+use core::fmt::{self, Display, Debug};
+use core_error::Error as StdError;
 
 /// A compatibility wrapper around an error type from this crate.
 ///
@@ -27,17 +28,11 @@ impl<E> Compat<E> {
     }
 }
 
+impl<E: Display + Debug> StdError for Compat<E> {}
+
 with_std! {
-    use std::fmt::Debug;
-    use std::error::Error as StdError;
 
     use Error;
-
-    impl<E: Display + Debug> StdError for Compat<E> {
-        fn description(&self) -> &'static str {
-            "An error has occurred."
-        }
-    }
 
     impl From<Error> for Box<dyn StdError> {
         fn from(error: Error) -> Box<dyn StdError> {

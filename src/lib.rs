@@ -33,6 +33,8 @@ macro_rules! without_std { ($($i:item)*) => ($(#[cfg(not(feature = "std"))]$i)*)
 #[doc(hidden)]
 pub extern crate core as _core;
 
+extern crate core_error;
+
 mod as_fail;
 mod backtrace;
 #[cfg(feature = "std")]
@@ -59,6 +61,8 @@ extern crate failure_derive;
 #[doc(hidden)]
 pub use failure_derive::*;
 
+use core_error::Error as StdError;
+
 with_std! {
     extern crate core;
 
@@ -66,8 +70,6 @@ with_std! {
     pub use sync_failure::SyncFailure;
 
     mod error;
-
-    use std::error::Error as StdError;
 
     pub use error::Error;
 
@@ -269,7 +271,6 @@ impl dyn Fail {
     }
 }
 
-#[cfg(feature = "std")]
 impl<E: StdError + Send + Sync + 'static> Fail for E {}
 
 #[cfg(feature = "std")]

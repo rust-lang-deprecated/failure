@@ -1,5 +1,5 @@
 use Fail;
-use std::error::Error;
+use core_error::Error;
 use std::fmt::{self, Debug, Display};
 use std::sync::Mutex;
 

@@ -1,4 +1,4 @@
-use std::error::Error;
+use core_error::Error;
 use std::fmt;
 use Fail;
 

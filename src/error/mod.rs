@@ -12,8 +12,7 @@ use box_std::BoxStd;
 mod error_impl;
 use self::error_impl::ErrorImpl;
 
-#[cfg(feature = "std")]
-use std::error::Error as StdError;
+use core_error::Error as StdError;
 
 
 /// The `Error` type, which can contain any failure.
