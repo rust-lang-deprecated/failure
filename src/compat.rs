@@ -5,6 +5,8 @@ use core_error::Error as StdError;
 ///
 /// `Compat` implements `std::error::Error`, allowing the types from this
 /// crate to be passed to interfaces that expect a type of that trait.
+///
+/// In `no_std`, `Compat` implements `core_error::Error`.
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Hash, Default)]
 pub struct Compat<E> {
     pub(crate) error: E,
