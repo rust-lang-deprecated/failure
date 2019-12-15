@@ -39,11 +39,7 @@ impl<E: Error + Send + 'static> SyncFailure<E> {
     ///
     /// // implement Display/Error for NonSyncError...
     /// #
-    /// # impl StdError for NonSyncError {
-    /// #     fn description(&self) -> &str {
-    /// #         "oops!"
-    /// #     }
-    /// # }
+    /// # impl StdError for NonSyncError {}
     /// #
     /// # impl Display for NonSyncError {
     /// #     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {

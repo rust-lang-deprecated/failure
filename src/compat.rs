@@ -33,11 +33,7 @@ with_std! {
 
     use Error;
 
-    impl<E: Display + Debug> StdError for Compat<E> {
-        fn description(&self) -> &'static str {
-            "An error has occurred."
-        }
-    }
+    impl<E: Display + Debug> StdError for Compat<E> {}
 
     impl From<Error> for Box<dyn StdError> {
         fn from(error: Error) -> Box<dyn StdError> {
