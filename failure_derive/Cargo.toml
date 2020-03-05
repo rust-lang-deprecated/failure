@@ -16,7 +16,7 @@ synstructure = "0.12.0"
 proc-macro2 = "1"
 
 [dev-dependencies.failure]
-version = "0.1.7"
+version = "0.1.0"
 path = ".."
 
 [lib]
