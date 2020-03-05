@@ -3,10 +3,10 @@ authors = ["Without Boats <woboats@gmail.com>"]
 description = "derives for the failure crate"
 license = "MIT OR Apache-2.0"
 name = "failure_derive"
-repository = "https://github.com/withoutboats/failure_derive"
+repository = "https://github.com/rust-lang-nursery/failure"
 homepage = "https://rust-lang-nursery.github.io/failure/"
 documentation = "https://docs.rs/failure"
-version = "0.1.6"
+version = "0.1.7"
 build = "build.rs"
 
 [dependencies]
@@ -16,7 +16,7 @@ synstructure = "0.12.0"
 proc-macro2 = "1"
 
 [dev-dependencies.failure]
-version = "0.1.0"
+version = "0.1.7"
 path = ".."
 
 [lib]
