@@ -6,7 +6,7 @@ name = "failure_derive"
 repository = "https://github.com/rust-lang-nursery/failure"
 homepage = "https://rust-lang-nursery.github.io/failure/"
 documentation = "https://docs.rs/failure"
-version = "0.1.7"
+version = "0.1.8"
 build = "build.rs"
 
 [dependencies]
@@ -18,6 +18,9 @@ proc-macro2 = "1"
 [dev-dependencies.failure]
 version = "0.1.0"
 path = ".."
+
+[badges]
+maintenance = { status = "deprecated" }
 
 [lib]
 proc-macro = true
