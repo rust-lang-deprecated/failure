@@ -17,6 +17,9 @@ path = "./failure_derive"
 optional = true
 version = "0.3.3"
 
+[dependencies.core-error]
+version = "0.0.1-rc3"
+
 [workspace]
 members = [".", "failure_derive"]
 
@@ -26,5 +29,6 @@ maintenance = { status = "deprecated" }
 [features]
 default = ["std", "derive"]
 #small-error = ["std"]
-std = ["backtrace"]
+std = ["backtrace", "core-error/std"]
+alloc = ["core-error/alloc"]
 derive = ["failure_derive"]

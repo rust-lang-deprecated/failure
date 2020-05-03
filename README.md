@@ -111,7 +111,9 @@ If either crate fails to compile on any version newer than 1.31.0, please open
 an issue.
 
 failure is **no_std** compatible, though some aspects of it (primarily the
-`Error` type) will not be available in no_std mode.
+`Error` type) will not be available in no_std mode. Additionally, uses of the
+`std::error::Error` trait (such as in the `Compat` struct) are replaced with
+the [core_error] trait to be compatible with other error handling crates.
 
 ## License
 
