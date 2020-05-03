@@ -18,30 +18,22 @@ pub trait ResultExt<T, E> {
     /// #  
     /// # #[cfg(all(feature = "std", feature = "derive"))] mod tests {
     /// use std::error::Error;
-    /// # use std::fmt;
+    /// use std::fmt;
     /// #
     /// # extern crate failure;
     /// #
     /// # use tests::failure::ResultExt;
     /// #
-    /// # #[derive(Debug)]
+    /// #[derive(Debug)]
     /// struct CustomError;
     ///
-    /// impl Error for CustomError {
-    ///     fn description(&self) -> &str {
-    ///         "My custom error message"
-    ///     }
+    /// impl Error for CustomError {}
     ///
-    ///     fn cause(&self) -> Option<&Error> {
-    ///         None
+    /// impl fmt::Display for CustomError {
+    ///     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    ///         write!(f, "My custom error message")
     ///     }
     /// }
-    /// #
-    /// # impl fmt::Display for CustomError {
-    /// #     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    /// #         write!(f, "{}", self.description())
-    /// #     }
-    /// # }
     /// #
     /// # pub fn run_test() {
     ///
