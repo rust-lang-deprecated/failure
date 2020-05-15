@@ -40,6 +40,7 @@ mod box_std;
 mod compat;
 mod context;
 mod result_ext;
+mod option_ext;
 
 use core::any::TypeId;
 use core::fmt::{Debug, Display};
@@ -49,6 +50,7 @@ pub use backtrace::Backtrace;
 pub use compat::Compat;
 pub use context::Context;
 pub use result_ext::ResultExt;
+pub use option_ext::OptionExt;
 
 #[cfg(feature = "failure_derive")]
 #[allow(unused_imports)]
