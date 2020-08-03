@@ -1,5 +1,5 @@
 //! An experimental new error-handling library. Guide-style introduction
-//! is available [here](https://boats.gitlab.io/failure/).
+//! is available [here](https://rust-lang-nursery.github.io/failure/).
 //!
 //! The primary items exported by this library are:
 //!
