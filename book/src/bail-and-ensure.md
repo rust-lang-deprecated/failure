@@ -1,6 +1,6 @@
 # `bail!` and `ensure!`
 
-If you were a fan of the `bail!` and ensure! macros from error-chain, good news. failure has a version of these macros as well.
+If you were a fan of the `bail!` and `ensure!` macros from error-chain, good news. failure has a version of these macros as well.
 
 The `bail!` macro returns an error immediately, based on a format string. The `ensure!` macro additionally takes a conditional, and returns the error only if that conditional is false. You can think of `bail!` and `ensure!` as being analogous to `panic!` and `assert!`, but throwing errors instead of panicking.
 
